@@ -1,3 +1,5 @@
+<img src="images/neteclogo (2).png" alt="logo" width="300"/>
+
 # Certified Kubernetes Administration
 
 Este curso proporciona una formación práctica en Kubernetes enfocada en la operación real de clústeres y la resolución de problemas en entornos contenerizados. A lo largo de los capítulos, el participante aprenderá a desplegar y gestionar aplicaciones mediante recursos como Pods, Deployments, Services y volúmenes persistentes, así como a configurar acceso seguro con RBAC y exponer aplicaciones mediante Ingress.
@@ -84,8 +86,12 @@ Al finalizar, el alumno será capaz de administrar recursos en Kubernetes, ident
   - Descripción: Resolución de escenarios integrales en tiempo limitado, utilizando kubectl para desplegar, diagnosticar y validar recursos bajo condiciones similares a un examen CKA.
   - Duración estimada: 134 min
 
-## Flujo de colaboración
+---
 
-- Trabajar en `changes_course`.
-- Crear Pull Request hacia `main`.
-- Merge por `Squash and merge`.
+## 📬 **Contacto y más información**
+
+Si tienes alguna pregunta o necesitas más detalles, no dudes en [contactarnos](mailto:soporte@netec.com). También puedes encontrar más recursos en nuestra [página](https://netec.com).
+
+---
+
+¡Gracias por visitar nuestra plataforma! No olvides revisar todos los laboratorios y comenzar tu viaje de aprendizaje hoy mismo.
