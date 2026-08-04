@@ -13,7 +13,7 @@ prerequisites:
   - Haber completado la Práctica 1.
   - Conservar node-web-deployment y node-web-service.
   - Tener Minikube y kubectl operativos.
-  - Disponer del archivo lab2-scenario.yaml proporcionado con esta práctica.
+  - Disponer del archivo lab1-1-scenario.yaml proporcionado con esta práctica.
 introduction:
   - En este reto recibirás una aplicación que funcionaba correctamente al finalizar la Práctica 1, pero cuyo acceso mediante Service ha dejado de funcionar. No conocerás de antemano la causa. Tu objetivo será observar el estado de los recursos, recopilar evidencia, identificar la relación rota y aplicar la corrección mínima necesaria sin reiniciar innecesariamente la aplicación.
 slug: lab2
@@ -91,13 +91,13 @@ El Deployment debe estar disponible y al menos un Pod debe encontrarse en estado
 - {% include step_label.html %} Ejecuta el siguiente comando para descargar el archivo del reto.
 
   ```bash
-  curl -L -o k8s/lab2-scenario.yaml https://githubusercontent.com CAMBIAR ESTA URL
+  curl -L -o k8s/lab1-1-scenario.yaml https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab2/lab2-scenario.yaml
   ```
 
 - {% include step_label.html %} Desde el directorio donde guardaste `lab2-scenario.yaml`, aplica el archivo sin abrirlo ni inspeccionarlo todavía.
 
   ```bash
-  kubectl apply -f lab2-scenario.yaml
+  kubectl apply -f lab1-1-scenario.yaml
   ```
 
 > **IMPORTANTE:** El archivo contiene el cambio que originó el incidente. No utilices `cat`, VS Code ni otro editor para inspeccionarlo antes de completar el diagnóstico.

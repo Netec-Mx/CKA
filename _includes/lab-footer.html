@@ -8,7 +8,7 @@ Parámetros (usa page.* o include.*):
 {% endcomment %}
 
 <div class="lab-summary">
-  <h2>¡Felicidades! Has completado el Laboratorio {{ include.lab_number | default: page.lab_number }}.</h2>
+  <h2>¡Felicidades! Has completado el Laboratorio.</h2>
 
   {% assign _final = include.final_result | default: page.final_result %}
   {% if _final %}

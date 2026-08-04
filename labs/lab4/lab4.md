@@ -103,7 +103,7 @@ El Deployment debe tener sus réplicas disponibles y deben existir ReplicaSets a
 - {% include step_label.html %} Descarga el archivo en la siguiente ruta.
 
   ```bash
-  curl -L -o lab2-1-scenario.sh https://githubusercontent.com CAMBIAR ESTA URL
+  curl -L -o lab2-1-scenario.sh https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab4/lab2-1-scenario.sh
   ```
 
 - {% include step_label.html %} Ejecuta el escenario proporcionado sin abrir el archivo ni revisar previamente su contenido.
