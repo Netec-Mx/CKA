@@ -1,0 +1,82 @@
+# Prompts de apoyo para la Práctica 1
+# El slug del laboratorio debe ser: lab1
+
+tarea1:
+  title: "Explicar la Tarea 1 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 1 de la
+    Práctica 1 de Kubernetes.
+
+    En esta tarea creé la estructura del proyecto y desarrollé una aplicación
+    web sencilla con Node.js. Preparé los archivos package.json, server.js e
+    index.html, configuré un endpoint /health y validé localmente la aplicación
+    desde el navegador antes de contenerizarla.
+
+    Explica el propósito de cada comando, archivo, configuración o procedimiento,
+    cómo funciona el servidor Node.js, cómo interpretar las salidas esperadas,
+    cómo validar que la tarea se completó correctamente y qué errores comunes
+    podrían presentarse.
+
+tarea2:
+  title: "Explicar la Tarea 2 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 2 de la
+    Práctica 1 de Kubernetes.
+
+    En esta tarea creé el Dockerfile y el archivo .dockerignore, construí la imagen
+    k8s-node-web:1.0, validé su funcionamiento mediante un contenedor temporal,
+    inicié Minikube con el driver Docker y cargué la imagen local en el clúster
+    mediante minikube image load.
+
+    Explica el propósito de cada comando, archivo, configuración o procedimiento,
+    cómo funciona la construcción de la imagen, por qué se carga en Minikube,
+    cómo interpretar las salidas esperadas, cómo validar que la tarea se completó
+    correctamente y qué errores comunes podrían presentarse.
+
+tarea3:
+  title: "Explicar la Tarea 3 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 3 de la
+    Práctica 1 de Kubernetes.
+
+    En esta tarea creé el manifiesto deployment.yaml para definir un Deployment
+    con una réplica de la aplicación Node.js, validé el archivo con dry-run,
+    apliqué el manifiesto al clúster y revisé los recursos Deployment, ReplicaSet
+    y Pod creados automáticamente por Kubernetes.
+
+    Explica el propósito de cada campo del manifiesto, cada comando kubectl y el
+    modelo declarativo de Kubernetes, cómo interpretar las salidas esperadas,
+    cómo validar que la tarea se completó correctamente y qué errores comunes
+    podrían presentarse.
+
+tarea4:
+  title: "Explicar la Tarea 4 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 4 de la
+    Práctica 1 de Kubernetes.
+
+    En esta tarea creé el manifiesto service.yaml para definir un Service de tipo
+    NodePort, relacioné el Service con el Pod mediante el selector app=node-web,
+    apliqué el recurso al clúster y utilicé minikube service para acceder a la
+    aplicación Node.js desde el navegador.
+
+    Explica el propósito de cada campo del Service, la diferencia entre port,
+    targetPort y NodePort, cómo funciona el selector, cómo interpretar las
+    salidas esperadas, cómo validar que la tarea se completó correctamente y qué
+    errores comunes podrían presentarse.
+
+tarea5:
+  title: "Explicar la Tarea 5 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 5 de la
+    Práctica 1 de Kubernetes.
+
+    En esta tarea validé el flujo completo del despliegue utilizando kubectl.
+    Revisé Deployment, ReplicaSet, Pod y Service, comprobé los endpoints asociados,
+    consulté los logs de la aplicación y ejecuté una verificación final para
+    confirmar que todos los recursos se encontraban disponibles y operativos.
+
+    Explica el propósito de cada comando de validación, cómo se relacionan
+    Deployment, ReplicaSet, Pod, Service y endpoints, cómo interpretar las
+    salidas esperadas, cómo validar que la práctica quedó correctamente
+    completada y qué errores comunes podrían presentarse.

@@ -1,0 +1,79 @@
+# Prompts de apoyo para la Práctica 5
+# El slug del laboratorio debe ser: lab8
+
+tarea1:
+  title: "Explicar la Tarea 1 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 1 de la
+    Práctica 5 de Kubernetes.
+
+    En esta tarea creé ConfigMaps mediante comandos imperativos y manifiestos YAML,
+    almacené parámetros simples y archivos de configuración, y consumí sus valores
+    desde Pods utilizando variables de entorno y volúmenes montados.
+
+    Explica el propósito de ConfigMaps, la diferencia entre creación imperativa
+    y declarativa, cómo funcionan envFrom, configMapRef, volumeMounts y subPath,
+    cómo interpretar las salidas esperadas, cómo validar que la tarea se completó
+    correctamente y qué errores comunes podrían presentarse.
+
+tarea2:
+  title: "Explicar la Tarea 2 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 2 de la
+    Práctica 5 de Kubernetes.
+
+    En esta tarea creé Secrets de tipo Opaque y TLS, analicé la representación
+    base64 de los valores y consumí credenciales desde un Pod mediante variables
+    de entorno y un volumen montado de solo lectura.
+
+    Explica cómo funcionan los Secrets, por qué base64 no representa cifrado,
+    cómo se crean los tipos Opaque y kubernetes.io/tls, cómo se consumen mediante
+    secretRef y volúmenes, cómo interpretar las salidas esperadas, cómo validar
+    que la tarea se completó correctamente y qué errores comunes podrían presentarse.
+
+tarea3:
+  title: "Explicar la Tarea 3 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 3 de la
+    Práctica 5 de Kubernetes.
+
+    En esta tarea creé la ServiceAccount app-reader, definí el Role
+    pod-configmap-reader con permisos de solo lectura sobre Pods, logs y
+    ConfigMaps, y utilicé un RoleBinding para asignar esos permisos a la
+    ServiceAccount dentro del namespace lab8.
+
+    Explica qué función cumple una ServiceAccount, cómo funcionan Role y
+    RoleBinding, qué representan apiGroups, resources y verbs, cómo se aplica
+    el principio de mínimo privilegio, cómo validar la vinculación entre los
+    recursos y qué errores comunes podrían presentarse.
+
+tarea4:
+  title: "Explicar la Tarea 4 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 4 de la
+    Práctica 5 de Kubernetes.
+
+    En esta tarea utilicé kubectl auth can-i para impersonar la ServiceAccount
+    app-reader y comprobar que puede consultar Pods y ConfigMaps, pero no puede
+    crear o eliminar Pods, consultar Secrets ni acceder a Pods de kube-system.
+
+    Explica cómo funciona kubectl auth can-i, el formato
+    system:serviceaccount:namespace:nombre, cómo comprobar permisos permitidos
+    y denegados, cómo influye el alcance del namespace, cómo interpretar
+    --list y qué errores comunes podrían presentarse.
+
+tarea5:
+  title: "Explicar la Tarea 5 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 5 de la
+    Práctica 5 de Kubernetes.
+
+    En esta tarea desplegué rbac-demo-pod utilizando la ServiceAccount app-reader
+    y validé desde el propio Pod el acceso real a la API de Kubernetes. El Pod
+    pudo consultar Pods y ConfigMaps, mientras el acceso a Secrets fue rechazado
+    por las reglas RBAC configuradas.
+
+    Explica cómo un Pod utiliza una ServiceAccount como identidad, cómo se
+    aplican Role y RoleBinding durante las solicitudes a la API, por qué algunas
+    operaciones devuelven Forbidden, cómo validar la ServiceAccount asignada,
+    cómo interpretar la validación final y qué errores comunes podrían presentarse.

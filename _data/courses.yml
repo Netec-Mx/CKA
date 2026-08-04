@@ -1,0 +1,103 @@
+# _data/courses.yml
+kubeadmin:
+  title: "Certified Kubernetes Administration" # COLOCAR EL NOMBRE DEL CURSO
+  intro: "DESCRIPCIÓN_DEL_CURSO_AQUI"
+  labs:
+
+    - id: lab1
+      title: "Despliegue de una aplicación Node.js en Kubernetes" # NOMBRE DE LA PRACTICA
+      url: "/lab1/lab1/"
+      duration: "60 min" # AJUSTAR TIEMPO DE LA PRACTICA
+      desc: "Despliega una aplicación Node.js en Kubernetes con Deployment y Service, validando recursos y acceso desde Minikube."
+    
+    - id: lab2
+      title: "Práctica complementaria 1.1: Validación básica con kubectl y manifiestos YAML" # NOMBRE DE LA PRACTICA
+      url: "/lab2/lab2/"
+      duration: "20 min" # AJUSTAR TIEMPO DE LA PRACTICA
+      desc: "Valida recursos con kubectl, analiza labels y selectors, y corrige una inconsistencia básica en un manifiesto YAML."
+
+    - id: lab3
+      title: "Gestión de Deployments con escalamiento, rolling updates y rollback" # NOMBRE DE LA PRACTICA
+      url: "/lab3/lab3/"
+      duration: "60 min" # AJUSTAR TIEMPO DE LA PRACTICA
+      desc: "Gestiona Deployments con escalamiento, actualizaciones progresivas y rollback, validando ReplicaSets y Pods."
+
+    - id: lab4
+      title: "Práctica complementaria 2.1: Labels, selectors y ReplicaSets" # NOMBRE DE LA PRACTICA
+      url: "/lab4/lab4/"
+      duration: "20 min"
+      desc: "Analiza labels, selectors y ReplicaSets, identifica revisiones activas e históricas y valida su relación con los Pods."
+
+    - id: lab5
+      title: "Mantenimiento de nodos y reprogramación de workloads en Kubernetes" # NOMBRE DE LA PRACTICA
+      url: "/lab5/lab5/"
+      duration: "60 min"
+      desc: "Ejecuta cordon, drain y uncordon, reprograma workloads y valida la disponibilidad mediante PodDisruptionBudget."
+
+    - id: lab6
+      title: "Gestión de namespaces y despliegue de recursos" # NOMBRE DE LA PRACTICA
+      url: "/lab6/lab6/"
+      duration: "50 min"
+      desc: "Administra namespaces, despliega recursos aislados y aplica ResourceQuota y LimitRange para controlar su consumo."
+
+    - id: lab7
+      title: "Práctica complementaria 4.1: Separación lógica por ambiente" # NOMBRE DE LA PRACTICA
+      url: "/lab7/lab7/"
+      duration: "20 min"
+      desc: "Valida aislamiento entre namespaces, resolución DNS interna y acceso entre ambientes mediante Services de Kubernetes."
+
+    - id: lab8
+      title: "Configuración de aplicaciones con ConfigMaps, Secrets y RBAC" # NOMBRE DE LA PRACTICA
+      url: "/lab8/lab8/"
+      duration: "75 min"
+      desc: "Configura aplicaciones con ConfigMaps y Secrets, y aplica RBAC con ServiceAccounts, Roles y validación de permisos."
+
+    - id: lab9
+      title: "Práctica complementaria 5.1: Validación de permisos con ServiceAccount" # NOMBRE DE LA PRACTICA
+      url: "/lab9/lab9/"
+      duration: "20 min"
+      desc: "Audita permisos RBAC de una ServiceAccount, ajusta accesos mínimos y verifica autorizaciones permitidas y denegadas."
+
+    - id: lab10
+      title: "Exposición de aplicaciones con Services e Ingress" # NOMBRE DE LA PRACTICA
+      url: "/lab10/lab10/"
+      duration: "70 min"
+      desc: "Expone aplicaciones con ClusterIP, NodePort e Ingress, validando acceso interno, externo y enrutamiento HTTP."
+
+    - id: lab11
+      title: "Práctica complementaria 6.1: Diagnóstico de Service y endpoints" # NOMBRE DE LA PRACTICA
+      url: "/lab11/lab11/"
+      duration: "15 min"
+      desc: "Diagnostica Services y endpoints, identifica fallas de selectors y restaura la conectividad entre aplicaciones."
+
+    - id: lab12
+      title: "Práctica complementaria 6.2: Validación de DNS interno" # NOMBRE DE LA PRACTICA
+      url: "/lab12/lab12/"
+      duration: "15 min"
+      desc: "Valida DNS interno con nombres cortos, namespace y FQDN, comparando resolución de Services entre distintos ambientes."
+
+    - id: lab13
+      title: "Despliegue con almacenamiento persistente usando PVC" # NOMBRE DE LA PRACTICA
+      url: "/lab13/lab13/"
+      duration: "50 min"
+      desc: "Implementa almacenamiento persistente con PV y PVC, valida persistencia de datos y aprovisionamiento dinámico."
+
+    - id: lab14
+      title: "Diagnóstico y resolución de fallos en Pods, Services y DNS" # NOMBRE DE LA PRACTICA
+      url: "/lab14/lab14/"
+      duration: "80 min"
+      desc: "Diagnostica fallos en Pods, Services y DNS aplicando describe, logs, events y pruebas funcionales de conectividad."
+
+    - id: lab15
+      title: "Simulación integral tipo CKA" # NOMBRE DE LA PRACTICA
+      url: "/lab15/lab15/"
+      duration: "120 min"
+      desc: "Resuelve escenarios integrales tipo CKA bajo límite de tiempo, validando administración, red, storage y troubleshooting."
+
+    # ESTRUCTURA DE SUB-PRACTICA OCUPAR SI ES NECESARIO SINO BORRAR
+    # - id: lab61
+    #   number: "6.1"
+    #   title: "Despliegue de servicios en Docker Swarm"
+    #   url:  "/capitulo6/lab61/"
+    #   duration: "60 min"
+    #   desc: "Despliega un servicio en Docker Swarm con réplicas, secrets y actualizaciones controladas."

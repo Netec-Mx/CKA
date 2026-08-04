@@ -1,0 +1,78 @@
+# Prompts de apoyo para la Práctica 4
+# El slug del laboratorio debe ser: lab6
+
+tarea1:
+  title: "Explicar la Tarea 1 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 1 de la
+    Práctica 4 de Kubernetes.
+
+    En esta tarea exploré los namespaces predeterminados del clúster, identifiqué
+    default, kube-system, kube-public y kube-node-lease, y revisé recursos internos
+    como Pods del sistema y objetos Lease para comprender su propósito.
+
+    Explica el propósito de cada comando, namespace, configuración o procedimiento,
+    cómo interpretar las salidas esperadas, cómo validar que la tarea se completó
+    correctamente y qué errores comunes podrían presentarse.
+
+tarea2:
+  title: "Explicar la Tarea 2 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 2 de la
+    Práctica 4 de Kubernetes.
+
+    En esta tarea creé los namespaces development, staging y production utilizando
+    métodos imperativos y declarativos. También agregué labels y annotations para
+    identificar los ambientes y facilitar su organización dentro del clúster.
+
+    Explica la diferencia entre creación imperativa y declarativa, el propósito
+    de labels y annotations en namespaces, cómo interpretar las salidas esperadas,
+    cómo validar que la tarea se completó correctamente y qué errores comunes
+    podrían presentarse.
+
+tarea3:
+  title: "Explicar la Tarea 3 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 3 de la
+    Práctica 4 de Kubernetes.
+
+    En esta tarea desplegué una aplicación llamada webapp junto con un Service
+    webapp-svc en los namespaces development, staging y production, utilizando el
+    mismo nombre de recursos pero diferentes cantidades de réplicas para demostrar
+    el aislamiento lógico proporcionado por los namespaces.
+
+    Explica cómo Kubernetes identifica recursos mediante namespace y nombre,
+    por qué los mismos nombres pueden coexistir sin conflicto, cómo interpretar
+    las salidas esperadas, cómo validar el aislamiento correctamente y qué errores
+    comunes podrían presentarse.
+
+tarea4:
+  title: "Explicar la Tarea 4 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 4 de la
+    Práctica 4 de Kubernetes.
+
+    En esta tarea configuré una ResourceQuota y un LimitRange dentro del namespace
+    development. La ResourceQuota limitó el consumo total de Pods, Services, CPU
+    y memoria, mientras que el LimitRange definió requests y limits predeterminados
+    para contenedores que no los especificaban explícitamente.
+
+    Explica la diferencia entre ResourceQuota y LimitRange, cómo funcionan juntos,
+    cómo interpretar sus valores de uso y límites, cómo validar la asignación
+    automática de recursos y qué errores comunes podrían presentarse.
+
+tarea5:
+  title: "Explicar la Tarea 5 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 5 de la
+    Práctica 4 de Kubernetes.
+
+    En esta tarea revisé los recursos existentes en staging, eliminé completamente
+    ese namespace y comprobé que Kubernetes eliminó en cascada los Deployments,
+    ReplicaSets, Pods y Services contenidos, mientras development y production
+    permanecieron disponibles.
+
+    Explica cómo funciona la eliminación de namespaces y recursos namespaced,
+    qué significa la eliminación en cascada, cómo interpretar las salidas
+    esperadas, cómo validar que los otros ambientes permanecieron intactos y qué
+    errores comunes podrían presentarse.

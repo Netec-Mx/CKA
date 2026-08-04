@@ -1,0 +1,112 @@
+lab1:
+  results:
+    - "**Resultado esperado:** Aplicación Node.js creada y validada localmente desde el navegador y el endpoint de salud antes de contenerizarla."
+    - "**Resultado esperado:** Imagen Docker `k8s-node-web:1.0` construida, probada localmente y cargada correctamente en el clúster Minikube."
+    - "**Resultado esperado:** Deployment `node-web-deployment` creado con una réplica disponible y un Pod en estado `Running` administrado por Kubernetes."
+    - "**Resultado esperado:** Service `node-web-service` de tipo NodePort creado y aplicación Node.js accesible desde el navegador mediante la URL de Minikube."
+    - "**Resultado esperado:** Deployment, ReplicaSet, Pod, Service y endpoint validados correctamente con `kubectl`, confirmando el flujo completo del despliegue."
+
+lab2:
+  results:
+    - "**Resultado esperado:** Estado del Deployment, ReplicaSet, Pods y Service analizado correctamente, diferenciando los componentes saludables del recurso afectado."
+    - "**Resultado esperado:** Causa raíz del fallo identificada mediante `kubectl`, labels, selectors, endpoints y pruebas de conectividad, sin modificar recursos innecesarios."
+    - "**Resultado esperado:** Configuración del Service corregida mediante el cambio mínimo necesario, restaurando endpoints, conservando la ClusterIP y recuperando el acceso a la aplicación."
+
+lab3:
+  results:
+    - "**Resultado esperado:** Deployment creado y administrado correctamente, identificando la relación entre Deployment, ReplicaSet y Pods."
+    - "**Resultado esperado:** Escalamiento horizontal ejecutado correctamente mediante enfoques imperativo y declarativo, ajustando las réplicas del Deployment."
+    - "**Resultado esperado:** Rolling update completado hacia una nueva versión de NGINX, observando la creación y transición entre ReplicaSets."
+    - "**Resultado esperado:** Historial de revisiones consultado y rollback ejecutado correctamente, restaurando la versión anterior del Deployment."
+    - "**Resultado esperado:** Deployment estable y validado después del ciclo completo de escalamiento, actualización y reversión."
+
+lab4:
+  results:
+    - "**Resultado esperado:** Estado del Deployment, ReplicaSets y Pods analizado correctamente, identificando labels, selectors y relaciones de administración."
+    - "**Resultado esperado:** Pod fuera del selector detectado mediante labels, `ownerReferences` y `pod-template-hash`, explicando por qué el ReplicaSet creó una réplica de reemplazo."
+    - "**Resultado esperado:** Recurso anómalo eliminado correctamente sin modificar el Deployment, restaurando el número esperado de Pods y el estado estable del ReplicaSet."
+
+lab5:
+  results:
+    - "**Resultado esperado:** Workloads desplegados y distribuidos correctamente en un clúster Minikube de tres nodos, estableciendo una línea base operativa."
+    - "**Resultado esperado:** Nodo marcado con `cordon`, confirmando que los Pods existentes continúan activos y los nuevos evitan el nodo en mantenimiento."
+    - "**Resultado esperado:** PodDisruptionBudgets configurados correctamente, identificando cuándo una política permite o bloquea disrupciones voluntarias."
+    - "**Resultado esperado:** Drain completado después de diagnosticar y resolver el bloqueo del PDB, reprogramando los Pods en nodos disponibles."
+    - "**Resultado esperado:** Nodo reincorporado mediante `uncordon`, workloads disponibles y clúster validado después del ciclo completo de mantenimiento."
+
+lab6:
+  results:
+    - "**Resultado esperado:** Namespaces del sistema identificados correctamente, reconociendo su función y diferenciándolos de los ambientes de usuario."
+    - "**Resultado esperado:** Namespaces `development`, `staging` y `production` creados y etiquetados correctamente mediante métodos imperativos y declarativos."
+    - "**Resultado esperado:** Aplicación `webapp` desplegada en los tres namespaces, comprobando el aislamiento lógico y la reutilización de nombres sin conflictos."
+    - "**Resultado esperado:** ResourceQuota y LimitRange configurados en `development`, limitando recursos y asignando valores predeterminados a los contenedores."
+    - "**Resultado esperado:** Namespace `staging` eliminado correctamente junto con sus recursos, conservando intactos los ambientes `development` y `production`."
+
+lab7:
+  results:
+    - "**Resultado esperado:** Recursos con nombres equivalentes identificados correctamente en `development` y `production`, comprobando su aislamiento lógico."
+    - "**Resultado esperado:** Resolución DNS validada dentro y entre namespaces, diferenciando el Service local del recurso ubicado en otro ambiente."
+    - "**Resultado esperado:** Recursos auditados globalmente y separación lógica confirmada, conservando los namespaces y eliminando únicamente el Pod temporal."
+
+lab8:
+  results:
+    - "**Resultado esperado:** ConfigMaps creados y consumidos correctamente mediante variables de entorno y archivos montados dentro de Pods."
+    - "**Resultado esperado:** Secrets Opaque y TLS creados y utilizados correctamente, validando su codificación y consumo seguro desde Pods."
+    - "**Resultado esperado:** ServiceAccount y Role configurados con permisos de mínimo privilegio dentro del namespace `lab8`."
+    - "**Resultado esperado:** Permisos permitidos y denegados comprobados correctamente mediante `kubectl auth can-i` utilizando la identidad `app-reader`."
+    - "**Resultado esperado:** Pod RBAC ejecutado con la ServiceAccount `app-reader`, confirmando acceso a Pods y ConfigMaps y denegación sobre Secrets."
+
+lab9:
+  results:
+    - "**Resultado esperado:** Permisos efectivos de `app-reader` auditados correctamente, diferenciando acciones permitidas, denegadas y alcance por namespace."
+    - "**Resultado esperado:** Role actualizado con permisos mínimos de lectura sobre Services, sin otorgar acceso de escritura ni privilegios adicionales."
+    - "**Resultado esperado:** ServiceAccount validada después del ajuste, confirmando acceso a Services y manteniendo denegados Secrets y operaciones no autorizadas."
+
+lab10:
+  results:
+    - "**Resultado esperado:** Frontend y backend desplegados correctamente mediante Deployments con dos réplicas disponibles por componente."
+    - "**Resultado esperado:** Services ClusterIP configurados para frontend y backend, proporcionando acceso interno estable hacia los Pods seleccionados."
+    - "**Resultado esperado:** Frontend expuesto mediante NodePort y accesible desde el host utilizando la URL proporcionada por Minikube."
+    - "**Resultado esperado:** Ingress Controller habilitado y reglas configuradas para enrutar `/` hacia frontend y `/api` hacia backend."
+    - "**Resultado esperado:** Arquitectura de exposición validada correctamente, confirmando Deployments, Services, NodePort e Ingress operativos."
+
+lab11:
+  results:
+    - "**Resultado esperado:** Relación entre Service, selector, labels y Pods identificada correctamente, validando los endpoints asociados al backend."
+    - "**Resultado esperado:** Falla controlada provocada mediante un selector incorrecto, comprobando la pérdida de endpoints sin afectar los Pods."
+    - "**Resultado esperado:** Selector restaurado correctamente y conectividad recuperada, confirmando nuevamente endpoints activos y acceso al backend."
+
+lab12:
+  results:
+    - "**Resultado esperado:** Resolución DNS validada dentro de `lab10`, comprobando nombre corto, nombre con namespace y FQDN hacia la misma ClusterIP."
+    - "**Resultado esperado:** Configuración DNS del Pod interpretada correctamente, relacionando `search`, `nameserver` y el dominio `svc.cluster.local`."
+    - "**Resultado esperado:** Resolución desde otro namespace comprobada correctamente, diferenciando el comportamiento del nombre corto y del FQDN completo."
+
+lab13:
+  results:
+    - "**Resultado esperado:** PersistentVolume y PersistentVolumeClaim creados y vinculados correctamente, validando el estado `Bound` del almacenamiento estático."
+    - "**Resultado esperado:** MySQL desplegado utilizando el PVC estático y datos conservados correctamente después de eliminar y recrear el Pod."
+    - "**Resultado esperado:** PVC dinámico aprovisionado mediante la StorageClass predeterminada y consumido correctamente desde un Pod NGINX."
+    - "**Resultado esperado:** Diferencia entre `emptyDir` y PVC comprobada mediante la pérdida de datos efímeros y conservación del almacenamiento persistente."
+    - "**Resultado esperado:** Recursos de almacenamiento validados correctamente, confirmando PV, PVC, persistencia de MySQL y aprovisionamiento dinámico."
+
+lab14:
+  results:
+    - "**Resultado esperado:** Metodología sistemática de troubleshooting aplicada correctamente mediante observación, descripción, análisis, corrección y validación."
+    - "**Resultado esperado:** Fallos `ImagePullBackOff`, `CrashLoopBackOff` y `Pending` diagnosticados y corregidos hasta recuperar Pods operativos."
+    - "**Resultado esperado:** Problemas de selector, `targetPort` y liveness probe corregidos, restaurando endpoints y conectividad de los Services."
+    - "**Resultado esperado:** Fallos de DNS diagnosticados y corregidos mediante `dnsPolicy`, resolución interna y validación del funcionamiento de CoreDNS."
+    - "**Resultado esperado:** Ocho escenarios de fallo validados satisfactoriamente, confirmando Pods, Services, endpoints y resolución DNS operativos."
+
+lab15:
+  results:
+    - "**Resultado esperado:** Mantenimiento de nodo completado correctamente, conservando disponibilidad de workloads y restaurando el scheduling al finalizar."
+    - "**Resultado esperado:** ServiceAccount, Role y RoleBinding configurados con mínimo privilegio, validando permisos permitidos y denegados mediante RBAC."
+    - "**Resultado esperado:** Deployment actualizado y revertido mediante rollout, conservando cuatro réplicas disponibles y la imagen final solicitada."
+    - "**Resultado esperado:** Workload analítico programado exclusivamente en el nodo designado mediante labels, taints, tolerations y scheduling declarativo."
+    - "**Resultado esperado:** Service defectuoso reparado y expuesto mediante NodePort, recuperando endpoints y conectividad hacia los Pods backend."
+    - "**Resultado esperado:** Ingress configurado correctamente para enrutar `/` y `/api` hacia Services independientes con backends disponibles."
+    - "**Resultado esperado:** PersistentVolume, PersistentVolumeClaim y Pod consumidor configurados correctamente, validando binding y persistencia del dato solicitado."
+    - "**Resultado esperado:** Pods con fallos de imagen y ejecución diagnosticados y corregidos hasta alcanzar estado `Running` y `Ready`."
+    - "**Resultado esperado:** Service y resolución DNS restaurados correctamente, validando endpoints, nombre corto, FQDN y acceso HTTP interno."
+    - "**Resultado esperado:** Incidente integral de disponibilidad resuelto, recuperando tres réplicas Ready, endpoints activos y conectividad funcional al Service."
