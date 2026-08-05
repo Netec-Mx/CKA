@@ -44,9 +44,9 @@ lab6:
 
 lab7:
   results:
-    - "**Resultado esperado:** Recursos con nombres equivalentes identificados correctamente en `development` y `production`, comprobando su aislamiento lógico."
-    - "**Resultado esperado:** Resolución DNS validada dentro y entre namespaces, diferenciando el Service local del recurso ubicado en otro ambiente."
-    - "**Resultado esperado:** Recursos auditados globalmente y separación lógica confirmada, conservando los namespaces y eliminando únicamente el Pod temporal."
+    - "**Resultado esperado:** Namespaces `development` y `production` comparados correctamente, identificando Services con el mismo nombre pero ClusterIP independientes."
+    - "**Resultado esperado:** Comportamiento DNS diagnosticado correctamente, comprobando que el nombre corto resuelve al Service local y que el FQDN identifica explícitamente `production`."
+    - "**Resultado esperado:** Referencia DNS del cliente corregida sin modificar Services ni CoreDNS, validando resolución hacia `production`, conectividad HTTP y eliminación del Pod temporal."
 
 lab8:
   results:
@@ -58,9 +58,9 @@ lab8:
 
 lab9:
   results:
-    - "**Resultado esperado:** Permisos efectivos de `app-reader` auditados correctamente, diferenciando acciones permitidas, denegadas y alcance por namespace."
-    - "**Resultado esperado:** Role actualizado con permisos mínimos de lectura sobre Services, sin otorgar acceso de escritura ni privilegios adicionales."
-    - "**Resultado esperado:** ServiceAccount validada después del ajuste, confirmando acceso a Services y manteniendo denegados Secrets y operaciones no autorizadas."
+    - "**Resultado esperado:** Nuevo Service del escenario identificado y permisos actuales de `app-reader` auditados correctamente, comprobando que el acceso a Services está inicialmente denegado."
+    - "**Resultado esperado:** Role `pod-configmap-reader` corregido con `get`, `list` y `watch` sobre Services, aplicando mínimo privilegio sin modificar los permisos existentes."
+    - "**Resultado esperado:** Acceso a Services validado correctamente después del ajuste, manteniendo denegados Secrets, escritura sobre Services y acceso fuera del namespace `lab5`."
 
 lab10:
   results:
@@ -72,15 +72,15 @@ lab10:
 
 lab11:
   results:
-    - "**Resultado esperado:** Relación entre Service, selector, labels y Pods identificada correctamente, validando los endpoints asociados al backend."
-    - "**Resultado esperado:** Falla controlada provocada mediante un selector incorrecto, comprobando la pérdida de endpoints sin afectar los Pods."
-    - "**Resultado esperado:** Selector restaurado correctamente y conectividad recuperada, confirmando nuevamente endpoints activos y acceso al backend."
+    - "**Resultado esperado:** Estado de Pods, Service y conectividad analizado correctamente, comprobando que el backend permanece saludable aunque `backend-svc` no disponga de destinos."
+    - "**Resultado esperado:** Causa raíz identificada al comparar selector, labels y endpoints, confirmando que `backend-svc` utiliza una selección que no coincide con los Pods backend."
+    - "**Resultado esperado:** Selector de `backend-svc` corregido mediante el cambio mínimo necesario, restaurando endpoints, conservando la ClusterIP y recuperando la conectividad."
 
 lab12:
   results:
-    - "**Resultado esperado:** Resolución DNS validada dentro de `lab10`, comprobando nombre corto, nombre con namespace y FQDN hacia la misma ClusterIP."
-    - "**Resultado esperado:** Configuración DNS del Pod interpretada correctamente, relacionando `search`, `nameserver` y el dominio `svc.cluster.local`."
-    - "**Resultado esperado:** Resolución desde otro namespace comprobada correctamente, diferenciando el comportamiento del nombre corto y del FQDN completo."
+    - "**Resultado esperado:** Falla DNS reproducida y aislada correctamente en `dns-client`, comprobando que `backend-svc`, sus endpoints y CoreDNS permanecen operativos."
+    - "**Resultado esperado:** Configuración DNS del Pod diagnosticada mediante `dnsPolicy`, `dnsConfig` y `/etc/resolv.conf`, identificando por qué el cliente no utiliza correctamente el DNS del clúster."
+    - "**Resultado esperado:** Política `ClusterFirst` restaurada y resolución validada mediante el FQDN de `backend-svc`, comprobando además conectividad HTTP mediante el nombre corto dentro del namespace."
 
 lab13:
   results:

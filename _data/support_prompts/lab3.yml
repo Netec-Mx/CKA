@@ -1,34 +1,33 @@
-# Prompts de apoyo para la Práctica 3
-# El slug del laboratorio debe ser: lab5
+# Prompts de apoyo para la Práctica 2
+# El slug del laboratorio debe ser: lab3
 
 tarea1:
   title: "Explicar la Tarea 1 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 1 de la
-    Práctica 3 de Kubernetes.
+    Práctica 2 de Kubernetes.
 
-    En esta tarea preparé dos Deployments de prueba dentro del namespace lab5,
-    desplegué las aplicaciones app-web y app-backend y validé la distribución
-    inicial de sus Pods entre los nodos del clúster Minikube de tres nodos.
+    En esta tarea creé un Deployment llamado webapp con tres réplicas de NGINX,
+    definí una estrategia RollingUpdate y validé el manifiesto antes de aplicarlo.
+    Después inspeccioné el Deployment, el ReplicaSet generado automáticamente y
+    los Pods creados para comprender la relación Deployment → ReplicaSet → Pod.
 
-    Explica el propósito de cada comando, manifiesto, configuración o procedimiento,
-    cómo funciona la programación inicial de Pods, cómo interpretar las salidas
-    esperadas, cómo validar que la tarea se completó correctamente y qué errores
-    comunes podrían presentarse.
+    Explica el propósito de cada comando, campo del manifiesto, configuración o
+    procedimiento, cómo interpretar las salidas esperadas, cómo validar que la
+    tarea se completó correctamente y qué errores comunes podrían presentarse.
 
 tarea2:
   title: "Explicar la Tarea 2 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 2 de la
-    Práctica 3 de Kubernetes.
+    Práctica 2 de Kubernetes.
 
-    En esta tarea ejecuté kubectl cordon sobre el nodo minikube-m02 para marcarlo
-    como no programable. Después escalé temporalmente app-web para comprobar que
-    los nuevos Pods evitaban el nodo cordoned mientras los Pods existentes
-    continuaban ejecutándose normalmente.
+    En esta tarea escalé el Deployment webapp primero de tres a seis réplicas
+    mediante kubectl scale y después reduje el número de réplicas a dos modificando
+    el manifiesto YAML y aplicándolo nuevamente al clúster.
 
-    Explica cómo funciona cordon, qué significa SchedulingDisabled, qué efecto
-    tiene sobre el scheduler y los Pods existentes, cómo interpretar las salidas
+    Explica la diferencia entre escalamiento imperativo y declarativo, cómo actúa
+    el ReplicaSet cuando cambia el número de réplicas, cómo interpretar las salidas
     esperadas, cómo validar que la tarea se completó correctamente y qué errores
     comunes podrían presentarse.
 
@@ -36,44 +35,45 @@ tarea3:
   title: "Explicar la Tarea 3 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 3 de la
-    Práctica 3 de Kubernetes.
+    Práctica 2 de Kubernetes.
 
-    En esta tarea creé PodDisruptionBudgets para app-web y app-backend. Configuré
-    un PDB que permite una disrupción y otro más restrictivo con minAvailable igual
-    al número total de réplicas, provocando ALLOWED DISRUPTIONS igual a cero.
+    En esta tarea ejecuté un rolling update del Deployment webapp para cambiar la
+    imagen de nginx:1.25 a nginx:1.26. Observé el proceso de actualización,
+    registré la causa del cambio y comprobé que Kubernetes creó un nuevo ReplicaSet
+    mientras reducía progresivamente las réplicas del ReplicaSet anterior.
 
-    Explica qué es un PodDisruptionBudget, cómo funciona minAvailable, cómo se
-    calcula ALLOWED DISRUPTIONS, cómo protege aplicaciones durante disrupciones
-    voluntarias, cómo validar los PDBs y qué errores comunes podrían presentarse.
+    Explica cómo funciona RollingUpdate, el propósito de maxSurge y maxUnavailable,
+    por qué se crea un nuevo ReplicaSet, cómo interpretar las salidas esperadas,
+    cómo validar que la actualización terminó correctamente y qué errores comunes
+    podrían presentarse.
 
 tarea4:
   title: "Explicar la Tarea 4 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 4 de la
-    Práctica 3 de Kubernetes.
+    Práctica 2 de Kubernetes.
 
-    En esta tarea ejecuté kubectl drain sobre minikube-m02, observé que el proceso
-    fue bloqueado por un PodDisruptionBudget restrictivo, diagnostiqué la causa
-    mediante kubectl y escalé app-backend para permitir una disrupción. Después
-    repetí el drain y confirmé la reprogramación de los Pods en otros nodos.
+    En esta tarea consulté el historial de revisiones del Deployment webapp,
+    inspeccioné las versiones disponibles y ejecuté kubectl rollout undo para
+    restaurar la versión anterior basada en nginx:1.25. Después verifiqué la
+    imagen activa y los ReplicaSets involucrados en el rollback.
 
-    Explica cómo funciona drain, el propósito de --ignore-daemonsets y
-    --delete-emptydir-data, cómo los PDBs afectan las evicciones, cómo diagnosticar
-    un drain bloqueado, cómo interpretar las salidas esperadas y qué errores
-    comunes podrían presentarse.
+    Explica cómo Kubernetes conserva revisiones, cómo funciona kubectl rollout
+    history y kubectl rollout undo, cómo interpretar las salidas esperadas,
+    cómo validar que el rollback fue exitoso y qué errores comunes podrían
+    presentarse.
 
 tarea5:
   title: "Explicar la Tarea 5 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 5 de la
-    Práctica 3 de Kubernetes.
+    Práctica 2 de Kubernetes.
 
-    En esta tarea ejecuté kubectl uncordon para reincorporar minikube-m02 al
-    clúster, comprobé que Kubernetes no redistribuye automáticamente los Pods
-    existentes y utilicé rolling restart para provocar nuevas decisiones del
-    scheduler. Finalmente validé nodos, Deployments, Pods y PodDisruptionBudgets.
+    En esta tarea validé el ciclo de vida completo del Deployment webapp después
+    de realizar escalamiento, rolling update y rollback. Revisé el estado del
+    Deployment, los ReplicaSets históricos, los Pods activos, la imagen utilizada
+    y el historial de revisiones.
 
-    Explica cómo funciona uncordon, por qué el scheduler no rebalancea
-    automáticamente los Pods existentes, cómo un rolling restart permite nuevas
-    asignaciones, cómo interpretar la validación final y qué errores comunes
-    podrían presentarse.
+    Explica el propósito de cada comando de validación, cómo interpretar el estado
+    final del Deployment y sus ReplicaSets, cómo confirmar que el workload quedó
+    estable y qué errores comunes podrían presentarse.

@@ -151,8 +151,8 @@ minikube-m03
 - {% include step_label.html %} Crea el directorio de trabajo.
 
   ```bash
-  mkdir -p /c/LABS/kubernetes/lab15
-  cd /c/LABS/kubernetes/lab15
+  mkdir -p /c/LABS/kubernetes/lab9
+  cd /c/LABS/kubernetes/lab9
   ```
 
 ## Preparación 4. Crear alias de sesión

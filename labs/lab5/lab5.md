@@ -46,7 +46,7 @@ next: /lab6/lab6/
 
 ## 📁 Preparación del directorio y del clúster
 
-En esta práctica crearás el directorio `lab5` y prepararás un clúster Minikube con tres nodos. La topología multinodo es necesaria para observar cómo Kubernetes reprograma workloads cuando un worker queda fuera de servicio.
+En esta práctica crearás el directorio `lab3` y prepararás un clúster Minikube con tres nodos. La topología multinodo es necesaria para observar cómo Kubernetes reprograma workloads cuando un worker queda fuera de servicio.
 
 ### 🗂️ Crear el subdirectorio de la práctica
 
@@ -55,13 +55,13 @@ En esta práctica crearás el directorio `lab5` y prepararás un clúster Miniku
 - {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el subdirectorio destinado a esta práctica.
 
   ```bash
-  mkdir -p /c/LABS/kubernetes/lab5
+  mkdir -p /c/LABS/kubernetes/lab3
   ```
 
 - {% include step_label.html %} Cambia la ubicación activa de Git Bash al nuevo directorio para mantener separados los manifiestos y evidencias del laboratorio.
 
   ```bash
-  cd /c/LABS/kubernetes/lab5
+  cd /c/LABS/kubernetes/lab3
   ```
 
 - {% include step_label.html %} Ejecuta `pwd` y confirma que la ruta activa corresponde exactamente al directorio de la práctica antes de continuar.
@@ -73,7 +73,7 @@ En esta práctica crearás el directorio `lab5` y prepararás un clúster Miniku
 **Salida esperada:**
 
 ```text
-/c/LABS/kubernetes/lab5
+/c/LABS/kubernetes/lab3
 ```
 
 ### 🧱 Preparar el clúster de tres nodos
@@ -129,10 +129,10 @@ En esta tarea desplegarás dos aplicaciones de prueba dentro de un namespace ded
 
 ### Tarea 1.1. Crear el namespace y los manifiestos
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear el namespace `lab5`, aislando los workloads de esta práctica respecto de los recursos del sistema.
+- {% include step_label.html %} Ejecuta el comando siguiente para crear el namespace `lab3`, aislando los workloads de esta práctica respecto de los recursos del sistema.
 
   ```bash
-  kubectl create namespace lab5
+  kubectl create namespace lab3
   ```
 
 - {% include step_label.html %} Crea el archivo donde almacenarás los dos Deployments utilizados durante las operaciones de mantenimiento.
@@ -148,7 +148,7 @@ En esta tarea desplegarás dos aplicaciones de prueba dentro de un namespace ded
   kind: Deployment
   metadata:
     name: app-web
-    namespace: lab5
+    namespace: lab3
     labels:
       app: app-web
   spec:
@@ -178,7 +178,7 @@ En esta tarea desplegarás dos aplicaciones de prueba dentro de un namespace ded
   kind: Deployment
   metadata:
     name: app-backend
-    namespace: lab5
+    namespace: lab3
     labels:
       app: app-backend
   spec:
@@ -222,14 +222,14 @@ En esta tarea desplegarás dos aplicaciones de prueba dentro de un namespace ded
 - {% include step_label.html %} Espera a que los Deployments indiquen que todas sus réplicas se encuentran disponibles antes de registrar la distribución inicial.
 
   ```bash
-  kubectl rollout status deployment/app-web -n lab5
-  kubectl rollout status deployment/app-backend -n lab5
+  kubectl rollout status deployment/app-web -n lab3
+  kubectl rollout status deployment/app-backend -n lab3
   ```
 
 - {% include step_label.html %} Ejecuta la consulta siguiente para identificar exactamente en qué nodo está ejecutándose cada Pod.
 
   ```bash
-  kubectl get pods -n lab5 -o wide
+  kubectl get pods -n lab3 -o wide
   ```
 
 **Resultado esperado:**
@@ -277,7 +277,7 @@ minikube-m03   Ready                      <none>          ...
 - {% include step_label.html %} Ejecuta el comando siguiente para comprobar que los Pods que ya estaban en `minikube-m02` continúan ejecutándose después del cordon.
 
   ```bash
-  kubectl get pods -n lab5 -o wide | grep minikube-m02
+  kubectl get pods -n lab3 -o wide | grep minikube-m02
   ```
 
 ### Tarea 2.2. Confirmar que los nuevos Pods evitan el nodo
@@ -286,21 +286,21 @@ minikube-m03   Ready                      <none>          ...
 
   ```bash
   kubectl scale deployment app-web \
-    -n lab5 \
+    -n lab3 \
     --replicas=6
   ```
 
 - {% include step_label.html %} Observa la ubicación de los seis Pods y verifica que las nuevas instancias no hayan sido programadas en `minikube-m02`.
 
   ```bash
-  kubectl get pods -n lab5 -l app=app-web -o wide
+  kubectl get pods -n lab3 -l app=app-web -o wide
   ```
 
 - {% include step_label.html %} Regresa `app-web` a cuatro réplicas para continuar con el escenario de mantenimiento definido para el resto del laboratorio.
 
   ```bash
   kubectl scale deployment app-web \
-    -n lab5 \
+    -n lab3 \
     --replicas=4
   ```
 
@@ -334,7 +334,7 @@ En esta tarea crearás dos PodDisruptionBudgets. Uno permitirá una disrupción 
   kind: PodDisruptionBudget
   metadata:
     name: pdb-app-web
-    namespace: lab5
+    namespace: lab3
   spec:
     minAvailable: 3
     selector:
@@ -346,7 +346,7 @@ En esta tarea crearás dos PodDisruptionBudgets. Uno permitirá una disrupción 
 
   ```bash
   kubectl apply -f pdb.yaml
-  kubectl get pdb -n lab5
+  kubectl get pdb -n lab3
   ```
 
 **Salida esperada aproximada:**
@@ -366,7 +366,7 @@ pdb-app-web   3               N/A               1
   kind: PodDisruptionBudget
   metadata:
     name: pdb-app-backend-strict
-    namespace: lab5
+    namespace: lab3
   spec:
     minAvailable: 3
     selector:
@@ -378,7 +378,7 @@ pdb-app-web   3               N/A               1
 
   ```bash
   kubectl apply -f pdb.yaml
-  kubectl get pdb -n lab5
+  kubectl get pdb -n lab3
   ```
 
 **Salida esperada aproximada:**
@@ -425,13 +425,13 @@ Cannot evict pod as it would violate the pod's disruption budget.
 - {% include step_label.html %} Ejecuta la consulta siguiente para identificar qué PDB tiene cero disrupciones permitidas y relacionarlo con el workload que bloqueó el drain.
 
   ```bash
-  kubectl get pdb -n lab5
+  kubectl get pdb -n lab3
   ```
 
 - {% include step_label.html %} Comprueba la cantidad de réplicas disponibles de `app-backend` para relacionar el valor `minAvailable: 3` con sus tres Pods actuales.
 
   ```bash
-  kubectl get deployment app-backend -n lab5
+  kubectl get deployment app-backend -n lab3
   ```
 
 ### Tarea 4.2. Resolver correctamente la restricción
@@ -440,20 +440,20 @@ Cannot evict pod as it would violate the pod's disruption budget.
 
   ```bash
   kubectl scale deployment app-backend \
-    -n lab5 \
+    -n lab3 \
     --replicas=4
   ```
 
 - {% include step_label.html %} Espera hasta que el Deployment confirme las cuatro réplicas disponibles antes de volver a intentar el drenado.
 
   ```bash
-  kubectl rollout status deployment/app-backend -n lab5
+  kubectl rollout status deployment/app-backend -n lab3
   ```
 
 - {% include step_label.html %} Comprueba nuevamente el PDB y confirma que ahora existe al menos una disrupción permitida.
 
   ```bash
-  kubectl get pdb -n lab5
+  kubectl get pdb -n lab3
   ```
 
 ### Tarea 4.3. Completar el drain
@@ -473,21 +473,21 @@ Cannot evict pod as it would violate the pod's disruption budget.
 node/minikube-m02 drained
 ```
 
-- {% include step_label.html %} Ejecuta la consulta siguiente para comprobar que los Pods del namespace `lab5` fueron reprogramados en nodos disponibles y ya no permanecen en el worker drenado.
+- {% include step_label.html %} Ejecuta la consulta siguiente para comprobar que los Pods del namespace `lab3` fueron reprogramados en nodos disponibles y ya no permanecen en el worker drenado.
 
   ```bash
-  kubectl get pods -n lab5 -o wide
+  kubectl get pods -n lab3 -o wide
   ```
 
 - {% include step_label.html %} Ejecuta el filtro siguiente para confirmar que ningún Pod de usuario del laboratorio continúa ejecutándose en `minikube-m02`.
 
   ```bash
-  kubectl get pods -n lab5 -o wide | grep minikube-m02
+  kubectl get pods -n lab3 -o wide | grep minikube-m02
   ```
 
 **Resultado esperado:**
 
-La última consulta no debe devolver Pods del namespace `lab5`.
+La última consulta no debe devolver Pods del namespace `lab3`.
 
 > **NOTA:** Los Pods administrados por DaemonSets del sistema pueden continuar visibles en `minikube-m02`. El parámetro `--ignore-daemonsets` indica precisamente que no deben impedir el drenado.
 {: .lab-note .info .compact}
@@ -532,7 +532,7 @@ minikube-m03   Ready    <none>          ...
 - {% include step_label.html %} Ejecuta la consulta siguiente inmediatamente después del uncordon y observa que los Pods existentes permanecen donde fueron reprogramados durante el drain.
 
   ```bash
-  kubectl get pods -n lab5 -o wide
+  kubectl get pods -n lab3 -o wide
   ```
 
 > **Concepto clave:** `uncordon` permite que el nodo vuelva a recibir Pods nuevos, pero no provoca un rebalanceo automático de los Pods que ya están ejecutándose correctamente en otros nodos.
@@ -541,21 +541,21 @@ minikube-m03   Ready    <none>          ...
 - {% include step_label.html %} Ejecuta un rolling restart sobre ambos Deployments para provocar la recreación progresiva de Pods y permitir que el scheduler vuelva a considerar todos los nodos disponibles.
 
   ```bash
-  kubectl rollout restart deployment/app-web -n lab5
-  kubectl rollout restart deployment/app-backend -n lab5
+  kubectl rollout restart deployment/app-web -n lab3
+  kubectl rollout restart deployment/app-backend -n lab3
   ```
 
 - {% include step_label.html %} Espera hasta que ambos rollouts terminen correctamente antes de revisar nuevamente la distribución de los Pods.
 
   ```bash
-  kubectl rollout status deployment/app-web -n lab5
-  kubectl rollout status deployment/app-backend -n lab5
+  kubectl rollout status deployment/app-web -n lab3
+  kubectl rollout status deployment/app-backend -n lab3
   ```
 
 - {% include step_label.html %} Ejecuta la consulta siguiente para observar la nueva ubicación de los Pods después de su recreación.
 
   ```bash
-  kubectl get pods -n lab5 -o wide
+  kubectl get pods -n lab3 -o wide
   ```
 
 ### Tarea 5.3. Ejecutar la verificación final
@@ -580,10 +580,10 @@ minikube-m03   Ready    <none>          ...
     echo "✅ Todos los nodos aceptan scheduling"
   fi
 
-  WEB_READY=$(kubectl get deployment app-web -n lab5 \
+  WEB_READY=$(kubectl get deployment app-web -n lab3 \
     -o jsonpath='{.status.readyReplicas}')
 
-  WEB_DESIRED=$(kubectl get deployment app-web -n lab5 \
+  WEB_DESIRED=$(kubectl get deployment app-web -n lab3 \
     -o jsonpath='{.spec.replicas}')
 
   if [ "$WEB_READY" = "$WEB_DESIRED" ]; then
@@ -592,10 +592,10 @@ minikube-m03   Ready    <none>          ...
     echo "❌ app-web incompleto: $WEB_READY/$WEB_DESIRED"
   fi
 
-  BACK_READY=$(kubectl get deployment app-backend -n lab5 \
+  BACK_READY=$(kubectl get deployment app-backend -n lab3 \
     -o jsonpath='{.status.readyReplicas}')
 
-  BACK_DESIRED=$(kubectl get deployment app-backend -n lab5 \
+  BACK_DESIRED=$(kubectl get deployment app-backend -n lab3 \
     -o jsonpath='{.spec.replicas}')
 
   if [ "$BACK_READY" = "$BACK_DESIRED" ]; then
@@ -606,11 +606,11 @@ minikube-m03   Ready    <none>          ...
 
   echo ""
   echo "Distribucion final de Pods:"
-  kubectl get pods -n lab5 -o wide
+  kubectl get pods -n lab3 -o wide
 
   echo ""
   echo "PodDisruptionBudgets:"
-  kubectl get pdb -n lab5
+  kubectl get pdb -n lab3
 
   echo "=== Fin de verificacion ==="
   ```
@@ -671,19 +671,19 @@ Si el host tiene recursos limitados, cierra aplicaciones no necesarias y revisa 
 Identifica el PDB bloqueante y compara sus requisitos con las réplicas actuales.
 
 ```bash
-kubectl get pdb -n lab5
-kubectl get deployments -n lab5
+kubectl get pdb -n lab3
+kubectl get deployments -n lab3
 ```
 
 Si `pdb-app-backend-strict` muestra cero disrupciones permitidas, escala `app-backend` antes de reintentar:
 
 ```bash
 kubectl scale deployment app-backend \
-  -n lab5 \
+  -n lab3 \
   --replicas=4
 
-kubectl rollout status deployment/app-backend -n lab5
-kubectl get pdb -n lab5
+kubectl rollout status deployment/app-backend -n lab3
+kubectl get pdb -n lab3
 ```
 
 ---
@@ -699,11 +699,11 @@ kubectl get pdb -n lab5
 Identifica el Pod afectado y revisa los eventos de scheduling.
 
 ```bash
-kubectl get pods -n lab5
-POD_NAME=$(kubectl get pods -n lab5 \
+kubectl get pods -n lab3
+POD_NAME=$(kubectl get pods -n lab3 \
   --field-selector=status.phase=Pending \
   -o jsonpath='{.items[0].metadata.name}')
-kubectl describe pod "$POD_NAME" -n lab5
+kubectl describe pod "$POD_NAME" -n lab3
 ```
 
 Revisa la sección `Events` para determinar qué recurso impide la programación.
@@ -727,8 +727,8 @@ kubectl get nodes
 Si necesitas provocar una nueva decisión del scheduler, recrea progresivamente los Pods mediante un rolling restart:
 
 ```bash
-kubectl rollout restart deployment/app-web -n lab5
-kubectl rollout restart deployment/app-backend -n lab5
+kubectl rollout restart deployment/app-web -n lab3
+kubectl rollout restart deployment/app-backend -n lab3
 ```
 
 ---

@@ -5,26 +5,27 @@ permalink: /lab11/lab11/
 images_base: /labs/lab11/img
 duration: "15 minutos"
 objective:
-  - Verificar la relación entre un Service, sus selectors y los Pods seleccionados.
-  - Identificar endpoints activos asociados con un Service.
-  - Diagnosticar una falla provocada por un selector incorrecto.
-  - Restaurar la conectividad después de corregir la configuración del Service.
+  - Diagnosticar una pérdida de conectividad hacia un Service sin conocer inicialmente la causa.
+  - Relacionar selectors, labels, EndpointSlices y Pods como parte del flujo de red.
+  - Identificar por qué un Service puede existir y conservar su ClusterIP aunque no tenga backends disponibles.
+  - Aplicar la corrección mínima y validar la recuperación sin reiniciar los Deployments.
 prerequisites:
-  - Haber completado la Práctica 6.
-  - Conservar el namespace lab10.
+  - Haber completado la Práctica 6 y conservar el namespace lab6.
   - Conservar los Deployments backend y frontend.
   - Conservar los Services backend-svc y frontend-svc.
-  - Tener kubectl configurado contra el clúster Minikube.
+  - Tener Docker Desktop, Minikube y kubectl operativos.
+  - Disponer del archivo service-endpoints-scenario6-1.yaml proporcionado con esta práctica.
 introduction:
-  - Esta práctica complementaria se desarrolla como un reto de troubleshooting. Partirás de los Services creados en el Lab 10 y analizarás cómo Kubernetes relaciona selectors, Pods y endpoints. Después provocarás una inconsistencia controlada en backend-svc, observarás cómo desaparecen sus endpoints y corregirás la configuración hasta restaurar la comunicación.
+  - En este reto el frontend ya no puede comunicarse con backend-svc, aunque los Pods backend continúan ejecutándose. No conocerás inicialmente la causa. Deberás comprobar qué componentes permanecen saludables, inspeccionar la asociación entre Service y backends, identificar la configuración responsable y restaurar la conectividad modificando únicamente el recurso necesario.
 slug: lab11
 lab_number: 11
 final_result: >
-  Al finalizar el reto habrás diagnosticado y corregido una falla de conectividad causada por un selector incorrecto, comprobando la relación entre Service, labels, selectors y endpoints.
+  Al finalizar el reto habrás diagnosticado una pérdida de endpoints en backend-svc, identificado la relación incorrecta entre selector y labels y restaurado la conectividad sin recrear Pods, Deployments ni el Service.
 notes:
-  - Esta práctica reutiliza recursos creados en el Lab 10.
-  - No elimines los Deployments ni los Pods del laboratorio principal.
-  - La falla debe provocarse únicamente modificando el selector de backend-svc.
+  - Esta práctica dura 15 minutos y reutiliza los recursos creados en el Lab 6.
+  - No elimines ni reinicies los Deployments backend o frontend.
+  - No modifiques los labels de los Pods para resolver el incidente.
+  - Conserva la ClusterIP original de backend-svc.
   - Esta práctica complementaria no incluye prompts de apoyo con IA.
 references:
   - text: Services
@@ -40,80 +41,180 @@ next: /lab12/lab12/
 ---
 <!-- Aquí comienzan las instrucciones del reto -->
 
-## 🧩 Preparación del reto
+# 🧩 Escenario del reto
 
-Esta práctica reutiliza directamente los recursos creados en el Lab 10.
+La aplicación desplegada en el Lab 6 funcionaba correctamente. Después de un cambio realizado sobre la capa de red, el frontend dejó de obtener respuesta de `backend-svc`.
 
-### 🗂️ Confirmar el entorno
+Los Pods backend aparentemente siguen disponibles y el objeto Service continúa existiendo.
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que Minikube continúa operativo antes de iniciar el diagnóstico.
+Debes determinar:
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y ubícate en el directorio del Lab 10.
+```text
+1. ¿El problema está en los Pods, el Service o la asociación entre ambos?
+2. ¿backend-svc conserva su ClusterIP?
+3. ¿El Service todavía dispone de backends?
+4. ¿Qué configuración impide que Kubernetes publique destinos?
+5. ¿Cuál es la corrección mínima necesaria?
+```
 
-  ```bash
-  cd /c/LABS/kubernetes/lab10
-  ```
+### ⏱️ Distribución sugerida
 
-- {% include step_label.html %} Confirma que el namespace `lab10` continúa activo y que los Services necesarios existen.
-
-  ```bash
-  kubectl get namespace lab10
-  kubectl get services -n lab10
-  ```
-
-- {% include step_label.html %} Comprueba que los Pods backend y frontend están disponibles antes de provocar cualquier falla.
-
-  ```bash
-  kubectl get pods -n lab10 -o wide
-  ```
-
-**Resultado esperado:**
-
-Los Deployments y Services del Lab 10 deben continuar disponibles.
+```text
+Preparación         2 min
+Reto 1              4 min
+Reto 2              5 min
+Reto 3              4 min
+Total               15 min
+```
 
 ---
 
-## 🔎 Reto 1. Relacionar Service, selector y Pods
+## ⚙️ Preparación del escenario
 
-**Tiempo sugerido: 5 minutos**
+- {% include step_label.html %} Verifica que `lab6`, los Deployments y los Services de la práctica principal continúan disponibles antes de introducir el incidente.
 
-Tu primera misión consiste en demostrar cómo `backend-svc` identifica los Pods backend.
+  ```bash
+  kubectl get deployment,service \
+    -n lab6
+  ```
 
-### Reto 1.1. Inspeccionar el selector
-
-- {% include step_label.html %} Consulta el selector configurado en `backend-svc`.
-
-- {% include step_label.html %} Consulta los labels de los Pods backend y confirma que existe una coincidencia con el selector del Service.
-
-### Reto 1.2. Identificar endpoints
-
-- {% include step_label.html %} Obtén los endpoints asociados con `backend-svc` y compara sus IPs con las direcciones IP de los Pods backend.
-
-### Evidencias requeridas
+**Salida esperada aproximada:**
 
 ```text
-1. ¿Qué selector utiliza backend-svc?
-2. ¿Qué label tienen los Pods backend?
-3. ¿Cuántos endpoints tiene backend-svc?
-4. ¿Las IPs de endpoints coinciden con las IPs de los Pods backend?
+NAME                       READY   UP-TO-DATE   AVAILABLE
+deployment.apps/backend    2/2     2            2
+deployment.apps/frontend   2/2     2            2
+
+NAME                        TYPE        CLUSTER-IP
+service/backend-svc         ClusterIP   10.x.x.x
+service/frontend-svc        ClusterIP   10.x.x.x
+service/frontend-nodeport   NodePort    10.x.x.x
 ```
 
-### Pistas permitidas
+- {% include step_label.html %} Registra la ClusterIP actual de `backend-svc`; este valor permitirá comprobar que el mismo Service se conserva durante la reparación.
 
-Puedes utilizar:
+  ```bash
+  BACKEND_IP=$(kubectl get service backend-svc \
+    -n lab6 \
+    -o jsonpath='{.spec.clusterIP}')
+
+  echo "ClusterIP inicial: $BACKEND_IP"
+  ```
+
+**Salida esperada aproximada:**
 
 ```text
-kubectl get service
-kubectl describe service
-kubectl get pods --show-labels
-kubectl get endpoints
-kubectl get endpointslices
-kubectl get ... -o wide
+ClusterIP inicial: 10.x.x.x
 ```
 
-**Resultado esperado:**
+### Aplicar el estado inicial del reto
 
-Debes demostrar que el Service selecciona correctamente los Pods backend y que sus endpoints corresponden a las IPs de esos Pods.
+- {% include step_label.html %} Descarga `service-endpoints-scenario6-1.yaml`.
+
+  ```bash
+  curl -L \
+    -o service-endpoints-scenario6-1.yaml \
+    https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab9/service-endpoints-scenario6-1.yaml
+  ```
+
+- {% include step_label.html %} Aplica `service-endpoints-scenario6-1.yaml` sin inspeccionarlo previamente para reproducir el estado recibido por el equipo de soporte.
+
+  ```bash
+  kubectl apply -f service-endpoints-scenario6-1.yaml
+  ```
+
+**Salida esperada:**
+
+```text
+service/backend-svc configured
+```
+
+- {% include step_label.html %} Espera unos segundos para que Kubernetes actualice EndpointSlices después del cambio aplicado al Service.
+
+  ```bash
+  sleep 3
+  ```
+
+> **IMPORTANTE:** No abras el archivo del escenario antes de completar los Retos 1 y 2. El objetivo es encontrar la causa utilizando el estado efectivo del clúster.
+{: .lab-note .important .compact}
+
+---
+
+# 🔎 Reto 1. Determinar qué componente sigue saludable
+
+**Tiempo sugerido: 4 minutos**
+
+### Reto 1.1. Revisar los Pods backend
+
+- {% include step_label.html %} Comprueba que las dos réplicas backend continúan `Running` y `Ready`, descartando primero un fallo del workload.
+
+  ```bash
+  kubectl get pods \
+    -n lab6 \
+    -l app=backend \
+    -o wide
+  ```
+
+**Salida esperada aproximada:**
+
+```text
+NAME                     READY   STATUS    IP
+backend-<hash>-<id>       1/1     Running   10.244.x.x
+backend-<hash>-<id>       1/1     Running   10.244.x.x
+```
+
+### Reto 1.2. Probar directamente un Pod backend
+
+- {% include step_label.html %} Ejecuta una solicitud dentro de un Pod backend para comprobar que NGINX responde antes de investigar el Service.
+
+  ```bash
+  BACKEND_POD=$(kubectl get pod \
+    -n lab6 \
+    -l app=backend \
+    -o jsonpath='{.items[0].metadata.name}')
+
+  kubectl exec \
+    -n lab6 \
+    "$BACKEND_POD" -- \
+    sh -c 'wget -qO- http://127.0.0.1/'
+  ```
+
+**Salida esperada aproximada:**
+
+```html
+<html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
+```
+
+### Reto 1.3. Probar el Service desde frontend
+
+- {% include step_label.html %} Utiliza un Pod frontend como cliente y comprueba si la misma aplicación puede alcanzarse mediante `backend-svc`.
+
+  ```bash
+  FRONTEND_POD=$(kubectl get pod \
+    -n lab6 \
+    -l app=frontend \
+    -o jsonpath='{.items[0].metadata.name}')
+
+  kubectl exec \
+    -n lab6 \
+    "$FRONTEND_POD" -- \
+    sh -c 'wget -qO- -T 3 http://backend-svc || echo "SERVICE_UNAVAILABLE"'
+  ```
+
+**Salida esperada durante el incidente:**
+
+```text
+SERVICE_UNAVAILABLE
+```
+
+### Evidencia requerida
+
+```text
+[ ] Los Pods backend están Running.
+[ ] El backend responde directamente dentro del Pod.
+[ ] backend-svc existe.
+[ ] El acceso mediante backend-svc falla.
+```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -121,57 +222,72 @@ Debes demostrar que el Service selecciona correctamente los Pods backend y que s
 
 ---
 
-## ⚠️ Reto 2. Provocar y diagnosticar una falla de selector
+# 🧭 Reto 2. Localizar la relación rota
 
 **Tiempo sugerido: 5 minutos**
 
-En este reto modificarás de forma controlada el selector de `backend-svc` para provocar una pérdida total de endpoints.
+### Reto 2.1. Revisar los destinos del Service
 
-### Reto 2.1. Crear la inconsistencia
+- {% include step_label.html %} Consulta los endpoints publicados para `backend-svc`; un Service sin destinos no puede reenviar tráfico aunque conserve su ClusterIP.
 
-- {% include step_label.html %} Modifica únicamente el selector `app` de `backend-svc` para que deje de coincidir con los Pods backend.
+  ```bash
+  kubectl get endpoints backend-svc \
+    -n lab6
+  ```
 
-Utiliza como valor incorrecto:
-
-```text
-backend-error
-```
-
-### Reto 2.2. Detectar el impacto
-
-- {% include step_label.html %} Comprueba que el Service continúa existiendo y conserva su ClusterIP.
-
-- {% include step_label.html %} Consulta nuevamente sus endpoints y confirma que ya no existen destinos activos.
-
-- {% include step_label.html %} Desde un Pod frontend, intenta acceder a `backend-svc` y registra el comportamiento observado.
-
-### Preguntas del reto
+**Salida esperada durante el incidente:**
 
 ```text
-1. ¿El Service fue eliminado?
-2. ¿La ClusterIP cambió?
-3. ¿Qué ocurrió con los endpoints?
-4. ¿Los Pods backend continúan Running?
-5. ¿Por qué la comunicación falla si los Pods siguen activos?
+NAME          ENDPOINTS   AGE
+backend-svc   <none>      ...
 ```
 
-### Pistas permitidas
+- {% include step_label.html %} Revisa EndpointSlices para confirmar que Kubernetes tampoco está publicando direcciones de backend para este Service.
+
+  ```bash
+  kubectl get endpointslices \
+    -n lab6 \
+    -l kubernetes.io/service-name=backend-svc
+  ```
+
+La salida puede mostrar un EndpointSlice existente, pero sin endpoints listos asociados.
+
+### Reto 2.2. Comparar selector y labels
+
+- {% include step_label.html %} Extrae el selector efectivo de `backend-svc` para conocer qué conjunto de Pods intenta localizar Kubernetes.
+
+  ```bash
+  kubectl get service backend-svc \
+    -n lab6 \
+    -o jsonpath='{.spec.selector}{"\n"}'
+  ```
+
+- {% include step_label.html %} Muestra los labels reales de los Pods backend y compara el valor de `app` con el selector obtenido.
+
+  ```bash
+  kubectl get pods \
+    -n lab6 \
+    -l app=backend \
+    --show-labels
+  ```
+
+### Reto 2.3. Formular la causa raíz
+
+Debes poder completar:
 
 ```text
-kubectl patch service
-kubectl describe service
-kubectl get endpoints
-kubectl get pods
-kubectl exec
-wget
+backend-svc existe y conserva ____________________.
+
+Los Pods backend continúan ____________________.
+
+El Service no publica endpoints porque su selector ____________________
+con los labels ____________________.
+
+Por ello el problema está en ____________________ y no en los contenedores.
 ```
 
-> **IMPORTANTE:** No modifiques labels de los Pods ni reinicies Deployments. El objetivo es demostrar que un selector incorrecto puede dejar un Service sin destinos aun cuando los Pods estén saludables.
+> **IMPORTANTE:** No cambies los labels de los Pods. La corrección debe realizarse sobre el recurso que contiene la configuración incorrecta.
 {: .lab-note .important .compact}
-
-**Resultado esperado:**
-
-`backend-svc` debe continuar existiendo, pero sin endpoints disponibles porque su selector ya no coincide con ningún Pod.
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -179,38 +295,74 @@ wget
 
 ---
 
-## ✅ Reto 3. Restaurar la conectividad
+# ✅ Reto 3. Aplicar la corrección mínima
 
-**Tiempo sugerido: 5 minutos**
+**Tiempo sugerido: 4 minutos**
 
-En el reto final deberás corregir únicamente el selector del Service y demostrar que Kubernetes vuelve a asociar automáticamente los Pods.
-
-### Reto 3.1. Corregir backend-svc
-
-- {% include step_label.html %} Restaura el valor correcto del selector `app` de `backend-svc`.
-
-- {% include step_label.html %} Comprueba que los endpoints reaparecen sin recrear los Pods ni el Service.
-
-### Reto 3.2. Validar conectividad
-
-- {% include step_label.html %} Desde uno de los Pods frontend, realiza nuevamente una solicitud hacia `backend-svc`.
-
-- {% include step_label.html %} Confirma que la respuesta vuelve a contener `BACKEND API`.
-
-### Condiciones para superar el reto
+### Restricciones
 
 ```text
-[ ] backend-svc conserva su ClusterIP.
-[ ] El selector final es app=backend.
-[ ] Los Pods backend continúan Running.
-[ ] backend-svc vuelve a tener endpoints.
-[ ] Las IPs de los endpoints corresponden a Pods backend.
-[ ] El acceso desde frontend vuelve a funcionar.
+[ ] No elimines backend-svc.
+[ ] No reinicies Deployments.
+[ ] No modifiques labels de los Pods.
+[ ] Conserva la ClusterIP registrada.
 ```
 
-**Resultado esperado:**
+### Reto 3.1. Corregir el selector
 
-La conectividad debe restaurarse inmediatamente después de que el selector vuelva a coincidir con los labels de los Pods.
+- {% include step_label.html %} Ajusta únicamente el selector de `backend-svc` para que vuelva a coincidir con los Pods backend.
+
+Pistas permitidas:
+
+```text
+kubectl patch service
+kubectl edit service
+app=backend
+```
+
+### Reto 3.2. Validar recuperación automática
+
+- {% include step_label.html %} Comprueba que los endpoints reaparecen sin recrear el Service ni los Pods.
+
+  ```bash
+  kubectl get endpoints backend-svc \
+    -n lab6
+  ```
+
+**Salida esperada aproximada:**
+
+```text
+NAME          ENDPOINTS
+backend-svc   10.244.x.x:80,10.244.x.x:80
+```
+
+- {% include step_label.html %} Verifica que la ClusterIP final coincide con la registrada al comenzar el reto.
+
+  ```bash
+  FINAL_IP=$(kubectl get service backend-svc \
+    -n lab6 \
+    -o jsonpath='{.spec.clusterIP}')
+
+  echo "Antes:   $BACKEND_IP"
+  echo "Después: $FINAL_IP"
+  ```
+
+Ambas direcciones deben ser iguales.
+
+- {% include step_label.html %} Repite la solicitud desde frontend y confirma que el Service vuelve a entregar la respuesta del backend.
+
+  ```bash
+  kubectl exec \
+    -n lab6 \
+    "$FRONTEND_POD" -- \
+    sh -c 'wget -qO- http://backend-svc'
+  ```
+
+**Salida esperada aproximada:**
+
+```html
+<html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
+```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -218,128 +370,88 @@ La conectividad debe restaurarse inmediatamente después de que el selector vuel
 
 ---
 
-## ✅ Validación final del reto
+## ✅ Validación final
 
-- {% include step_label.html %} Ejecuta el bloque siguiente para comprobar que el Service quedó restaurado correctamente.
+```bash
+echo "=== Validacion complementaria 6.1 ==="
 
-  ```bash
-  echo "=== Validacion complementaria 6.1 ==="
+SELECTOR=$(kubectl get service backend-svc \
+  -n lab6 \
+  -o jsonpath='{.spec.selector.app}')
 
-  SELECTOR=$(kubectl get service backend-svc \
-    -n lab10 \
-    -o jsonpath='{.spec.selector.app}')
+ENDPOINTS=$(kubectl get endpoints backend-svc \
+  -n lab6 \
+  -o jsonpath='{.subsets[0].addresses[*].ip}')
 
-  if [ "$SELECTOR" = "backend" ]; then
-    echo "✅ Selector correcto: app=backend"
-  else
-    echo "❌ Selector incorrecto: app=$SELECTOR"
-  fi
+CURRENT_IP=$(kubectl get service backend-svc \
+  -n lab6 \
+  -o jsonpath='{.spec.clusterIP}')
 
-  ENDPOINTS=$(kubectl get endpoints backend-svc \
-    -n lab10 \
-    -o jsonpath='{.subsets[0].addresses[*].ip}')
+echo "Selector: $SELECTOR"
+echo "Endpoints: $ENDPOINTS"
+echo "ClusterIP conservada: $CURRENT_IP"
 
-  if [ -n "$ENDPOINTS" ]; then
-    echo "✅ Endpoints disponibles: $ENDPOINTS"
-  else
-    echo "❌ backend-svc no tiene endpoints"
-  fi
+FRONTEND_POD=$(kubectl get pod \
+  -n lab6 \
+  -l app=frontend \
+  -o jsonpath='{.items[0].metadata.name}')
 
-  FRONTEND_POD=$(kubectl get pod \
-    -n lab10 \
-    -l app=frontend \
-    -o jsonpath='{.items[0].metadata.name}')
+RESPONSE=$(kubectl exec \
+  -n lab6 \
+  "$FRONTEND_POD" -- \
+  sh -c 'wget -qO- http://backend-svc')
 
-  RESPONSE=$(kubectl exec \
-    -n lab10 \
-    "$FRONTEND_POD" -- \
-    wget -qO- http://backend-svc 2>/dev/null)
-
-  if echo "$RESPONSE" | grep -q "BACKEND API"; then
-    echo "✅ Conectividad frontend → backend restaurada"
-  else
-    echo "❌ La conectividad todavía falla"
-  fi
-
-  echo "=== Fin de validacion ==="
-  ```
+echo "$RESPONSE" | grep -q "BACKEND API" \
+  && echo "Conectividad: OK" \
+  || echo "Conectividad: ERROR"
+```
 
 **Salida esperada aproximada:**
 
 ```text
 === Validacion complementaria 6.1 ===
-✅ Selector correcto: app=backend
-✅ Endpoints disponibles: 10.x.x.x 10.x.x.x
-✅ Conectividad frontend → backend restaurada
-=== Fin de validacion ===
+Selector: backend
+Endpoints: 10.244.x.x 10.244.x.x
+ClusterIP conservada: 10.x.x.x
+Conectividad: OK
 ```
 
-> **IMPORTANTE:** Conserva todos los recursos del namespace `lab10`. La práctica complementaria 6.2 reutilizará los mismos Services para validar DNS interno.
+> **IMPORTANTE:** Conserva todos los recursos de `lab6`. La práctica complementaria 6.2 reutilizará los Services y Pods para diagnosticar DNS interno.
 {: .lab-note .important .compact}
 
 ---
 
 ## 🛠️ Resolución de problemas
 
-### Problema 1. Los endpoints no desaparecen después del cambio
+### Problema 1. Los endpoints no desaparecen
 
-**Síntoma:** Modificaste el selector, pero `backend-svc` continúa mostrando las mismas direcciones.
-
-**Causa probable:** El selector no fue actualizado realmente o el valor utilizado todavía coincide con algún Pod.
-
-**Solución:**
-
-Comprueba la configuración efectiva del Service y los labels existentes.
+Comprueba la configuración efectiva:
 
 ```bash
 kubectl get service backend-svc \
-  -n lab10 \
+  -n lab6 \
   -o jsonpath='{.spec.selector}{"\n"}'
 
 kubectl get pods \
-  -n lab10 \
+  -n lab6 \
   --show-labels
 ```
 
-Asegúrate de que el valor temporal no coincida con ningún Pod.
+Si el selector todavía coincide con algún Pod, el escenario no se aplicó como se esperaba.
 
----
-
-### Problema 2. Los endpoints reaparecen pero la comunicación continúa fallando
-
-**Síntoma:** `kubectl get endpoints backend-svc` muestra IPs, pero la petición HTTP desde frontend no responde.
-
-**Causa probable:** Los Pods backend pueden estar Running pero no listos para servir tráfico, o existe un problema con `targetPort`.
-
-**Solución:**
-
-Comprueba estado y puertos antes de modificar el Service.
+### Problema 2. Los endpoints reaparecen pero HTTP falla
 
 ```bash
 kubectl get pods \
-  -n lab10 \
-  -l app=backend \
-  -o wide
+  -n lab6 \
+  -l app=backend
 
-kubectl describe service backend-svc -n lab10
+kubectl describe service backend-svc \
+  -n lab6
 ```
 
-Confirma que `targetPort` sea `80` y que los Pods estén en estado `Ready`.
+Confirma que los Pods estén `Ready` y que `targetPort` sea `80`.
 
----
+### Problema 3. La ClusterIP cambió
 
-### Problema 3. El Service perdió su ClusterIP
-
-**Síntoma:** Después del ejercicio observas una ClusterIP diferente.
-
-**Causa probable:** El Service fue eliminado y recreado en lugar de modificar únicamente su selector.
-
-**Solución:**
-
-Para este reto debes conservar el mismo objeto Service. Si fue eliminado accidentalmente, vuelve a aplicar `services-clusterip.yaml`, aunque la ClusterIP asignada podría ser diferente.
-
-```bash
-cd /c/LABS/kubernetes/lab10
-kubectl apply -f services-clusterip.yaml
-kubectl get service backend-svc -n lab10
-```
+El Service fue recreado en lugar de corregirse. En este reto la reparación debe modificar únicamente su selector.

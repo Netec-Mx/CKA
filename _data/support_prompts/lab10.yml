@@ -1,0 +1,94 @@
+# Prompts de apoyo para la Práctica 6
+# El slug del laboratorio debe ser: lab10
+
+tarea1:
+  title: "Explicar la Tarea 1 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 1 de la
+    Práctica 6 de Kubernetes.
+
+    En esta tarea desplegué dos aplicaciones mediante Deployments: un frontend
+    y un backend, cada uno con dos réplicas utilizando NGINX. También validé
+    los manifiestos antes de aplicarlos, esperé a que los Deployments completaran
+    su rollout y revisé los Pods, sus direcciones IP y los nodos donde fueron
+    programados.
+
+    Explica el propósito de cada comando, configuración o procedimiento,
+    cómo funcionan Deployment, replicas, selectors y labels, cómo interpretar
+    las salidas esperadas, cómo validar que ambos workloads quedaron disponibles
+    y qué errores comunes podrían presentarse.
+
+tarea2:
+  title: "Explicar la Tarea 2 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 2 de la
+    Práctica 6 de Kubernetes.
+
+    En esta tarea creé Services de tipo ClusterIP para frontend y backend,
+    utilizando selectors para asociarlos con los Pods correspondientes.
+    Después validé la comunicación interna desde un Pod frontend hacia
+    backend-svc utilizando el nombre estable del Service y realicé varias
+    solicitudes para observar cómo Kubernetes distribuye conexiones entre
+    los Pods backend disponibles.
+
+    Explica el propósito de ClusterIP, port, targetPort, selectors y labels,
+    cómo un Service proporciona una dirección estable aunque cambien las IPs
+    de los Pods, cómo interpretar las pruebas de conectividad, cómo validar
+    que el Service funciona correctamente y qué errores comunes podrían
+    presentarse.
+
+tarea3:
+  title: "Explicar la Tarea 3 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 3 de la
+    Práctica 6 de Kubernetes.
+
+    En esta tarea expuse el frontend mediante un Service de tipo NodePort,
+    configurando el puerto 30080 para permitir acceso desde fuera del clúster.
+    Después utilicé minikube service con la opción --url para obtener una
+    dirección accesible desde el equipo host y validé la respuesta HTTP
+    mediante curl.
+
+    Explica cómo funciona un Service NodePort, la relación entre port,
+    targetPort y nodePort, por qué el rango de NodePort está reservado,
+    cómo se comporta Minikube con el driver Docker en Windows y macOS,
+    cómo interpretar la salida esperada, cómo validar el acceso externo
+    y qué errores comunes podrían presentarse.
+
+tarea4:
+  title: "Explicar la Tarea 4 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 4 de la
+    Práctica 6 de Kubernetes.
+
+    En esta tarea habilité el addon de Ingress de Minikube, comprobé que
+    el NGINX Ingress Controller estuviera disponible y creé un recurso
+    Ingress llamado app-ingress. Configuré las rutas / hacia frontend-svc
+    y /api hacia backend-svc, utilizando ingressClassName nginx y una
+    anotación de rewrite para adaptar el path enviado al backend.
+    Finalmente utilicé port-forward hacia el Ingress Controller para
+    probar ambas rutas desde el host.
+
+    Explica la función del Ingress Controller y del recurso Ingress,
+    cómo trabajan ingressClassName, paths, pathType, Services backend
+    y rewrite-target, por qué Ingress no reemplaza a los Services,
+    cómo interpretar las pruebas con curl, cómo validar correctamente
+    el enrutamiento y qué errores comunes podrían presentarse.
+
+tarea5:
+  title: "Explicar la Tarea 5 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 5 de la
+    Práctica 6 de Kubernetes.
+
+    En esta tarea realicé una validación integral de la arquitectura creada
+    durante la práctica. Revisé Deployments, Pods, Services e Ingress y
+    ejecuté comprobaciones automáticas para verificar que backend y frontend
+    mantuvieran dos réplicas disponibles, que backend-svc fuera ClusterIP,
+    que frontend-nodeport fuera NodePort con el puerto 30080 y que
+    app-ingress utilizara la clase nginx.
+
+    Explica el propósito de cada validación, cómo interpretar los valores
+    obtenidos mediante jsonpath, cómo comprobar el estado final de la
+    arquitectura, qué relaciones deben existir entre Deployments, Services
+    e Ingress y qué errores comunes podrían detectarse durante esta revisión.

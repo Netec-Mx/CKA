@@ -1,94 +1,78 @@
-# Prompts de apoyo para la Práctica 6
-# El slug del laboratorio debe ser: lab10
+# Prompts de apoyo para la Práctica 4
+# El slug del laboratorio debe ser: lab6
 
 tarea1:
   title: "Explicar la Tarea 1 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 1 de la
-    Práctica 6 de Kubernetes.
+    Práctica 4 de Kubernetes.
 
-    En esta tarea desplegué dos aplicaciones mediante Deployments: un frontend
-    y un backend, cada uno con dos réplicas utilizando NGINX. También validé
-    los manifiestos antes de aplicarlos, esperé a que los Deployments completaran
-    su rollout y revisé los Pods, sus direcciones IP y los nodos donde fueron
-    programados.
+    En esta tarea exploré los namespaces predeterminados del clúster, identifiqué
+    default, kube-system, kube-public y kube-node-lease, y revisé recursos internos
+    como Pods del sistema y objetos Lease para comprender su propósito.
 
-    Explica el propósito de cada comando, configuración o procedimiento,
-    cómo funcionan Deployment, replicas, selectors y labels, cómo interpretar
-    las salidas esperadas, cómo validar que ambos workloads quedaron disponibles
-    y qué errores comunes podrían presentarse.
+    Explica el propósito de cada comando, namespace, configuración o procedimiento,
+    cómo interpretar las salidas esperadas, cómo validar que la tarea se completó
+    correctamente y qué errores comunes podrían presentarse.
 
 tarea2:
   title: "Explicar la Tarea 2 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 2 de la
-    Práctica 6 de Kubernetes.
+    Práctica 4 de Kubernetes.
 
-    En esta tarea creé Services de tipo ClusterIP para frontend y backend,
-    utilizando selectors para asociarlos con los Pods correspondientes.
-    Después validé la comunicación interna desde un Pod frontend hacia
-    backend-svc utilizando el nombre estable del Service y realicé varias
-    solicitudes para observar cómo Kubernetes distribuye conexiones entre
-    los Pods backend disponibles.
+    En esta tarea creé los namespaces development, staging y production utilizando
+    métodos imperativos y declarativos. También agregué labels y annotations para
+    identificar los ambientes y facilitar su organización dentro del clúster.
 
-    Explica el propósito de ClusterIP, port, targetPort, selectors y labels,
-    cómo un Service proporciona una dirección estable aunque cambien las IPs
-    de los Pods, cómo interpretar las pruebas de conectividad, cómo validar
-    que el Service funciona correctamente y qué errores comunes podrían
-    presentarse.
+    Explica la diferencia entre creación imperativa y declarativa, el propósito
+    de labels y annotations en namespaces, cómo interpretar las salidas esperadas,
+    cómo validar que la tarea se completó correctamente y qué errores comunes
+    podrían presentarse.
 
 tarea3:
   title: "Explicar la Tarea 3 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 3 de la
-    Práctica 6 de Kubernetes.
+    Práctica 4 de Kubernetes.
 
-    En esta tarea expuse el frontend mediante un Service de tipo NodePort,
-    configurando el puerto 30080 para permitir acceso desde fuera del clúster.
-    Después utilicé minikube service con la opción --url para obtener una
-    dirección accesible desde el equipo host y validé la respuesta HTTP
-    mediante curl.
+    En esta tarea desplegué una aplicación llamada webapp junto con un Service
+    webapp-svc en los namespaces development, staging y production, utilizando el
+    mismo nombre de recursos pero diferentes cantidades de réplicas para demostrar
+    el aislamiento lógico proporcionado por los namespaces.
 
-    Explica cómo funciona un Service NodePort, la relación entre port,
-    targetPort y nodePort, por qué el rango de NodePort está reservado,
-    cómo se comporta Minikube con el driver Docker en Windows y macOS,
-    cómo interpretar la salida esperada, cómo validar el acceso externo
-    y qué errores comunes podrían presentarse.
+    Explica cómo Kubernetes identifica recursos mediante namespace y nombre,
+    por qué los mismos nombres pueden coexistir sin conflicto, cómo interpretar
+    las salidas esperadas, cómo validar el aislamiento correctamente y qué errores
+    comunes podrían presentarse.
 
 tarea4:
   title: "Explicar la Tarea 4 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 4 de la
-    Práctica 6 de Kubernetes.
+    Práctica 4 de Kubernetes.
 
-    En esta tarea habilité el addon de Ingress de Minikube, comprobé que
-    el NGINX Ingress Controller estuviera disponible y creé un recurso
-    Ingress llamado app-ingress. Configuré las rutas / hacia frontend-svc
-    y /api hacia backend-svc, utilizando ingressClassName nginx y una
-    anotación de rewrite para adaptar el path enviado al backend.
-    Finalmente utilicé port-forward hacia el Ingress Controller para
-    probar ambas rutas desde el host.
+    En esta tarea configuré una ResourceQuota y un LimitRange dentro del namespace
+    development. La ResourceQuota limitó el consumo total de Pods, Services, CPU
+    y memoria, mientras que el LimitRange definió requests y limits predeterminados
+    para contenedores que no los especificaban explícitamente.
 
-    Explica la función del Ingress Controller y del recurso Ingress,
-    cómo trabajan ingressClassName, paths, pathType, Services backend
-    y rewrite-target, por qué Ingress no reemplaza a los Services,
-    cómo interpretar las pruebas con curl, cómo validar correctamente
-    el enrutamiento y qué errores comunes podrían presentarse.
+    Explica la diferencia entre ResourceQuota y LimitRange, cómo funcionan juntos,
+    cómo interpretar sus valores de uso y límites, cómo validar la asignación
+    automática de recursos y qué errores comunes podrían presentarse.
 
 tarea5:
   title: "Explicar la Tarea 5 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 5 de la
-    Práctica 6 de Kubernetes.
+    Práctica 4 de Kubernetes.
 
-    En esta tarea realicé una validación integral de la arquitectura creada
-    durante la práctica. Revisé Deployments, Pods, Services e Ingress y
-    ejecuté comprobaciones automáticas para verificar que backend y frontend
-    mantuvieran dos réplicas disponibles, que backend-svc fuera ClusterIP,
-    que frontend-nodeport fuera NodePort con el puerto 30080 y que
-    app-ingress utilizara la clase nginx.
+    En esta tarea revisé los recursos existentes en staging, eliminé completamente
+    ese namespace y comprobé que Kubernetes eliminó en cascada los Deployments,
+    ReplicaSets, Pods y Services contenidos, mientras development y production
+    permanecieron disponibles.
 
-    Explica el propósito de cada validación, cómo interpretar los valores
-    obtenidos mediante jsonpath, cómo comprobar el estado final de la
-    arquitectura, qué relaciones deben existir entre Deployments, Services
-    e Ingress y qué errores comunes podrían detectarse durante esta revisión.
+    Explica cómo funciona la eliminación de namespaces y recursos namespaced,
+    qué significa la eliminación en cascada, cómo interpretar las salidas
+    esperadas, cómo validar que los otros ambientes permanecieron intactos y qué
+    errores comunes podrían presentarse.

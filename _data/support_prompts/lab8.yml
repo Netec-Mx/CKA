@@ -1,101 +1,79 @@
-# Prompts de apoyo para la Práctica 8
-# El slug del laboratorio debe ser: lab14
+# Prompts de apoyo para la Práctica 5
+# El slug del laboratorio debe ser: lab8
 
 tarea1:
   title: "Explicar la Tarea 1 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 1 de la
-    Práctica 8 de Kubernetes.
+    Práctica 5 de Kubernetes.
 
-    En esta tarea establecí una metodología sistemática de troubleshooting
-    basada en cinco etapas: observar, describir, analizar, corregir y validar.
-    Revisé el estado general de Pods, Services y Events dentro del namespace
-    troubleshooting-lab y utilicé kubectl describe para comprobar que el
-    estado visible de un recurso representa el síntoma, mientras que Events,
-    logs y configuración efectiva ayudan a identificar la causa raíz.
+    En esta tarea creé ConfigMaps mediante comandos imperativos y manifiestos YAML,
+    almacené parámetros simples y archivos de configuración, y consumí sus valores
+    desde Pods utilizando variables de entorno y volúmenes montados.
 
-    Explica el propósito de kubectl get, kubectl describe y kubectl get events,
-    cómo interpretar estados, Events, Reasons y Messages, cómo diferenciar
-    síntoma y causa raíz, cómo aplicar correctamente el flujo de troubleshooting,
-    cómo validar un diagnóstico antes de modificar recursos y qué errores
-    comunes podrían presentarse.
+    Explica el propósito de ConfigMaps, la diferencia entre creación imperativa
+    y declarativa, cómo funcionan envFrom, configMapRef, volumeMounts y subPath,
+    cómo interpretar las salidas esperadas, cómo validar que la tarea se completó
+    correctamente y qué errores comunes podrían presentarse.
 
 tarea2:
   title: "Explicar la Tarea 2 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 2 de la
-    Práctica 8 de Kubernetes.
+    Práctica 5 de Kubernetes.
 
-    En esta tarea diagnostiqué y corregí tres fallos de Pods. El primer Pod
-    presentó ImagePullBackOff por utilizar una imagen inexistente. El segundo
-    presentó CrashLoopBackOff porque ejecutaba un comando inválido. El tercero
-    permaneció Pending porque solicitaba cantidades imposibles de CPU y memoria.
-    Utilicé describe, logs --previous, jsonpath y Events para identificar cada
-    causa y después recreé los Pods con configuraciones válidas hasta dejarlos
-    en estado Running.
+    En esta tarea creé Secrets de tipo Opaque y TLS, analicé la representación
+    base64 de los valores y consumí credenciales desde un Pod mediante variables
+    de entorno y un volumen montado de solo lectura.
 
-    Explica cómo funcionan ImagePullBackOff, ErrImagePull, CrashLoopBackOff
-    y Pending, qué información proporcionan Events, exit codes y logs --previous,
-    cómo influyen los requests de CPU y memoria en el scheduler, cómo interpretar
-    jsonpath para revisar configuración efectiva, cómo validar que cada Pod
-    quedó realmente recuperado y qué errores comunes podrían presentarse.
+    Explica cómo funcionan los Secrets, por qué base64 no representa cifrado,
+    cómo se crean los tipos Opaque y kubernetes.io/tls, cómo se consumen mediante
+    secretRef y volúmenes, cómo interpretar las salidas esperadas, cómo validar
+    que la tarea se completó correctamente y qué errores comunes podrían presentarse.
 
 tarea3:
   title: "Explicar la Tarea 3 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 3 de la
-    Práctica 8 de Kubernetes.
+    Práctica 5 de Kubernetes.
 
-    En esta tarea diagnostiqué tres fallos relacionados con Services y probes.
-    Primero corregí un selector de Service que no coincidía con los labels del
-    Pod y provocaba ausencia de endpoints. Después corregí un targetPort 9999
-    que no coincidía con el puerto 80 donde escuchaba NGINX. Finalmente
-    diagnostiqué una liveness probe configurada sobre una ruta inexistente,
-    corregí el path y validé el nuevo rollout del Deployment.
+    En esta tarea creé la ServiceAccount app-reader, definí el Role
+    pod-configmap-reader con permisos de solo lectura sobre Pods, logs y
+    ConfigMaps, y utilicé un RoleBinding para asignar esos permisos a la
+    ServiceAccount dentro del namespace lab8.
 
-    Explica la relación entre Service, selector, labels, endpoints y Pods,
-    cómo funciona port frente a targetPort, qué diferencia existe entre un
-    Service sin endpoints y uno con endpoints pero puerto incorrecto, cómo
-    funciona una liveness probe y por qué puede provocar reinicios, cómo
-    interpretar Events Unhealthy, cómo validar el rollout después de corregir
-    la probe y qué errores comunes podrían presentarse.
+    Explica qué función cumple una ServiceAccount, cómo funcionan Role y
+    RoleBinding, qué representan apiGroups, resources y verbs, cómo se aplica
+    el principio de mínimo privilegio, cómo validar la vinculación entre los
+    recursos y qué errores comunes podrían presentarse.
 
 tarea4:
   title: "Explicar la Tarea 4 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 4 de la
-    Práctica 8 de Kubernetes.
+    Práctica 5 de Kubernetes.
 
-    En esta tarea diagnostiqué problemas de DNS dentro del clúster. Un Pod
-    estaba configurado con dnsPolicy None y un nameserver inválido, por lo
-    que no podía resolver Services internos. Revisé /etc/resolv.conf,
-    identifiqué la política incorrecta y recreé el Pod con ClusterFirst.
-    Después validé el estado de CoreDNS, el Service kube-dns, sus endpoints
-    y la resolución de nombres desde un segundo Pod de diagnóstico.
+    En esta tarea utilicé kubectl auth can-i para impersonar la ServiceAccount
+    app-reader y comprobar que puede consultar Pods y ConfigMaps, pero no puede
+    crear o eliminar Pods, consultar Secrets ni acceder a Pods de kube-system.
 
-    Explica cómo funcionan dnsPolicy ClusterFirst y None, cómo se genera
-    /etc/resolv.conf dentro de un Pod, qué función cumplen nameserver,
-    search y cluster.local, cómo CoreDNS resuelve nombres de Services,
-    cómo validar kube-dns y sus endpoints, cómo distinguir un fallo del Pod
-    cliente de un fallo real de CoreDNS y qué errores comunes podrían
-    presentarse.
+    Explica cómo funciona kubectl auth can-i, el formato
+    system:serviceaccount:namespace:nombre, cómo comprobar permisos permitidos
+    y denegados, cómo influye el alcance del namespace, cómo interpretar
+    --list y qué errores comunes podrían presentarse.
 
 tarea5:
   title: "Explicar la Tarea 5 con IA"
   prompt: >-
     Explícame expertamente qué hice en la Tarea 5 de la
-    Práctica 8 de Kubernetes.
+    Práctica 5 de Kubernetes.
 
-    En esta tarea ejecuté una validación integral de los ocho escenarios
-    corregidos. Comprobé que los Pods de ImagePullBackOff, CrashLoopBackOff
-    y Pending quedaran Running, que el Deployment con liveness probe tuviera
-    dos réplicas disponibles, que los tres Services mostraran endpoints
-    válidos y que las consultas DNS desde los Pods de prueba funcionaran.
-    También realicé pruebas HTTP mediante un Pod temporal para verificar
-    conectividad real a través de los Services.
+    En esta tarea desplegué rbac-demo-pod utilizando la ServiceAccount app-reader
+    y validé desde el propio Pod el acceso real a la API de Kubernetes. El Pod
+    pudo consultar Pods y ConfigMaps, mientras el acceso a Secrets fue rechazado
+    por las reglas RBAC configuradas.
 
-    Explica el propósito de cada comprobación final, cómo interpretar phase,
-    readyReplicas, endpoints y resultados de nslookup, por qué una validación
-    funcional complementa kubectl get, cómo determinar que los ocho escenarios
-    quedaron realmente resueltos, qué señales indicarían una corrección parcial
-    y qué errores comunes podrían detectarse durante esta revisión.
+    Explica cómo un Pod utiliza una ServiceAccount como identidad, cómo se
+    aplican Role y RoleBinding durante las solicitudes a la API, por qué algunas
+    operaciones devuelven Forbidden, cómo validar la ServiceAccount asignada,
+    cómo interpretar la validación final y qué errores comunes podrían presentarse.

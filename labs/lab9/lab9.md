@@ -1,30 +1,31 @@
 ---
 layout: lab
-title: "Práctica complementaria 5.1: Validación de permisos con ServiceAccount"
+title: "Práctica complementaria 5.1: Diagnóstico y ajuste de permisos con ServiceAccount"
 permalink: /lab9/lab9/
 images_base: /labs/lab9/img
 duration: "20 minutos"
 objective:
   - Auditar los permisos efectivos de una ServiceAccount mediante kubectl auth can-i.
-  - Comparar operaciones permitidas y denegadas dentro y fuera del namespace autorizado.
-  - Diagnosticar una necesidad de acceso adicional sin ampliar innecesariamente los privilegios.
-  - Ajustar un Role aplicando mínimo privilegio y verificar el nuevo comportamiento.
+  - Diagnosticar una autorización faltante sin ampliar innecesariamente el alcance del Role.
+  - Aplicar el principio de mínimo privilegio agregando únicamente lectura sobre Services.
+  - Validar desde impersonación y desde un Pod real que los permisos sensibles continúan denegados.
 prerequisites:
-  - Haber completado la Práctica 5.
-  - Conservar el namespace lab8.
-  - Conservar la ServiceAccount app-reader.
-  - Conservar el Role pod-configmap-reader y el RoleBinding app-reader-binding.
-  - Tener kubectl configurado contra el clúster Minikube.
+  - Haber completado la Práctica 5 y conservar el namespace lab5.
+  - Conservar la ServiceAccount app-reader y el RoleBinding app-reader-binding.
+  - Tener Docker Desktop, Minikube y kubectl operativos.
+  - Utilizar Visual Studio Code con Git Bash como terminal integrada.
+  - Disponer del archivo rbac-scenario5-1.yaml proporcionado para este reto.
 introduction:
-  - Esta práctica complementaria se desarrolla como un reto de autorización. Partirás del modelo RBAC creado en el Lab 8 y deberás demostrar qué puede y qué no puede hacer la ServiceAccount app-reader. Después recibirás un nuevo requerimiento funcional: la aplicación necesita consultar Services del namespace lab8. Deberás identificar por qué el acceso está denegado, modificar únicamente el permiso necesario y comprobar que Secrets, operaciones de escritura y otros namespaces continúan protegidos.
+  - En este reto recibirás una identidad de aplicación que puede consultar Pods y ConfigMaps, pero una nueva función de descubrimiento de Services falla con autorización denegada. No conocerás inicialmente qué permiso falta. Deberás reproducir el problema, inspeccionar el modelo RBAC efectivo, aplicar la corrección mínima y demostrar que Secrets, escritura y otros namespaces continúan protegidos.
 slug: lab9
 lab_number: 9
 final_result: >
-  Al finalizar el reto habrás auditado los permisos efectivos de una ServiceAccount, identificado una autorización faltante y ampliado un Role con el mínimo privilegio necesario, verificando que los accesos no relacionados permanecen denegados.
+  Al finalizar el reto habrás diagnosticado una autorización faltante en un Role, ampliado exclusivamente la lectura de Services dentro de lab5 y validado que la ServiceAccount app-reader conserva un modelo de mínimo privilegio.
 notes:
-  - Esta práctica reutiliza los recursos RBAC creados en el Lab 8.
-  - No crees ClusterRoles ni ClusterRoleBindings para resolver el reto.
-  - No agregues permisos sobre Secrets ni verbos de escritura.
+  - Esta práctica dura 20 minutos y reutiliza los recursos creados en el Lab 8.
+  - El namespace correcto de los recursos reutilizados es lab5.
+  - No utilices ClusterRole, ClusterRoleBinding, wildcards ni permisos de escritura para resolver el reto.
+  - No agregues acceso a Secrets.
   - Esta práctica complementaria no incluye prompts de apoyo con IA.
 references:
   - text: RBAC Authorization
@@ -40,102 +41,213 @@ next: /lab10/lab10/
 ---
 <!-- Aquí comienzan las instrucciones del reto -->
 
-## 🧩 Preparación del reto
+# 🧩 Escenario del reto
 
-Esta práctica utiliza directamente la configuración RBAC creada en el Lab 8. Antes de resolver los retos debes comprobar que la identidad y sus vinculaciones continúan disponibles.
+La ServiceAccount `app-reader` fue creada en la Práctica 5 para permitir consultas de lectura sobre Pods y ConfigMaps dentro del namespace `lab5`.
 
-### 🗂️ Confirmar los recursos existentes
+El equipo de desarrollo agregó una función que necesita descubrir los Services disponibles en ese mismo namespace. La aplicación ahora recibe una respuesta de autorización denegada cuando intenta consultar esos recursos.
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que Minikube continúa operativo antes de realizar las verificaciones de autorización.
+Tu objetivo es determinar:
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y ubícate en el directorio del Lab 8.
+```text
+1. ¿Qué permisos tiene actualmente app-reader?
+2. ¿Qué operación relacionada con Services está siendo denegada?
+3. ¿Qué regla falta en el Role?
+4. ¿Cuál es la corrección mínima necesaria?
+5. ¿Cómo demostrar que los permisos sensibles continúan bloqueados?
+```
 
-  ```bash
-  cd /c/LABS/kubernetes/lab8
-  ```
+### ⏱️ Distribución sugerida
 
-- {% include step_label.html %} Confirma que el namespace `lab8` continúa activo y que la ServiceAccount utilizada durante la práctica principal todavía existe.
-
-  ```bash
-  kubectl get namespace lab8
-  kubectl get serviceaccount app-reader -n lab8
-  ```
-
-- {% include step_label.html %} Comprueba que el Role y el RoleBinding asociados con `app-reader` permanecen disponibles.
-
-  ```bash
-  kubectl get role pod-configmap-reader -n lab8
-  kubectl get rolebinding app-reader-binding -n lab8
-  ```
-
-**Resultado esperado:**
-
-Los cuatro recursos deben existir antes de comenzar el reto.
-
-> **IMPORTANTE:** Si alguno de estos recursos no existe, vuelve a aplicar los manifiestos correspondientes del Lab 8 antes de continuar.
-{: .lab-note .important .compact}
+```text
+Preparación         2 min
+Reto 1              6 min
+Reto 2              7 min
+Reto 3              5 min
+Total               20 min
+```
 
 ---
 
-## 🔎 Reto 1. Auditar los permisos efectivos de app-reader
+## ⚙️ Preparación del escenario
+
+### Confirmar los recursos reutilizados
+
+- {% include step_label.html %} Verifica que el namespace `lab5` continúa activo, porque todos los objetos RBAC de la práctica principal fueron creados dentro de ese ámbito.
+
+  ```bash
+  kubectl get namespace lab5
+  ```
+
+**Salida esperada aproximada:**
+
+```text
+NAME   STATUS   AGE
+lab5   Active   ...
+```
+
+- {% include step_label.html %} Comprueba que la ServiceAccount y el RoleBinding siguen disponibles antes de modificar cualquier permiso.
+
+  ```bash
+  kubectl get serviceaccount app-reader \
+    -n lab5
+
+  kubectl get rolebinding app-reader-binding \
+    -n lab5
+  ```
+
+**Salida esperada aproximada:**
+
+```text
+NAME         SECRETS   AGE
+app-reader   0         ...
+
+NAME                 ROLE                         AGE
+app-reader-binding   Role/pod-configmap-reader    ...
+```
+
+> **NOTA:** En versiones actuales de Kubernetes es normal que la columna `SECRETS` de una ServiceAccount muestre `0`.
+{: .lab-note .info .compact}
+
+### Aplicar el estado inicial del reto
+
+- {% include step_label.html %} Descarga `rbac-scenario5-1.yaml`; el archivo restablece únicamente el Role utilizado en el ejercicio para garantizar un punto de partida conocido.
+
+  ```bash
+  curl -L \
+    -o rbac-scenario5-1.yaml \
+    https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab9/rbac-scenario5-1.yaml
+  ```
+
+> **IMPORTANTE:** No abras ni modifiques el archivo antes de completar el primer reto. La causa debe identificarse mediante los permisos efectivos de Kubernetes.
+{: .lab-note .important .compact}
+
+- {% include step_label.html %} Aplica el escenario para dejar `pod-configmap-reader` en el estado base esperado antes de iniciar el diagnóstico.
+
+  ```bash
+  kubectl apply -f rbac-scenario5-1.yaml
+  ```
+
+**Salida esperada:**
+
+```text
+service/discovery-api created
+role.rbac.authorization.k8s.io/pod-configmap-reader unchanged
+```
+
+La salida también puede mostrar `created` si el Role no existía.
+
+---
+
+# 🔎 Reto 1. Auditar los permisos efectivos de app-reader
 
 **Tiempo sugerido: 6 minutos**
 
-Tu primera misión consiste en construir una matriz de permisos reales de la ServiceAccount `app-reader` sin modificar todavía ningún recurso RBAC.
+En este reto no debes modificar RBAC. Primero construye evidencia suficiente para demostrar qué operaciones están permitidas y cuáles están bloqueadas.
 
-### Reto 1.1. Comprobar permisos dentro de lab8
+### Reto 1.1. Comprobar permisos conocidos
 
-Determina si `app-reader` puede realizar cada una de las operaciones siguientes:
+- {% include step_label.html %} Verifica que `app-reader` conserva lectura de Pods, confirmando que la identidad y su RoleBinding funcionan antes de investigar el nuevo requerimiento.
+
+  ```bash
+  kubectl auth can-i get pods \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+  ```
+
+**Salida esperada:**
 
 ```text
-1. get pods
-2. list pods
-3. get configmaps
-4. get secrets
-5. create pods
-6. delete pods
-7. get services
+yes
 ```
 
-- {% include step_label.html %} Utiliza impersonación para consultar individualmente cada permiso y registra si Kubernetes responde `yes` o `no`.
+- {% include step_label.html %} Comprueba también lectura de ConfigMaps para validar otra autorización definida originalmente en `pod-configmap-reader`.
 
-### Reto 1.2. Comprobar el alcance del Role
+  ```bash
+  kubectl auth can-i get configmaps \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+  ```
 
-- {% include step_label.html %} Comprueba si la misma identidad puede ejecutar `get pods` dentro del namespace `kube-system`.
+**Salida esperada:**
 
-- {% include step_label.html %} Obtén una vista completa de permisos efectivos de `app-reader` dentro de `lab8` y localiza las reglas provenientes de `pod-configmap-reader`.
+```text
+yes
+```
+
+### Reto 1.2. Reproducir el nuevo problema
+
+- {% include step_label.html %} Consulta si la identidad puede obtener Services dentro de `lab5`; esta prueba reproduce directamente la operación requerida por la nueva funcionalidad.
+
+  ```bash
+  kubectl auth can-i get services \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+  ```
+
+- {% include step_label.html %} Comprueba también `list services`, porque una función de descubrimiento normalmente necesita enumerar los Services disponibles y no solo consultar uno conocido.
+
+  ```bash
+  kubectl auth can-i list services \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+  ```
+
+**Salida esperada inicial:**
+
+```text
+no
+no
+```
+
+### Reto 1.3. Verificar límites sensibles
+
+- {% include step_label.html %} Confirma que la ServiceAccount no puede leer Secrets, estableciendo una línea base de seguridad que deberá conservarse después de la corrección.
+
+  ```bash
+  kubectl auth can-i get secrets \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+  ```
+
+- {% include step_label.html %} Comprueba que tampoco puede crear Pods, demostrando que el Role actual mantiene separados los permisos de lectura y escritura.
+
+  ```bash
+  kubectl auth can-i create pods \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+  ```
+
+- {% include step_label.html %} Verifica que un Role de `lab5` no otorga acceso equivalente sobre Pods de `kube-system`.
+
+  ```bash
+  kubectl auth can-i get pods \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=kube-system
+  ```
+
+**Salida esperada:**
+
+```text
+no
+no
+no
+```
 
 ### Evidencia requerida
 
-Completa una tabla similar a la siguiente:
+Debes poder construir esta matriz:
 
 ```text
-OPERACIÓN             RESULTADO
-get pods              ?
-list pods             ?
-get configmaps        ?
-get secrets           ?
-create pods           ?
-delete pods           ?
-get services          ?
-get pods kube-system  ?
+OPERACIÓN                         RESULTADO
+get pods en lab5                  yes
+get configmaps en lab5            yes
+get services en lab5              no
+list services en lab5             no
+get secrets en lab5               no
+create pods en lab5               no
+get pods en kube-system           no
 ```
-
-### Pistas permitidas
-
-Puedes utilizar:
-
-```text
-kubectl auth can-i
---as
---namespace
---list
-system:serviceaccount:<namespace>:<serviceaccount>
-```
-
-**Resultado esperado:**
-
-Debes demostrar que `app-reader` puede leer Pods y ConfigMaps dentro de `lab8`, pero no dispone de permisos sobre Secrets, escritura, Services ni Pods de otros namespaces.
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -143,63 +255,118 @@ Debes demostrar que `app-reader` puede leer Pods y ConfigMaps dentro de `lab8`, 
 
 ---
 
-## 🛡️ Reto 2. Corregir una autorización faltante con mínimo privilegio
+# 🧭 Reto 2. Identificar y corregir la autorización faltante
 
-**Tiempo sugerido: 8 minutos**
+**Tiempo sugerido: 7 minutos**
 
-El equipo de desarrollo reporta el siguiente requerimiento:
+Ahora debes localizar la regla responsable y aplicar solamente los permisos requeridos por la nueva función.
 
-> La aplicación que utiliza `app-reader` necesita consultar los Services disponibles dentro de `lab8` para descubrir endpoints internos. No necesita crear, modificar ni eliminar Services.
+### Reto 2.1. Inspeccionar el Role efectivo
 
-Actualmente la consulta está denegada.
+- {% include step_label.html %} Describe `pod-configmap-reader` para identificar los recursos y verbos actualmente autorizados sin depender de una copia local del manifiesto.
 
-### Reto 2.1. Reproducir el problema
+  ```bash
+  kubectl describe role pod-configmap-reader \
+    -n lab5
+  ```
 
-- {% include step_label.html %} Comprueba mediante `kubectl auth can-i` que `app-reader` actualmente no puede obtener ni listar Services dentro de `lab8`.
-
-### Reto 2.2. Identificar la causa
-
-- {% include step_label.html %} Inspecciona el Role `pod-configmap-reader` y determina qué regla falta para satisfacer el nuevo requerimiento.
-
-- {% include step_label.html %} Decide qué `apiGroup`, `resource` y `verbs` deben agregarse sin modificar los permisos existentes sobre Pods y ConfigMaps.
-
-### Reto 2.3. Aplicar la corrección
-
-- {% include step_label.html %} Modifica el manifiesto `role-reader.yaml` del Lab 8 para permitir únicamente operaciones de lectura sobre Services.
-
-Tu corrección debe cumplir simultáneamente estas condiciones:
+**Salida esperada aproximada antes de corregir:**
 
 ```text
-[ ] Puede get services.
-[ ] Puede list services.
-[ ] Puede watch services.
-[ ] NO puede create services.
-[ ] NO puede update services.
-[ ] NO puede delete services.
-[ ] NO obtiene acceso a Secrets.
+Resources      Verbs
+---------      -----
+pods           [get list watch]
+pods/log       [get]
+configmaps     [get list watch]
 ```
 
-- {% include step_label.html %} Aplica nuevamente el manifiesto del Role después de realizar el cambio.
+- {% include step_label.html %} Consulta el YAML efectivo para relacionar cada regla con `apiGroups`, `resources` y `verbs`.
 
-### Pistas permitidas
+  ```bash
+  kubectl get role pod-configmap-reader \
+    -n lab5 \
+    -o yaml
+  ```
 
-Puedes apoyarte en:
+### Reto 2.2. Formular la corrección
+
+Antes de editar, determina qué nueva regla cumple simultáneamente:
 
 ```text
-kubectl get role ... -o yaml
-kubectl describe role
-kubectl apply -f role-reader.yaml
-apiGroups: [""]
-resources:
-verbs:
+[ ] Permite get services.
+[ ] Permite list services.
+[ ] Permite watch services.
+[ ] No permite create services.
+[ ] No permite update services.
+[ ] No permite delete services.
+[ ] No concede acceso a Secrets.
+[ ] Solo aplica dentro de lab5.
 ```
 
-> **IMPORTANTE:** No resuelvas el problema agregando `resources: ["*"]`, `verbs: ["*"]`, `cluster-admin`, ClusterRole o ClusterRoleBinding. El objetivo es aplicar mínimo privilegio.
+La corrección debe utilizar:
+
+```text
+apiGroup principal de Kubernetes
+resource específico requerido
+verbos exclusivamente de lectura
+```
+
+### Reto 2.3. Corregir el manifiesto del escenario
+
+- {% include step_label.html %} Abre `rbac-scenario5-1.yaml` únicamente después de haber formulado el diagnóstico y agrega la regla mínima necesaria para Services.
+
+  ```bash
+  code rbac-scenario5-1.yaml
+  ```
+
+> **IMPORTANTE:** No reemplaces los recursos o verbos existentes por `*`. Tampoco cambies el Role por ClusterRole.
 {: .lab-note .important .compact}
 
-**Resultado esperado:**
+- {% include step_label.html %} Valida la sintaxis del archivo corregido antes de modificar el Role almacenado en Kubernetes.
 
-El Role debe conservar sus permisos originales y añadir solamente lectura de Services dentro del namespace `lab8`.
+  ```bash
+  kubectl apply \
+    --dry-run=client \
+    -f rbac-scenario5-1.yaml
+  ```
+
+**Salida esperada:**
+
+```text
+role.rbac.authorization.k8s.io/pod-configmap-reader configured (dry run)
+```
+
+- {% include step_label.html %} Aplica el manifiesto corregido para actualizar exclusivamente las reglas del Role dentro de `lab5`.
+
+  ```bash
+  kubectl apply -f rbac-scenario5-1.yaml
+  ```
+
+**Salida esperada:**
+
+```text
+role.rbac.authorization.k8s.io/pod-configmap-reader configured
+```
+
+### Reto 2.4. Confirmar la configuración efectiva
+
+- {% include step_label.html %} Describe nuevamente el Role y confirma que ahora aparece una regla de lectura para `services` sin alterar las reglas existentes.
+
+  ```bash
+  kubectl describe role pod-configmap-reader \
+    -n lab5
+  ```
+
+**Salida esperada aproximada después de corregir:**
+
+```text
+Resources      Verbs
+---------      -----
+pods           [get list watch]
+pods/log       [get]
+configmaps     [get list watch]
+services       [get list watch]
+```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -207,51 +374,137 @@ El Role debe conservar sus permisos originales y añadir solamente lectura de Se
 
 ---
 
-## ✅ Reto 3. Validar que el ajuste no amplió privilegios innecesarios
+# ✅ Reto 3. Validar mínimo privilegio desde Kubernetes y un Pod real
 
-**Tiempo sugerido: 6 minutos**
+**Tiempo sugerido: 5 minutos**
 
-En el último reto debes demostrar que el cambio solucionó el requerimiento sin debilitar el modelo de seguridad.
+La corrección no queda terminada hasta comprobar que resuelve el requerimiento sin introducir permisos adicionales.
 
-### Reto 3.1. Verificar los nuevos permisos
+### Reto 3.1. Validar la nueva autorización
 
-- {% include step_label.html %} Comprueba que `app-reader` ahora puede ejecutar `get`, `list` y `watch` sobre Services dentro de `lab8`.
+- {% include step_label.html %} Comprueba `get`, `list` y `watch` sobre Services utilizando impersonación de la ServiceAccount.
 
-- {% include step_label.html %} Comprueba que la identidad continúa sin permisos para crear o eliminar Services.
+  ```bash
+  for verb in get list watch; do
+    kubectl auth can-i "$verb" services \
+      --as=system:serviceaccount:lab5:app-reader \
+      --namespace=lab5
+  done
+  ```
 
-### Reto 3.2. Verificar permisos sensibles
-
-- {% include step_label.html %} Confirma que `app-reader` continúa sin poder consultar Secrets.
-
-- {% include step_label.html %} Confirma que continúa sin poder crear Pods.
-
-- {% include step_label.html %} Confirma que el acceso a Pods de `kube-system` continúa denegado.
-
-### Reto 3.3. Validar desde el Pod del Lab 8
-
-- {% include step_label.html %} Comprueba si `rbac-demo-pod` continúa disponible y verifica qué ServiceAccount tiene asignada.
-
-- {% include step_label.html %} Desde el Pod, ejecuta una consulta de Services dentro de `lab8` y confirma que la API ya permite esa operación.
-
-- {% include step_label.html %} Desde el mismo Pod, intenta consultar Secrets para demostrar que Kubernetes continúa respondiendo con `Forbidden`.
-
-### Condiciones para superar el reto
+**Salida esperada:**
 
 ```text
-[ ] app-reader puede leer Pods.
-[ ] app-reader puede leer ConfigMaps.
-[ ] app-reader puede leer Services.
-[ ] app-reader no puede crear Services.
-[ ] app-reader no puede eliminar Services.
-[ ] app-reader no puede leer Secrets.
-[ ] app-reader no puede crear Pods.
-[ ] app-reader no puede leer Pods de kube-system.
-[ ] rbac-demo-pod utiliza app-reader.
+yes
+yes
+yes
 ```
 
-**Resultado esperado:**
+- {% include step_label.html %} Verifica inmediatamente que las operaciones de escritura sobre Services continúan bloqueadas.
 
-El nuevo requerimiento debe quedar resuelto sin otorgar permisos de escritura, acceso a Secrets ni alcance fuera de `lab8`.
+  ```bash
+  for verb in create update delete; do
+    kubectl auth can-i "$verb" services \
+      --as=system:serviceaccount:lab5:app-reader \
+      --namespace=lab5
+  done
+  ```
+
+**Salida esperada:**
+
+```text
+no
+no
+no
+```
+
+### Reto 3.2. Volver a comprobar permisos sensibles
+
+- {% include step_label.html %} Confirma que la ampliación del Role no concedió accidentalmente lectura de Secrets ni creación de Pods.
+
+  ```bash
+  kubectl auth can-i get secrets \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+
+  kubectl auth can-i create pods \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5
+  ```
+
+**Salida esperada:**
+
+```text
+no
+no
+```
+
+- {% include step_label.html %} Confirma nuevamente que el Role sigue limitado al namespace `lab5`.
+
+  ```bash
+  kubectl auth can-i get pods \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=kube-system
+  ```
+
+**Salida esperada:**
+
+```text
+no
+```
+
+### Reto 3.3. Validar desde rbac-demo-pod
+
+- {% include step_label.html %} Comprueba si el Pod de validación de la práctica principal continúa disponible y confirma que utiliza la ServiceAccount correcta.
+
+  ```bash
+  kubectl get pod rbac-demo-pod \
+    -n lab5
+
+  kubectl get pod rbac-demo-pod \
+    -n lab5 \
+    -o jsonpath='{.spec.serviceAccountName}{"\n"}'
+  ```
+
+**Salida esperada:**
+
+```text
+app-reader
+```
+
+> **NOTA:** Si `rbac-demo-pod` no existe, vuelve a aplicar `pod-rbac.yaml` del Lab 8 antes de continuar con esta comprobación.
+{: .lab-note .info .compact}
+
+- {% include step_label.html %} Ejecuta `kubectl get services` desde el Pod para demostrar que el token real de `app-reader` recibe ahora la nueva autorización.
+
+  ```bash
+  kubectl exec rbac-demo-pod \
+    -n lab5 -- \
+    kubectl get services -n lab5
+  ```
+
+**Salida esperada aproximada:**
+
+```text
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+...
+```
+
+La lista puede variar según los Services existentes en `lab5`; lo importante es que la operación ya no responda `Forbidden`.
+
+- {% include step_label.html %} Intenta listar Secrets desde el mismo Pod para confirmar que la API continúa bloqueando el recurso sensible.
+
+  ```bash
+  kubectl exec rbac-demo-pod \
+    -n lab5 -- \
+    sh -c 'kubectl get secrets -n lab5 || true'
+  ```
+
+**Salida esperada aproximada:**
+
+```text
+Error from server (Forbidden): secrets is forbidden: User "system:serviceaccount:lab5:app-reader" cannot list resource "secrets" ...
+```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -261,61 +514,86 @@ El nuevo requerimiento debe quedar resuelto sin otorgar permisos de escritura, a
 
 ## ✅ Validación final del reto
 
-- {% include step_label.html %} Ejecuta el bloque siguiente para comprobar las condiciones esenciales después de modificar el Role.
+- {% include step_label.html %} Ejecuta el bloque siguiente para obtener una comprobación resumida del estado final de autorización de `app-reader`.
 
   ```bash
   echo "=== Validacion complementaria 5.1 ==="
 
+  echo ""
+  echo "--- Lectura de Services ---"
   for verb in get list watch; do
     RESULT=$(kubectl auth can-i "$verb" services \
-      --as=system:serviceaccount:lab8:app-reader \
-      --namespace=lab8)
+      --as=system:serviceaccount:lab5:app-reader \
+      --namespace=lab5)
 
-    echo "app-reader puede $verb services: $RESULT"
-  done
-
-  for verb in create delete; do
-    RESULT=$(kubectl auth can-i "$verb" services \
-      --as=system:serviceaccount:lab8:app-reader \
-      --namespace=lab8)
-
-    echo "app-reader puede $verb services: $RESULT"
+    echo "$verb services: $RESULT"
   done
 
   echo ""
-  echo "Permisos sensibles:"
+  echo "--- Escritura de Services ---"
+  for verb in create update delete; do
+    RESULT=$(kubectl auth can-i "$verb" services \
+      --as=system:serviceaccount:lab5:app-reader \
+      --namespace=lab5)
 
-  kubectl auth can-i get secrets \
-    --as=system:serviceaccount:lab8:app-reader \
-    --namespace=lab8
+    echo "$verb services: $RESULT"
+  done
 
-  kubectl auth can-i create pods \
-    --as=system:serviceaccount:lab8:app-reader \
-    --namespace=lab8
+  echo ""
+  echo "--- Permisos sensibles ---"
+  echo "get secrets: $(kubectl auth can-i get secrets \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5)"
 
-  kubectl auth can-i get pods \
-    --as=system:serviceaccount:lab8:app-reader \
-    --namespace=kube-system
+  echo "create pods: $(kubectl auth can-i create pods \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=lab5)"
 
+  echo "get pods kube-system: $(kubectl auth can-i get pods \
+    --as=system:serviceaccount:lab5:app-reader \
+    --namespace=kube-system)"
+
+  echo ""
   echo "=== Fin de validacion ==="
   ```
 
-**Resultado esperado:**
+**Salida esperada:**
 
 ```text
-app-reader puede get services: yes
-app-reader puede list services: yes
-app-reader puede watch services: yes
-app-reader puede create services: no
-app-reader puede delete services: no
+=== Validacion complementaria 5.1 ===
 
-Permisos sensibles:
-no
-no
-no
+--- Lectura de Services ---
+get services: yes
+list services: yes
+watch services: yes
+
+--- Escritura de Services ---
+create services: no
+update services: no
+delete services: no
+
+--- Permisos sensibles ---
+get secrets: no
+create pods: no
+get pods kube-system: no
+
+=== Fin de validacion ===
 ```
 
-> **IMPORTANTE:** Conserva el Role actualizado, el RoleBinding, la ServiceAccount y el namespace `lab8`. No es necesario eliminar estos recursos al finalizar el reto.
+### Condiciones para superar el reto
+
+```text
+[✓] app-reader conserva lectura de Pods y ConfigMaps.
+[✓] app-reader puede get, list y watch Services en lab5.
+[✓] app-reader no puede crear, actualizar ni eliminar Services.
+[✓] app-reader no puede leer Secrets.
+[✓] app-reader no puede crear Pods.
+[✓] app-reader no obtiene permisos equivalentes en kube-system.
+[✓] rbac-demo-pod utiliza app-reader.
+[✓] La consulta real de Services desde el Pod funciona.
+```
+
+> **IMPORTANTE:** Conserva el Role actualizado, el RoleBinding, la ServiceAccount y el namespace `lab5` para las siguientes prácticas.
 {: .lab-note .important .compact}
 
 ---
@@ -324,80 +602,96 @@ no
 
 ### Problema 1. get services continúa devolviendo no
 
-**Síntoma:** Después de modificar el Role, `kubectl auth can-i get services` todavía devuelve `no`.
+**Síntoma:** Después de actualizar el Role, la autorización sobre Services continúa denegada.
 
-**Causa probable:** El archivo fue editado pero no aplicado, la regla utiliza un resource incorrecto o se modificó un Role diferente.
-
-**Solución:**
-
-Comprueba la configuración efectiva almacenada en Kubernetes.
+**Análisis:** Comprueba que la regla fue realmente almacenada en `pod-configmap-reader` y no únicamente editada en el archivo local.
 
 ```bash
-kubectl get role pod-configmap-reader -n lab8 -o yaml
-kubectl describe role pod-configmap-reader -n lab8
+kubectl get role pod-configmap-reader \
+  -n lab5 \
+  -o yaml
+
+kubectl describe role pod-configmap-reader \
+  -n lab5
 ```
 
-Verifica que exista una regla sobre `services` y vuelve a aplicar `role-reader.yaml` si fuera necesario.
+La configuración efectiva debe contener `services` con `get`, `list` y `watch`.
 
 ---
 
-### Problema 2. app-reader puede crear Services
+### Problema 2. app-reader puede crear o eliminar Services
 
-**Síntoma:** `kubectl auth can-i create services` devuelve `yes` después del ajuste.
+**Síntoma:** Alguna operación de escritura devuelve `yes`.
 
-**Causa probable:** La regla agregada contiene verbos excesivos, por ejemplo `*`, `create` o un conjunto de permisos más amplio de lo requerido.
+**Análisis:** El Role posee verbos adicionales o existe otra vinculación que amplía los permisos de la ServiceAccount.
 
-**Solución:**
+```bash
+kubectl auth can-i --list \
+  --as=system:serviceaccount:lab5:app-reader \
+  --namespace=lab5
 
-Revisa la regla y conserva solamente permisos de lectura.
-
-```text
-get
-list
-watch
+kubectl get rolebindings \
+  -n lab5
 ```
 
-Aplica nuevamente el Role y repite las verificaciones.
+No elimines bindings hasta identificar cuál concede el permiso.
 
 ---
 
 ### Problema 3. app-reader puede leer Secrets
 
-**Síntoma:** La comprobación sobre Secrets devuelve `yes`, aunque la práctica principal había definido su acceso como denegado.
+**Síntoma:** `kubectl auth can-i get secrets` devuelve `yes`.
 
-**Causa probable:** Existe otro RoleBinding o ClusterRoleBinding que concede permisos adicionales a la ServiceAccount.
-
-**Solución:**
-
-Consulta las vinculaciones del namespace y los permisos efectivos.
+**Análisis:** La regla creada en esta práctica no debe contener Secrets. Revisa permisos acumulados y posibles bindings adicionales.
 
 ```bash
-kubectl get rolebindings -n lab8
 kubectl auth can-i --list \
-  --as=system:serviceaccount:lab8:app-reader \
-  --namespace=lab8
-```
+  --as=system:serviceaccount:lab5:app-reader \
+  --namespace=lab5
 
-No elimines recursos hasta identificar exactamente qué binding proporciona el permiso adicional.
+kubectl get rolebindings \
+  -n lab5 \
+  -o wide
+```
 
 ---
 
-### Problema 4. rbac-demo-pod ya no existe
+### Problema 4. rbac-demo-pod no existe
 
-**Síntoma:** No puedes realizar la validación desde el Pod porque Kubernetes devuelve `NotFound`.
+**Síntoma:** La validación desde un Pod real devuelve `NotFound`.
 
-**Causa probable:** El Pod del Lab 8 fue eliminado después de completar la práctica principal.
-
-**Solución:**
-
-Comprueba que `pod-rbac.yaml` continúe disponible en el directorio del Lab 8 y vuelve a aplicarlo.
+**Solución:** Regresa al directorio del Lab 8 y aplica nuevamente el manifiesto utilizado en la práctica principal.
 
 ```bash
-cd /c/LABS/kubernetes/lab8
+cd /c/LABS/kubernetes/lab5
+
 kubectl apply -f pod-rbac.yaml
-kubectl wait --for=condition=Ready pod/rbac-demo-pod \
-  -n lab8 \
+
+kubectl wait \
+  --for=condition=Ready \
+  pod/rbac-demo-pod \
+  -n lab5 \
   --timeout=90s
 ```
 
-Después repite la validación de permisos desde el contenedor.
+Después repite las comprobaciones del Reto 3.3.
+
+---
+
+### Problema 5. La consulta desde rbac-demo-pod sigue mostrando Forbidden
+
+**Síntoma:** La impersonación con `kubectl auth can-i` devuelve `yes`, pero el Pod no puede listar Services.
+
+**Análisis:** Confirma que el Pod realmente utiliza `app-reader` y que ejecuta la consulta en `lab5`.
+
+```bash
+kubectl get pod rbac-demo-pod \
+  -n lab5 \
+  -o jsonpath='{.spec.serviceAccountName}{"\n"}'
+
+kubectl exec rbac-demo-pod \
+  -n lab5 -- \
+  kubectl auth can-i get services -n lab5
+```
+
+La identidad debe ser `app-reader` y la segunda consulta debe devolver `yes`.

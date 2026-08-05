@@ -1,0 +1,97 @@
+# Prompts de apoyo para la Práctica 7
+# El slug del laboratorio debe ser: lab13
+
+tarea1:
+  title: "Explicar la Tarea 1 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 1 de la
+    Práctica 7 de Kubernetes.
+
+    En esta tarea preparé un directorio dentro del nodo principal de Minikube
+    y creé un PersistentVolume estático de 1 GiB utilizando hostPath,
+    ReadWriteOnce, reclaimPolicy Retain y storageClassName vacío. También
+    configuré nodeAffinity para asociar el volumen al nodo minikube.
+    Después creé un PersistentVolumeClaim de 500 MiB y validé que el PV
+    y el PVC alcanzaran correctamente el estado Bound.
+
+    Explica el propósito de PersistentVolume y PersistentVolumeClaim,
+    cómo funciona el binding entre ambos recursos, para qué sirven capacity,
+    accessModes, reclaimPolicy, storageClassName, hostPath y nodeAffinity,
+    cómo interpretar los estados Available y Bound, cómo validar que la
+    vinculación se completó correctamente y qué errores comunes podrían
+    presentarse.
+
+tarea2:
+  title: "Explicar la Tarea 2 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 2 de la
+    Práctica 7 de Kubernetes.
+
+    En esta tarea creé un Secret con las credenciales de MySQL y desplegué
+    el Pod mysql-persistente utilizando el PVC estático como volumen montado
+    en /var/lib/mysql. Después creé una tabla e inserté tres registros,
+    eliminé únicamente el Pod y lo recreé utilizando el mismo manifiesto
+    para comprobar que la información continuaba disponible en el volumen.
+
+    Explica cómo un Pod consume un PVC mediante persistentVolumeClaim y
+    volumeMounts, por qué /var/lib/mysql debe utilizar almacenamiento
+    persistente, cómo influye el Secret en la configuración de MySQL,
+    por qué los datos sobreviven a la eliminación del Pod, cómo validar
+    correctamente la persistencia y qué errores comunes podrían presentarse.
+
+tarea3:
+  title: "Explicar la Tarea 3 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 3 de la
+    Práctica 7 de Kubernetes.
+
+    En esta tarea identifiqué la StorageClass predeterminada del clúster
+    Minikube y creé un PersistentVolumeClaim sin especificar manualmente
+    un PersistentVolume ni un volumeName. Kubernetes utilizó el provisioner
+    asociado con la StorageClass para crear automáticamente el PV necesario.
+    Después monté ese PVC dinámico en un Pod nginx y escribí un archivo
+    dentro del volumen para comprobar que estaba disponible.
+
+    Explica qué es una StorageClass, cómo funciona el aprovisionamiento
+    dinámico, qué función realiza el provisioner, cuál es la diferencia
+    respecto al aprovisionamiento estático, cómo Kubernetes relaciona
+    automáticamente PVC y PV, cómo validar el volumen creado y qué errores
+    comunes podrían presentarse.
+
+tarea4:
+  title: "Explicar la Tarea 4 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 4 de la
+    Práctica 7 de Kubernetes.
+
+    En esta tarea desplegué un Pod utilizando un volumen emptyDir, escribí
+    manualmente un archivo dentro de ese volumen y comprobé que existía
+    mientras el Pod permanecía activo. Después eliminé y recreé el Pod
+    con el mismo manifiesto y confirmé que el archivo había desaparecido,
+    contrastando este comportamiento con los datos persistentes almacenados
+    mediante PVC en las tareas anteriores.
+
+    Explica cómo funciona emptyDir, cuál es su ciclo de vida, qué ocurre
+    cuando reinicia únicamente un contenedor y qué ocurre cuando se elimina
+    completamente el Pod, cuáles son las diferencias principales entre
+    emptyDir y PVC, qué casos de uso tiene cada alternativa, cómo validar
+    la pérdida del dato y qué errores comunes podrían presentarse.
+
+tarea5:
+  title: "Explicar la Tarea 5 con IA"
+  prompt: >-
+    Explícame expertamente qué hice en la Tarea 5 de la
+    Práctica 7 de Kubernetes.
+
+    En esta tarea realicé una validación integral de los recursos de
+    almacenamiento creados durante la práctica. Comprobé el estado Bound
+    del PV y PVC estáticos, validé que MySQL conservara los tres registros
+    después de recrear el Pod, confirmé que el PVC dinámico estuviera Bound
+    y verifiqué que el archivo almacenado en emptyDir hubiera desaparecido
+    después de eliminar y recrear su Pod.
+
+    Explica el propósito de cada validación, cómo interpretar los estados
+    de PV y PVC, cómo comprobar persistencia real de datos frente a
+    almacenamiento efímero, qué información aportan kubectl get,
+    kubectl exec y jsonpath, cómo determinar que la práctica terminó
+    correctamente y qué errores comunes podrían detectarse en esta revisión.

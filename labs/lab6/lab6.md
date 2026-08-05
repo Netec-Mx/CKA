@@ -23,7 +23,7 @@ lab_number: 6
 final_result: >
   Al finalizar la práctica habrás creado y administrado namespaces para tres ambientes, desplegado recursos con nombres repetidos sin conflicto, configurado límites de consumo mediante ResourceQuota y LimitRange y comprobado que la eliminación de un namespace elimina también los recursos contenidos.
 notes:
-  - Esta práctica reutiliza el clúster Minikube de tres nodos creado en el Lab 5.
+  - Esta práctica reutiliza el clúster Minikube de tres nodos creado en el Lab 3.
   - Los namespaces development y production se conservarán al finalizar para servir como referencia en actividades posteriores.
   - La comunicación DNS entre namespaces y la separación por equipos se profundizarán en la práctica complementaria 4.1.
   - No elimines los namespaces del sistema default, kube-system, kube-public ni kube-node-lease.
@@ -45,7 +45,7 @@ next: /lab7/lab7/
 
 ## 📁 Preparación del directorio de trabajo
 
-En esta práctica crearás el directorio `lab6` y comprobarás que el clúster Minikube conserva los tres nodos utilizados durante el laboratorio anterior.
+En esta práctica crearás el directorio `lab4` y comprobarás que el clúster Minikube conserva los tres nodos utilizados durante el laboratorio anterior.
 
 ### 🗂️ Crear el subdirectorio de la práctica
 
@@ -54,13 +54,13 @@ En esta práctica crearás el directorio `lab6` y comprobarás que el clúster M
 - {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio correspondiente al Lab 6.
 
   ```bash
-  mkdir -p /c/LABS/kubernetes/lab6
+  mkdir -p /c/LABS/kubernetes/lab4
   ```
 
 - {% include step_label.html %} Cambia la ubicación activa de Git Bash al directorio de trabajo para almacenar los manifiestos de namespaces y aplicaciones.
 
   ```bash
-  cd /c/LABS/kubernetes/lab6
+  cd /c/LABS/kubernetes/lab4
   ```
 
 - {% include step_label.html %} Confirma que la terminal se encuentra en la ruta correcta antes de crear los archivos de esta práctica.
@@ -72,7 +72,7 @@ En esta práctica crearás el directorio `lab6` y comprobarás que el clúster M
 **Salida esperada:**
 
 ```text
-/c/LABS/kubernetes/lab6
+/c/LABS/kubernetes/lab4
 ```
 
 - {% include step_label.html %} Ejecuta los comandos siguientes para confirmar que Minikube está activo y que los nodos continúan disponibles.
