@@ -350,6 +350,54 @@
       total > 0 &&
       completedCount === total
     );
+    /*
+    * ---------------------------------------------------------
+    * Estado visual secuencial de los pasos
+    * ---------------------------------------------------------
+    */
+
+    let firstPendingFound = false;
+
+    steps.forEach((step) => {
+      const stepId = getStepId(step);
+      const li = step.closest("li");
+
+      if (!stepId || !li) return;
+
+      const completed =
+        state.completed.includes(stepId);
+
+      /*
+      * Limpiar estados anteriores
+      */
+      li.classList.remove(
+        "step-completed",
+        "step-current",
+        "step-pending"
+      );
+
+      /*
+      * Paso completado
+      */
+      if (completed) {
+        li.classList.add("step-completed");
+        return;
+      }
+
+      /*
+      * Primer paso pendiente = paso actual/siguiente
+      */
+      if (!firstPendingFound) {
+        li.classList.add("step-current");
+        firstPendingFound = true;
+        return;
+      }
+
+      /*
+      * Resto de pasos
+      */
+      li.classList.add("step-pending");
+    });
   }
 
   /* ---------------------------------------------------------

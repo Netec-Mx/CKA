@@ -633,33 +633,6 @@ code table td {
   line-height: 1;
 }
 
-
-/* ---------------------------------------------------------
-   Paso completo
-   Se aplica al <li> que contiene .step-label
-   --------------------------------------------------------- */
-
-.lab-instructions li.step-completed {
-  position: relative;
-}
-
-.lab-instructions li.step-completed::before {
-  content: "";
-
-  position: absolute;
-
-  left: -1.05rem;
-  top: .15rem;
-  bottom: .15rem;
-
-  width: 3px;
-
-  border-radius: 999px;
-
-  background: #86efac;
-}
-
-
 /* ---------------------------------------------------------
    Panel flotante de progreso
    --------------------------------------------------------- */
@@ -1340,5 +1313,159 @@ code table td {
     padding: .4rem .65rem;
 
     font-size: .7rem;
+  }
+}
+
+/* =========================================================
+   Timeline secuencial de pasos
+   ========================================================= */
+
+/* =========================================================
+   Timeline secuencial de pasos
+   Mantiene el bullet original del markdown
+   y dibuja la línea de progreso más a la izquierda
+   ========================================================= */
+
+/* Asegura que el margen izquierdo tenga espacio visual */
+.lab-instructions ul,
+.lab-instructions ol {
+  overflow: visible;
+}
+
+/* No movemos el contenido del paso */
+.lab-instructions li:has(.step-label) {
+  position: relative;
+  padding-left: 0 !important;
+  overflow: visible;
+}
+
+/* Línea vertical de progreso: va a la izquierda del bullet original */
+.lab-instructions li:has(.step-label)::before {
+  content: "";
+  position: absolute;
+
+  left: -1.88rem;
+  top: 1.34rem;
+  bottom: -1.05rem;
+
+  width: 2px;
+
+  background: #dbe2ea;
+  border-radius: 999px;
+}
+
+/* Punto de progreso: también a la izquierda del bullet original */
+.lab-instructions li:has(.step-label)::after {
+  content: "";
+  position: absolute;
+
+  left: -2.14rem;
+  top: .56rem;
+
+  width: .54rem;
+  height: .54rem;
+
+  border-radius: 50%;
+
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+
+  box-sizing: border-box;
+  z-index: 2;
+
+  transition:
+    background-color .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease;
+}
+
+
+/* =========================================================
+   Paso completado
+   ========================================================= */
+
+.lab-instructions li.step-completed::before {
+  background: #86efac;
+}
+
+.lab-instructions li.step-completed::after {
+  border-color: #22c55e;
+  background: #22c55e;
+}
+
+.lab-instructions li.step-completed .step-label {
+  color: #166534;
+}
+
+
+/* =========================================================
+   Paso actual / siguiente
+   ========================================================= */
+
+.lab-instructions li.step-current::before {
+  background: #dbe2ea;
+}
+
+.lab-instructions li.step-current::after {
+  border-color: #2563eb;
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, .14);
+}
+
+.lab-instructions li.step-current .step-label {
+  color: #1d4ed8;
+}
+
+
+/* =========================================================
+   Paso pendiente
+   ========================================================= */
+
+.lab-instructions li.step-pending::before {
+  background: #e2e8f0;
+}
+
+.lab-instructions li.step-pending::after {
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   Último paso
+   Evita que la línea continúe indefinidamente
+   ========================================================= */
+
+.lab-instructions li:has(.step-label):last-child::before {
+  bottom: .45rem;
+}
+
+
+/* =========================================================
+   Ajuste visual del label
+   ========================================================= */
+
+.step-label {
+  position: relative;
+  z-index: 3;
+}
+
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 560px) {
+
+  .lab-instructions li:has(.step-label)::before {
+    left: -1.68rem;
+    top: 1.31rem;
+  }
+
+  .lab-instructions li:has(.step-label)::after {
+    left: -1.94rem;
+    top: .54rem;
   }
 }
