@@ -2,7 +2,13 @@
 layout: default
 ---
 
-<article class="lab">
+<article
+  class="lab"
+  {% if page.course_id %}data-course-id="{{ page.course_id | escape }}"{% endif %}
+  {% if page.lab_id %}data-lab-id="{{ page.lab_id | escape }}"{% endif %}
+  {% if site.labcontrol_api_url %}data-tracking-api="{{ site.labcontrol_api_url | escape }}"{% endif %}
+  data-tracking="{% if page.tracking == true %}true{% else %}false{% endif %}"
+>
 
   {% include nav.html %}
 
@@ -10,17 +16,24 @@ layout: default
 
   {% include lab-intro.html %}
 
-  {%- comment -%} Modal del zoom (una sola vez por página) {%- endcomment -%}
+  {%- comment -%}
+  Modal del zoom. Debe existir una sola vez por página.
+  {%- endcomment -%}
   {% include image-zoom.html %}
 
   {%- comment -%}
-  Capturamos el contenido del markdown del lab y lo pasamos al include
+  Capturamos el contenido Markdown del laboratorio y lo pasamos al include
   como un parámetro llamado "content".
   {%- endcomment -%}
   {% capture instrucciones_md %}
     {{ content }}
   {% endcapture %}
-  {% include lab-section.html title="Instrucciones" content=instrucciones_md class="lab-instructions" %}
+
+  {% include lab-section.html
+    title="Instrucciones"
+    content=instrucciones_md
+    class="lab-instructions"
+  %}
 
   {% include task-result.html %}
   {% include lab-footer.html %}

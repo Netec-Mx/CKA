@@ -18,14 +18,58 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Validate LabControl tooling
+        run: |
+          node scripts/test_lab_manifest.mjs
+          node scripts/test_sync_lab_manifests.mjs
+          node scripts/test_course_catalog.mjs
+          node scripts/test_lab_id_registry.mjs
+          node scripts/test_authoring_flow.mjs
+          node --check scripts/generate_lab_manifest.mjs
+          node --check scripts/generate_course_catalog.mjs
+          node --check scripts/sync_lab_manifests.mjs
+          node --check scripts/lab_id_registry.mjs
+          node --check scripts/normalize_course_labs.mjs
+          node --check scripts/test_authoring_flow.mjs
+          bash -n scripts/create_labs.sh
+          bash -n scripts/insert_lab.sh
+
+      - name: Generate LabControl course catalog
+        run: |
+          echo "Generating LabControl manifests..."
+          node scripts/generate_lab_manifest.mjs --all
+
+          echo "Generating public LabControl course catalog..."
+          node scripts/generate_course_catalog.mjs
+
+      - name: Sync LabControl manifests
+        env:
+          LABCONTROL_API_URL: ${{ vars.LABCONTROL_API_URL }}
+          LABCONTROL_SYNC_TOKEN: ${{ secrets.LABCONTROL_SYNC_TOKEN }}
+        run: |
+          if [[ -z "${LABCONTROL_API_URL}" || -z "${LABCONTROL_SYNC_TOKEN}" ]]; then
+            echo "Legacy LabControl push sync is not configured."
+            echo "The public course catalog will still be published."
+            exit 0
+          fi
+
+          echo "Legacy LabControl push sync is configured."
+          node scripts/sync_lab_manifests.mjs --all
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3'        # OK
+          ruby-version: '3.3'
           bundler-cache: true
 
       - name: Install dependencies
@@ -37,17 +81,19 @@ jobs:
         run: bundle exec jekyll build --trace
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./_site
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l013
+tracking: true
+position: 13
 layout: lab
 title: "Práctica 7: Despliegue con almacenamiento persistente usando PVC"
 permalink: /lab13/lab13/
@@ -52,16 +56,19 @@ En esta práctica crearás recursos de almacenamiento con alcance de clúster y 
 
 ### 🗂️ Preparar el entorno
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que el motor continúa activo antes de verificar los nodos y el almacenamiento disponible.
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio correspondiente al laboratorio.
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Abre **Docker Desktop** y confirma que el motor continúa activo antes de verificar los nodos y el almacenamiento disponible.
+
+- {% include step_label.html id="s002" %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio correspondiente al laboratorio.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab7
   cd /c/LABS/kubernetes/lab7
   ```
 
-- {% include step_label.html %} Comprueba que Minikube continúa activo y que los nodos del clúster permanecen en estado `Ready`.
+- {% include step_label.html id="s003" %} Comprueba que Minikube continúa activo y que los nodos del clúster permanecen en estado `Ready`.
 
   ```bash
   minikube status
@@ -85,7 +92,7 @@ minikube-m03   Ready    <none>          ...   ...
 
 Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos deben permanecer `Ready`.
 
-- {% include step_label.html %} Crea el namespace `lab7` para aislar los PVC, Pods, Secret y demás recursos namespaced utilizados durante el ejercicio.
+- {% include step_label.html id="s004" %} Crea el namespace `lab7` para aislar los PVC, Pods, Secret y demás recursos namespaced utilizados durante el ejercicio.
 
   ```bash
   kubectl create namespace lab7
@@ -97,7 +104,7 @@ Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos d
 namespace/lab7 created
 ```
 
-- {% include step_label.html %} Establece `lab7` como namespace predeterminado del contexto actual para reducir errores en comandos posteriores.
+- {% include step_label.html id="s005" %} Establece `lab7` como namespace predeterminado del contexto actual para reducir errores en comandos posteriores.
 
   ```bash
   kubectl config set-context --current --namespace=lab7
@@ -109,7 +116,7 @@ namespace/lab7 created
 Context "<nombre-del-contexto>" modified.
 ```
 
-- {% include step_label.html %} Consulta las StorageClasses existentes para identificar la opción predeterminada disponible en Minikube.
+- {% include step_label.html id="s006" %} Consulta las StorageClasses existentes para identificar la opción predeterminada disponible en Minikube.
 
   ```bash
   kubectl get storageclass
@@ -135,7 +142,10 @@ En esta tarea crearás almacenamiento estático mediante `hostPath` y limitarás
 
 ### Tarea 1.1. Preparar el directorio del nodo
 
-- {% include step_label.html %} Crea el directorio que respaldará el PV dentro del nodo principal de Minikube.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s007" %} Crea el directorio que respaldará el PV dentro del nodo principal de Minikube.
 
   ```bash
   minikube ssh -- "sudo mkdir -p /mnt/data/lab7-pv && sudo chmod 777 /mnt/data/lab7-pv"
@@ -145,7 +155,7 @@ En esta tarea crearás almacenamiento estático mediante `hostPath` y limitarás
 
 El comando no debe mostrar errores. Puede finalizar sin imprimir texto.
 
-- {% include step_label.html %} Comprueba que el directorio existe en el nodo antes de definir el PersistentVolume.
+- {% include step_label.html id="s008" %} Comprueba que el directorio existe en el nodo antes de definir el PersistentVolume.
 
   ```bash
   minikube ssh -- "ls -ld /mnt/data/lab7-pv"
@@ -159,13 +169,13 @@ drwxrwxrwx ... /mnt/data/lab7-pv
 
 ### Tarea 1.2. Crear el PersistentVolume
 
-- {% include step_label.html %} Crea el archivo `pv-static.yaml` para definir un PV de 1 GiB con política `Retain`.
+- {% include step_label.html id="s009" %} Crea el archivo `pv-static.yaml` para definir un PV de 1 GiB con política `Retain`.
 
   ```bash
   touch pv-static.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente, incluyendo afinidad al nodo `minikube`.
+- {% include step_label.html id="s010" %} Agrega el manifiesto siguiente, incluyendo afinidad al nodo `minikube`.
 
   ```yaml
   apiVersion: v1
@@ -195,7 +205,7 @@ drwxrwxrwx ... /mnt/data/lab7-pv
                   - minikube
   ```
 
-- {% include step_label.html %} Valida y aplica el PV antes de crear cualquier reclamación de almacenamiento.
+- {% include step_label.html id="s011" %} Valida y aplica el PV antes de crear cualquier reclamación de almacenamiento.
 
   ```bash
   kubectl apply --dry-run=client -f pv-static.yaml
@@ -207,7 +217,7 @@ drwxrwxrwx ... /mnt/data/lab7-pv
 persistentvolume/pv-lab7-static created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el manifiesto validado para crear el PV de alcance de clúster.
+- {% include step_label.html id="s012" %} Aplica el manifiesto validado para crear el PV de alcance de clúster.
 
   ```bash
   kubectl apply -f pv-static.yaml
@@ -219,7 +229,7 @@ persistentvolume/pv-lab7-static created (dry run)
 persistentvolume/pv-lab7-static created
 ```
 
-- {% include step_label.html %} Comprueba que el PV se encuentra `Available` y todavía no está asociado con ningún PVC.
+- {% include step_label.html id="s013" %} Comprueba que el PV se encuentra `Available` y todavía no está asociado con ningún PVC.
 
   ```bash
   kubectl get pv pv-lab7-static
@@ -234,13 +244,13 @@ pv-lab7-static   1Gi        RWO            Retain           Available
 
 ### Tarea 1.3. Crear el PersistentVolumeClaim
 
-- {% include step_label.html %} Crea `pvc-static.yaml` para solicitar 500 MiB sobre el PV estático definido anteriormente.
+- {% include step_label.html id="s014" %} Crea `pvc-static.yaml` para solicitar 500 MiB sobre el PV estático definido anteriormente.
 
   ```bash
   touch pvc-static.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente.
+- {% include step_label.html id="s015" %} Agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: v1
@@ -258,7 +268,7 @@ pv-lab7-static   1Gi        RWO            Retain           Available
     volumeName: pv-lab7-static
   ```
 
-- {% include step_label.html %} Valida el PVC antes de crearlo para confirmar que solicita explícitamente `pv-lab7-static` y no activa aprovisionamiento dinámico.
+- {% include step_label.html id="s016" %} Valida el PVC antes de crearlo para confirmar que solicita explícitamente `pv-lab7-static` y no activa aprovisionamiento dinámico.
 
   ```bash
   kubectl apply --dry-run=client -f pvc-static.yaml
@@ -270,7 +280,7 @@ pv-lab7-static   1Gi        RWO            Retain           Available
 persistentvolumeclaim/pvc-lab7-static created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el PVC y espera hasta que Kubernetes complete el binding con el PV estático.
+- {% include step_label.html id="s017" %} Aplica el PVC y espera hasta que Kubernetes complete el binding con el PV estático.
 
   ```bash
   kubectl apply -f pvc-static.yaml
@@ -285,7 +295,7 @@ persistentvolumeclaim/pvc-lab7-static created
 persistentvolumeclaim/pvc-lab7-static condition met
 ```
 
-- {% include step_label.html %} Comprueba desde ambos recursos que el PVC quedó enlazado exactamente con `pv-lab7-static`.
+- {% include step_label.html id="s018" %} Comprueba desde ambos recursos que el PVC quedó enlazado exactamente con `pv-lab7-static`.
 
   ```bash
   kubectl get pvc pvc-lab7-static -n lab7
@@ -315,7 +325,10 @@ En esta tarea montarás el PVC en `/var/lib/mysql`, crearás datos de prueba y d
 
 ### Tarea 2.1. Crear las credenciales
 
-- {% include step_label.html %} Crea un Secret con credenciales exclusivamente destinadas al laboratorio.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s019" %} Crea un Secret con credenciales exclusivamente destinadas al laboratorio.
 
   ```bash
   kubectl create secret generic mysql-secret --from-literal=MYSQL_ROOT_PASSWORD='K8s-lab7-2026!' --from-literal=MYSQL_DATABASE=testdb -n lab7
@@ -329,13 +342,13 @@ secret/mysql-secret created
 
 ### Tarea 2.2. Crear el Pod MySQL
 
-- {% include step_label.html %} Crea el archivo `mysql-pvc.yaml` para montar `pvc-lab7-static` en la ruta de datos utilizada por MySQL.
+- {% include step_label.html id="s020" %} Crea el archivo `mysql-pvc.yaml` para montar `pvc-lab7-static` en la ruta de datos utilizada por MySQL.
 
   ```bash
   touch mysql-pvc.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente.
+- {% include step_label.html id="s021" %} Agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: v1
@@ -388,7 +401,7 @@ secret/mysql-secret created
           claimName: pvc-lab7-static
   ```
 
-- {% include step_label.html %} Valida el manifiesto antes de crear el Pod, comprobando la referencia al Secret y al PVC sin modificar todavía el clúster.
+- {% include step_label.html id="s022" %} Valida el manifiesto antes de crear el Pod, comprobando la referencia al Secret y al PVC sin modificar todavía el clúster.
 
   ```bash
   kubectl apply --dry-run=client -f mysql-pvc.yaml
@@ -400,7 +413,7 @@ secret/mysql-secret created
 pod/mysql-persistente created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el Pod y espera hasta que la `readinessProbe` confirme que MySQL realmente acepta conexiones, no solo que el proceso arrancó.
+- {% include step_label.html id="s023" %} Aplica el Pod y espera hasta que la `readinessProbe` confirme que MySQL realmente acepta conexiones, no solo que el proceso arrancó.
 
   ```bash
   kubectl apply -f mysql-pvc.yaml
@@ -415,7 +428,7 @@ pod/mysql-persistente created
 pod/mysql-persistente condition met
 ```
 
-- {% include step_label.html %} Comprueba en qué nodo fue programado el Pod y confirma que respeta la afinidad del volumen.
+- {% include step_label.html id="s024" %} Comprueba en qué nodo fue programado el Pod y confirma que respeta la afinidad del volumen.
 
   ```bash
   kubectl get pod mysql-persistente \
@@ -434,7 +447,7 @@ El Pod debe ejecutarse sobre `minikube` porque el PV está limitado mediante `no
 
 ### Tarea 2.3. Crear datos persistentes
 
-- {% include step_label.html %} Crea una tabla e inserta tres registros para disponer de información verificable antes de eliminar el Pod.
+- {% include step_label.html id="s025" %} Crea una tabla e inserta tres registros para disponer de información verificable antes de eliminar el Pod.
 
   ```bash
   kubectl exec mysql-persistente \
@@ -467,7 +480,7 @@ id  mensaje
 
 Puede aparecer una advertencia de MySQL por utilizar la contraseña desde la línea de comandos; para este laboratorio es esperada.
 
-- {% include step_label.html %} Obtén el número de registros y confirma que la base de datos contiene exactamente tres filas.
+- {% include step_label.html id="s026" %} Obtén el número de registros y confirma que la base de datos contiene exactamente tres filas.
 
   ```bash
   kubectl exec mysql-persistente \
@@ -487,7 +500,7 @@ Puede aparecer una advertencia de MySQL por utilizar la contraseña desde la lí
 
 ### Tarea 2.4. Eliminar y recrear el Pod
 
-- {% include step_label.html %} Elimina únicamente el Pod y comprueba que el PVC continúa en estado `Bound`.
+- {% include step_label.html id="s027" %} Elimina únicamente el Pod y comprueba que el PVC continúa en estado `Bound`.
 
   ```bash
   kubectl delete pod mysql-persistente -n lab7
@@ -504,7 +517,7 @@ NAME               STATUS   VOLUME
 pvc-lab7-static   Bound    pv-lab7-static
 ```
 
-- {% include step_label.html %} Recrea el Pod utilizando exactamente el mismo manifiesto y espera nuevamente hasta que esté listo.
+- {% include step_label.html id="s028" %} Recrea el Pod utilizando exactamente el mismo manifiesto y espera nuevamente hasta que esté listo.
 
   ```bash
   kubectl apply -f mysql-pvc.yaml
@@ -519,7 +532,7 @@ pod/mysql-persistente created
 pod/mysql-persistente condition met
 ```
 
-- {% include step_label.html %} Consulta la tabla después de recrear el Pod para demostrar que el contenido persistió fuera del ciclo de vida del contenedor.
+- {% include step_label.html id="s029" %} Consulta la tabla después de recrear el Pod para demostrar que el contenido persistió fuera del ciclo de vida del contenedor.
 
   ```bash
   kubectl exec mysql-persistente \
@@ -559,13 +572,16 @@ En esta tarea crearás un PVC sin definir manualmente un PV y dejarás que la St
 
 ### Tarea 3.1. Identificar la StorageClass predeterminada
 
-- {% include step_label.html %} Ejecuta el comando siguiente y localiza la StorageClass marcada como `(default)`.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s030" %} Ejecuta el comando siguiente y localiza la StorageClass marcada como `(default)`.
 
   ```bash
   kubectl get storageclass
   ```
 
-- {% include step_label.html %} Guarda automáticamente el nombre de la StorageClass predeterminada para utilizarlo en las comprobaciones posteriores.
+- {% include step_label.html id="s031" %} Guarda automáticamente el nombre de la StorageClass predeterminada para utilizarlo en las comprobaciones posteriores.
 
   ```bash
   DEFAULT_SC=$(kubectl get storageclass \
@@ -587,13 +603,13 @@ El nombre puede ser diferente; la variable no debe quedar vacía.
 
 ### Tarea 3.2. Crear un PVC dinámico
 
-- {% include step_label.html %} Crea `pvc-dynamic.yaml` sin especificar `storageClassName` ni `volumeName`, permitiendo que Kubernetes utilice la clase predeterminada.
+- {% include step_label.html id="s032" %} Crea `pvc-dynamic.yaml` sin especificar `storageClassName` ni `volumeName`, permitiendo que Kubernetes utilice la clase predeterminada.
 
   ```bash
   touch pvc-dynamic.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente.
+- {% include step_label.html id="s033" %} Agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: v1
@@ -609,7 +625,7 @@ El nombre puede ser diferente; la variable no debe quedar vacía.
         storage: 200Mi
   ```
 
-- {% include step_label.html %} Valida y aplica el PVC sin especificar `storageClassName`, permitiendo que Kubernetes seleccione la StorageClass predeterminada.
+- {% include step_label.html id="s034" %} Valida y aplica el PVC sin especificar `storageClassName`, permitiendo que Kubernetes seleccione la StorageClass predeterminada.
 
   ```bash
   kubectl apply --dry-run=client -f pvc-dynamic.yaml
@@ -623,7 +639,7 @@ persistentvolumeclaim/pvc-lab7-dynamic created (dry run)
 persistentvolumeclaim/pvc-lab7-dynamic created
 ```
 
-- {% include step_label.html %} Consulta el estado del PVC y la modalidad de binding de la StorageClass para interpretar correctamente `Bound` o `Pending`.
+- {% include step_label.html id="s035" %} Consulta el estado del PVC y la modalidad de binding de la StorageClass para interpretar correctamente `Bound` o `Pending`.
 
   ```bash
   kubectl get pvc pvc-lab7-dynamic -n lab7
@@ -641,7 +657,7 @@ Immediate
 
 Si la StorageClass muestra `WaitForFirstConsumer`, es válido que el PVC continúe `Pending` hasta crear `nginx-dynamic` en la Tarea 3.3.
 
-- {% include step_label.html %} Consulta el nombre del PV creado por el provisioner y revisa la StorageClass utilizada.
+- {% include step_label.html id="s036" %} Consulta el nombre del PV creado por el provisioner y revisa la StorageClass utilizada.
 
   ```bash
   DYNAMIC_PV=$(kubectl get pvc pvc-lab7-dynamic \
@@ -655,13 +671,13 @@ Si la StorageClass muestra `WaitForFirstConsumer`, es válido que el PVC contin�
 
 ### Tarea 3.3. Consumir el PVC dinámico
 
-- {% include step_label.html %} Crea el archivo `pod-dynamic.yaml` para montar el PVC dinámico dentro de un Pod NGINX.
+- {% include step_label.html id="s037" %} Crea el archivo `pod-dynamic.yaml` para montar el PVC dinámico dentro de un Pod NGINX.
 
   ```bash
   touch pod-dynamic.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente.
+- {% include step_label.html id="s038" %} Agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: v1
@@ -682,7 +698,7 @@ Si la StorageClass muestra `WaitForFirstConsumer`, es válido que el PVC contin�
           claimName: pvc-lab7-dynamic
   ```
 
-- {% include step_label.html %} Aplica el Pod, espera a que esté listo y escribe un archivo dentro del volumen aprovisionado dinámicamente.
+- {% include step_label.html id="s039" %} Aplica el Pod, espera a que esté listo y escribe un archivo dentro del volumen aprovisionado dinámicamente.
 
   ```bash
   kubectl apply -f pod-dynamic.yaml
@@ -698,7 +714,7 @@ Si la StorageClass muestra `WaitForFirstConsumer`, es válido que el PVC contin�
     sh -c 'echo "<h1>PVC dinamico operativo</h1>" > /usr/share/nginx/html/index.html'
   ```
 
-- {% include step_label.html %} Lee nuevamente el archivo para confirmar que el volumen se encuentra montado y disponible.
+- {% include step_label.html id="s040" %} Lee nuevamente el archivo para confirmar que el volumen se encuentra montado y disponible.
 
   ```bash
   kubectl exec nginx-dynamic -n lab7 -- sh -c 'cat /usr/share/nginx/html/index.html'
@@ -724,13 +740,16 @@ En esta tarea crearás un volumen efímero y demostrarás que sus datos desapare
 
 ### Tarea 4.1. Crear el Pod con emptyDir
 
-- {% include step_label.html %} Crea el archivo `pod-emptydir.yaml` con un contenedor que permanezca en ejecución sin generar automáticamente archivos dentro del volumen.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s041" %} Crea el archivo `pod-emptydir.yaml` con un contenedor que permanezca en ejecución sin generar automáticamente archivos dentro del volumen.
 
   ```bash
   touch pod-emptydir.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente.
+- {% include step_label.html id="s042" %} Agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: v1
@@ -754,7 +773,7 @@ En esta tarea crearás un volumen efímero y demostrarás que sus datos desapare
         emptyDir: {}
   ```
 
-- {% include step_label.html %} Aplica el Pod y espera hasta que se encuentre listo antes de escribir datos.
+- {% include step_label.html id="s043" %} Aplica el Pod y espera hasta que se encuentre listo antes de escribir datos.
 
   ```bash
   kubectl apply --dry-run=client -f pod-emptydir.yaml
@@ -773,7 +792,7 @@ pod/emptydir-demo condition met
 
 ### Tarea 4.2. Escribir y perder el dato
 
-- {% include step_label.html %} Crea manualmente un archivo dentro de `emptyDir` y comprueba que existe durante la vida actual del Pod.
+- {% include step_label.html id="s044" %} Crea manualmente un archivo dentro de `emptyDir` y comprueba que existe durante la vida actual del Pod.
 
   ```bash
   kubectl exec emptydir-demo \
@@ -789,7 +808,7 @@ pod/emptydir-demo condition met
 Dato temporal lab7
 ```
 
-- {% include step_label.html %} Elimina y recrea el Pod utilizando el mismo manifiesto.
+- {% include step_label.html id="s045" %} Elimina y recrea el Pod utilizando el mismo manifiesto.
 
   ```bash
   kubectl delete pod emptydir-demo -n lab7
@@ -807,7 +826,7 @@ pod/emptydir-demo created
 pod/emptydir-demo condition met
 ```
 
-- {% include step_label.html %} Intenta leer el archivo anterior y confirma que ya no existe.
+- {% include step_label.html id="s046" %} Intenta leer el archivo anterior y confirma que ya no existe.
 
   ```bash
   kubectl exec emptydir-demo \
@@ -838,7 +857,10 @@ En esta tarea comprobarás los estados esenciales del almacenamiento utilizado d
 
 ### Tarea 5.1. Revisar PV y PVC
 
-- {% include step_label.html %} Consulta los PV y PVC creados para identificar claramente almacenamiento estático y dinámico.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s047" %} Consulta los PV y PVC creados para identificar claramente almacenamiento estático y dinámico.
 
   ```bash
   kubectl get pv
@@ -861,7 +883,7 @@ El nombre del PV dinámico es generado por Kubernetes y será diferente en cada 
 
 ### Tarea 5.2. Ejecutar validación final
 
-- {% include step_label.html %} Ejecuta el bloque siguiente para validar binding estático, ubicación de MySQL, persistencia, aprovisionamiento dinámico y pérdida de datos de `emptyDir`.
+- {% include step_label.html id="s048" %} Ejecuta el bloque siguiente para validar binding estático, ubicación de MySQL, persistencia, aprovisionamiento dinámico y pérdida de datos de `emptyDir`.
 
   ```bash
   echo "=== Validacion final de la Practica 7 ==="

@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l014
+tracking: true
+position: 14
 layout: lab
 title: "Práctica 8: Diagnóstico y resolución de fallos en Pods, Services y DNS"
 permalink: /lab14/lab14/
@@ -51,16 +55,19 @@ Crearás todos los escenarios dentro de un namespace dedicado para evitar interf
 
 ### 🗂️ Preparar el entorno
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que Minikube continúa activo antes de desplegar escenarios defectuosos.
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio del laboratorio.
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Abre **Docker Desktop** y confirma que Minikube continúa activo antes de desplegar escenarios defectuosos.
+
+- {% include step_label.html id="s002" %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio del laboratorio.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab8
   cd /c/LABS/kubernetes/lab8
   ```
 
-- {% include step_label.html %} Comprueba que los nodos continúan disponibles y que CoreDNS se encuentra operativo antes de comenzar.
+- {% include step_label.html id="s003" %} Comprueba que los nodos continúan disponibles y que CoreDNS se encuentra operativo antes de comenzar.
 
   ```bash
   kubectl get nodes
@@ -81,7 +88,7 @@ coredns-<hash>-<id>        1/1     Running
 
 Los tres nodos deben estar `Ready` y al menos un Pod de CoreDNS debe permanecer disponible.
 
-- {% include step_label.html %} Crea `troubleshooting-lab` para aislar los ocho escenarios defectuosos de los recursos utilizados en prácticas anteriores.
+- {% include step_label.html id="s004" %} Crea `troubleshooting-lab` para aislar los ocho escenarios defectuosos de los recursos utilizados en prácticas anteriores.
 
   ```bash
   kubectl create namespace troubleshooting-lab
@@ -93,7 +100,7 @@ Los tres nodos deben estar `Ready` y al menos un Pod de CoreDNS debe permanecer 
 namespace/troubleshooting-lab created
 ```
 
-- {% include step_label.html %} Configura el namespace como predeterminado del contexto actual para reducir errores durante las operaciones de diagnóstico.
+- {% include step_label.html id="s005" %} Configura el namespace como predeterminado del contexto actual para reducir errores durante las operaciones de diagnóstico.
 
   ```bash
   kubectl config set-context --current --namespace=troubleshooting-lab
@@ -107,13 +114,13 @@ Context "<nombre-del-contexto>" modified.
 
 ### 🧰 Crear los escenarios de fallo
 
-- {% include step_label.html %} Crea el archivo `setup-failures.yaml`, que contendrá los ocho escenarios intencionalmente defectuosos.
+- {% include step_label.html id="s006" %} Crea el archivo `setup-failures.yaml`, que contendrá los ocho escenarios intencionalmente defectuosos.
 
   ```bash
   touch setup-failures.yaml
   ```
 
-- {% include step_label.html %} Agrega el contenido siguiente.
+- {% include step_label.html id="s007" %} Agrega el contenido siguiente.
 
   ```yaml
   apiVersion: v1
@@ -280,7 +287,7 @@ Context "<nombre-del-contexto>" modified.
         command: ["sh", "-c", "sleep 3600"]
   ```
 
-- {% include step_label.html %} Valida el manifiesto completo antes de crear los recursos, comprobando que los ocho escenarios son aceptados sintácticamente por Kubernetes.
+- {% include step_label.html id="s008" %} Valida el manifiesto completo antes de crear los recursos, comprobando que los ocho escenarios son aceptados sintácticamente por Kubernetes.
 
   ```bash
   kubectl apply --dry-run=client -f setup-failures.yaml
@@ -290,7 +297,7 @@ Context "<nombre-del-contexto>" modified.
 
 La salida debe listar los Pods, Services y el Deployment como `created (dry run)` sin errores de validación.
 
-- {% include step_label.html %} Aplica todos los escenarios y espera 30 segundos para que los reinicios, fallos de pull y eventos de scheduling sean observables.
+- {% include step_label.html id="s009" %} Aplica todos los escenarios y espera 30 segundos para que los reinicios, fallos de pull y eventos de scheduling sean observables.
 
   ```bash
   kubectl apply -f setup-failures.yaml
@@ -313,7 +320,7 @@ pod/pod-c1-dns-policy created
 pod/pod-c2-dns-debug created
 ```
 
-- {% include step_label.html %} Obtén una vista inicial de Pods, Deployments, Services y eventos recientes.
+- {% include step_label.html id="s010" %} Obtén una vista inicial de Pods, Deployments, Services y eventos recientes.
 
   ```bash
   kubectl get pods -n troubleshooting-lab
@@ -359,7 +366,10 @@ Antes de resolver escenarios individuales, utilizarás siempre el mismo flujo:
 
 ### Tarea 1.1. Construir una línea base
 
-- {% include step_label.html %} Ejecuta una vista amplia de los recursos y registra qué escenarios muestran síntomas evidentes y cuáles requieren pruebas funcionales.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s011" %} Ejecuta una vista amplia de los recursos y registra qué escenarios muestran síntomas evidentes y cuáles requieren pruebas funcionales.
 
   ```bash
   kubectl get pods \
@@ -376,7 +386,7 @@ Antes de resolver escenarios individuales, utilizarás siempre el mismo flujo:
 
 ### Tarea 1.2. Priorizar evidencia
 
-- {% include step_label.html %} Selecciona un Pod fallido y confirma que la sección `Events` de `kubectl describe` aporta más contexto que el campo STATUS aislado.
+- {% include step_label.html id="s012" %} Selecciona un Pod fallido y confirma que la sección `Events` de `kubectl describe` aporta más contexto que el campo STATUS aislado.
 
   ```bash
   kubectl describe pod pod-a1-imagepull \
@@ -400,7 +410,10 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
 
 ### Tarea 2.1. ImagePullBackOff
 
-- {% include step_label.html %} Observa y describe `pod-a1-imagepull`, prestando atención a los eventos `Failed`, `ErrImagePull` y `BackOff`.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s013" %} Observa y describe `pod-a1-imagepull`, prestando atención a los eventos `Failed`, `ErrImagePull` y `BackOff`.
 
   ```bash
   kubectl get pod pod-a1-imagepull \
@@ -410,7 +423,7 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
     -n troubleshooting-lab
   ```
 
-- {% include step_label.html %} Confirma qué imagen está configurada actualmente.
+- {% include step_label.html id="s014" %} Confirma qué imagen está configurada actualmente.
 
   ```bash
   kubectl get pod pod-a1-imagepull \
@@ -418,7 +431,7 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
     -o jsonpath='{.spec.containers[0].image}{"\n"}'
   ```
 
-- {% include step_label.html %} Corrige el escenario recreando el Pod con una imagen existente.
+- {% include step_label.html id="s015" %} Corrige el escenario recreando el Pod con una imagen existente.
 
   ```bash
   kubectl delete pod pod-a1-imagepull \
@@ -430,7 +443,7 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
     -n troubleshooting-lab
   ```
 
-- {% include step_label.html %} Espera a que el Pod quede disponible.
+- {% include step_label.html id="s016" %} Espera a que el Pod quede disponible.
 
   ```bash
   kubectl wait \
@@ -442,7 +455,7 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
 
 ### Tarea 2.2. CrashLoopBackOff
 
-- {% include step_label.html %} Revisa `describe` y los logs de la ejecución anterior para identificar el comando inexistente.
+- {% include step_label.html id="s017" %} Revisa `describe` y los logs de la ejecución anterior para identificar el comando inexistente.
 
   ```bash
   kubectl describe pod pod-a2-crashloop \
@@ -453,7 +466,7 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
     --previous
   ```
 
-- {% include step_label.html %} Consulta el comando configurado en el Pod y relaciónalo con el error de shell.
+- {% include step_label.html id="s018" %} Consulta el comando configurado en el Pod y relaciónalo con el error de shell.
 
   ```bash
   kubectl get pod pod-a2-crashloop \
@@ -461,7 +474,7 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
     -o jsonpath='{.spec.containers[0].command}{"\n"}'
   ```
 
-- {% include step_label.html %} Recrea el Pod permitiendo que NGINX utilice su comando predeterminado.
+- {% include step_label.html id="s019" %} Recrea el Pod permitiendo que NGINX utilice su comando predeterminado.
 
   ```bash
   kubectl delete pod pod-a2-crashloop \
@@ -475,14 +488,14 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
 
 ### Tarea 2.3. Pending por recursos imposibles
 
-- {% include step_label.html %} Describe `pod-a3-pending` y localiza el evento `FailedScheduling`.
+- {% include step_label.html id="s020" %} Describe `pod-a3-pending` y localiza el evento `FailedScheduling`.
 
   ```bash
   kubectl describe pod pod-a3-pending \
     -n troubleshooting-lab
   ```
 
-- {% include step_label.html %} Consulta los requests definidos y confirma que ningún nodo del laboratorio puede satisfacerlos.
+- {% include step_label.html id="s021" %} Consulta los requests definidos y confirma que ningún nodo del laboratorio puede satisfacerlos.
 
   ```bash
   kubectl get pod pod-a3-pending \
@@ -490,7 +503,7 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
     -o jsonpath='{.spec.containers[0].resources.requests}{"\n"}'
   ```
 
-- {% include step_label.html %} Recrea el Pod con requests razonables para el entorno Minikube.
+- {% include step_label.html id="s022" %} Recrea el Pod con requests razonables para el entorno Minikube.
 
   ```bash
   kubectl delete pod pod-a3-pending \
@@ -533,7 +546,7 @@ pod/pod-a3-pending created
 pod/pod-a3-pending condition met
 ```
 
-- {% include step_label.html %} Verifica que los tres escenarios A1, A2 y A3 queden finalmente en `Running`.
+- {% include step_label.html id="s023" %} Verifica que los tres escenarios A1, A2 y A3 queden finalmente en `Running`.
 
   ```bash
   kubectl get pods \
@@ -555,7 +568,10 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
 
 ### Tarea 3.1. Selector incorrecto
 
-- {% include step_label.html %} Comprueba el Service y sus endpoints antes de modificar cualquier selector.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s024" %} Comprueba el Service y sus endpoints antes de modificar cualquier selector.
 
   ```bash
   kubectl get service svc-b1-wrong-selector \
@@ -566,7 +582,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     -n troubleshooting-lab
   ```
 
-- {% include step_label.html %} Compara el selector del Service con los labels del Pod destino.
+- {% include step_label.html id="s025" %} Compara el selector del Service con los labels del Pod destino.
 
   ```bash
   kubectl describe service svc-b1-wrong-selector \
@@ -578,7 +594,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     --show-labels
   ```
 
-- {% include step_label.html %} Corrige únicamente el selector incorrecto.
+- {% include step_label.html id="s026" %} Corrige únicamente el selector incorrecto.
 
   ```bash
   kubectl patch service svc-b1-wrong-selector \
@@ -587,7 +603,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     -p '{"spec":{"selector":{"app":"backend-real"}}}'
   ```
 
-- {% include step_label.html %} Comprueba que los endpoints aparecen automáticamente.
+- {% include step_label.html id="s027" %} Comprueba que los endpoints aparecen automáticamente.
 
   ```bash
   kubectl get endpoints svc-b1-wrong-selector \
@@ -596,7 +612,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
 
 ### Tarea 3.2. targetPort incorrecto
 
-- {% include step_label.html %} Comprueba que `svc-b2-wrong-port` sí tiene endpoint, pero observa el puerto asociado.
+- {% include step_label.html id="s028" %} Comprueba que `svc-b2-wrong-port` sí tiene endpoint, pero observa el puerto asociado.
 
   ```bash
   kubectl get endpoints svc-b2-wrong-port \
@@ -607,7 +623,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     -n troubleshooting-lab
   ```
 
-- {% include step_label.html %} Confirma que NGINX escucha en el puerto 80 según la configuración del Pod.
+- {% include step_label.html id="s029" %} Confirma que NGINX escucha en el puerto 80 según la configuración del Pod.
 
   ```bash
   kubectl get pod pod-b2-webserver \
@@ -615,7 +631,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     -o jsonpath='{.spec.containers[0].ports[0].containerPort}{"\n"}'
   ```
 
-- {% include step_label.html %} Corrige `targetPort` para dirigir tráfico al puerto correcto.
+- {% include step_label.html id="s030" %} Corrige `targetPort` para dirigir tráfico al puerto correcto.
 
   ```bash
   kubectl patch service svc-b2-wrong-port \
@@ -626,7 +642,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
 
 ### Tarea 3.3. Liveness probe incorrecta
 
-- {% include step_label.html %} Obtén uno de los Pods del Deployment y revisa Events para localizar mensajes `Unhealthy`.
+- {% include step_label.html id="s031" %} Obtén uno de los Pods del Deployment y revisa Events para localizar mensajes `Unhealthy`.
 
   ```bash
   POD_B3=$(kubectl get pod \
@@ -638,7 +654,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     -n troubleshooting-lab
   ```
 
-- {% include step_label.html %} Consulta la ruta configurada en la liveness probe.
+- {% include step_label.html id="s032" %} Consulta la ruta configurada en la liveness probe.
 
   ```bash
   kubectl get deployment deploy-b3-liveness \
@@ -646,7 +662,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     -o jsonpath='{.spec.template.spec.containers[0].livenessProbe.httpGet.path}{"\n"}'
   ```
 
-- {% include step_label.html %} Corrige la ruta a `/`, provocando un nuevo rollout del Deployment.
+- {% include step_label.html id="s033" %} Corrige la ruta a `/`, provocando un nuevo rollout del Deployment.
 
   ```bash
   kubectl patch deployment deploy-b3-liveness \
@@ -655,7 +671,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     -p='[{"op":"replace","path":"/spec/template/spec/containers/0/livenessProbe/httpGet/path","value":"/"}]'
   ```
 
-- {% include step_label.html %} Espera a que el Deployment alcance nuevamente disponibilidad completa.
+- {% include step_label.html id="s034" %} Espera a que el Deployment alcance nuevamente disponibilidad completa.
 
   ```bash
   kubectl rollout status \
@@ -664,7 +680,7 @@ Ahora diagnosticarás tres escenarios donde los Pods pueden estar presentes, per
     --timeout=120s
   ```
 
-- {% include step_label.html %} Confirma que los tres Services tienen destinos disponibles.
+- {% include step_label.html id="s035" %} Confirma que los tres Services tienen destinos disponibles.
 
   ```bash
   kubectl get endpoints \
@@ -688,7 +704,10 @@ En esta tarea resolverás una configuración DNS incorrecta y luego verificarás
 
 ### Tarea 4.1. dnsPolicy incorrecta
 
-- {% include step_label.html %} Comprueba que `pod-c1-dns-policy` está `Running`; este estado demuestra que un Pod puede estar sano a nivel de proceso y fallar únicamente en resolución DNS.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s036" %} Comprueba que `pod-c1-dns-policy` está `Running`; este estado demuestra que un Pod puede estar sano a nivel de proceso y fallar únicamente en resolución DNS.
 
   ```bash
   kubectl get pod pod-c1-dns-policy \
@@ -702,7 +721,7 @@ NAME                READY   STATUS
 pod-c1-dns-policy   1/1     Running
 ```
 
-- {% include step_label.html %} Ejecuta una consulta acotada al FQDN de `kubernetes.default`; el timeout evita que una configuración DNS inválida mantenga la terminal esperando demasiado tiempo.
+- {% include step_label.html id="s037" %} Ejecuta una consulta acotada al FQDN de `kubernetes.default`; el timeout evita que una configuración DNS inválida mantenga la terminal esperando demasiado tiempo.
 
   ```bash
   kubectl exec pod-c1-dns-policy \
@@ -718,7 +737,7 @@ DNS_FAILED
 
 Puede aparecer además un mensaje de timeout generado por `nslookup`.
 
-- {% include step_label.html %} Revisa `/etc/resolv.conf` dentro del contenedor utilizando `sh -c` para evitar que Git Bash transforme la ruta Linux.
+- {% include step_label.html id="s038" %} Revisa `/etc/resolv.conf` dentro del contenedor utilizando `sh -c` para evitar que Git Bash transforme la ruta Linux.
 
   ```bash
   kubectl exec pod-c1-dns-policy \
@@ -732,7 +751,7 @@ Puede aparecer además un mensaje de timeout generado por `nslookup`.
 nameserver 1.2.3.4
 ```
 
-- {% include step_label.html %} Confirma mediante la API que el Pod utiliza `dnsPolicy: None` y una configuración DNS explícita.
+- {% include step_label.html id="s039" %} Confirma mediante la API que el Pod utiliza `dnsPolicy: None` y una configuración DNS explícita.
 
   ```bash
   kubectl get pod pod-c1-dns-policy \
@@ -752,7 +771,7 @@ None
 {"nameservers":["1.2.3.4"]}
 ```
 
-- {% include step_label.html %} Recrea únicamente el Pod C1 con `ClusterFirst`, retirando la configuración personalizada sin modificar CoreDNS ni el Service `kube-dns`.
+- {% include step_label.html id="s040" %} Recrea únicamente el Pod C1 con `ClusterFirst`, retirando la configuración personalizada sin modificar CoreDNS ni el Service `kube-dns`.
 
   ```bash
   kubectl delete pod pod-c1-dns-policy \
@@ -794,7 +813,7 @@ pod/pod-c1-dns-policy created
 pod/pod-c1-dns-policy condition met
 ```
 
-- {% include step_label.html %} Repite la consulta usando el FQDN completo para validar de forma determinista que el Pod vuelve a consultar el DNS del clúster.
+- {% include step_label.html id="s041" %} Repite la consulta usando el FQDN completo para validar de forma determinista que el Pod vuelve a consultar el DNS del clúster.
 
   ```bash
   kubectl exec pod-c1-dns-policy \
@@ -811,7 +830,7 @@ Address: 10.x.x.x
 
 ### Tarea 4.2. Diagnóstico de CoreDNS
 
-- {% include step_label.html %} Revisa los Pods y el Service de CoreDNS.
+- {% include step_label.html id="s042" %} Revisa los Pods y el Service de CoreDNS.
 
   ```bash
   kubectl get pods \
@@ -822,14 +841,14 @@ Address: 10.x.x.x
     -n kube-system
   ```
 
-- {% include step_label.html %} Comprueba que el Service `kube-dns` dispone de endpoints activos.
+- {% include step_label.html id="s043" %} Comprueba que el Service `kube-dns` dispone de endpoints activos.
 
   ```bash
   kubectl get endpoints kube-dns \
     -n kube-system
   ```
 
-- {% include step_label.html %} Utiliza `pod-c2-dns-debug` para resolver un Service del namespace y el Service `kubernetes.default`.
+- {% include step_label.html id="s044" %} Utiliza `pod-c2-dns-debug` para resolver un Service del namespace y el Service `kubernetes.default`.
 
   ```bash
   kubectl exec pod-c2-dns-debug \
@@ -842,7 +861,7 @@ Address: 10.x.x.x
     nslookup kubernetes.default.svc.cluster.local
   ```
 
-- {% include step_label.html %} Revisa `/etc/resolv.conf` y relaciona `nameserver` y `search` con el comportamiento observado.
+- {% include step_label.html id="s045" %} Revisa `/etc/resolv.conf` y relaciona `nameserver` y `search` con el comportamiento observado.
 
   ```bash
   kubectl exec pod-c2-dns-debug \
@@ -867,7 +886,10 @@ La última tarea verifica que los ocho escenarios se encuentran corregidos y que
 
 ### Tarea 5.1. Validar Pods y Deployment
 
-- {% include step_label.html %} Ejecuta las comprobaciones siguientes.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s046" %} Ejecuta las comprobaciones siguientes.
 
   ```bash
   kubectl get pods \
@@ -879,7 +901,7 @@ La última tarea verifica que los ocho escenarios se encuentran corregidos y que
 
 ### Tarea 5.2. Validar Services
 
-- {% include step_label.html %} Crea un Pod temporal para probar los tres Services corregidos.
+- {% include step_label.html id="s047" %} Crea un Pod temporal para probar los tres Services corregidos.
 
   ```bash
   kubectl run final-test \
@@ -901,7 +923,7 @@ La última tarea verifica que los ocho escenarios se encuentran corregidos y que
 
 ### Tarea 5.3. Ejecutar el resumen automático
 
-- {% include step_label.html %} Ejecuta el bloque siguiente para verificar estados, correcciones de Service, liveness probe, endpoints y DNS mediante FQDN completos.
+- {% include step_label.html id="s048" %} Ejecuta el bloque siguiente para verificar estados, correcciones de Service, liveness probe, endpoints y DNS mediante FQDN completos.
 
   ```bash
   echo "=== Validacion final de la Practica 8 ==="

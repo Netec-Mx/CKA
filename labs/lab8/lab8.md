@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l008
+tracking: true
+position: 8
 layout: lab
 title: "Práctica 5: Configuración de aplicaciones con ConfigMaps, Secrets y RBAC"
 permalink: /lab8/lab8/
@@ -52,23 +56,26 @@ En esta práctica crearás un namespace dedicado llamado `lab5` y un directorio 
 
 ### 🗂️ Preparar el entorno de trabajo
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que el motor continúa activo antes de utilizar Minikube.
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio correspondiente a este laboratorio.
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Abre **Docker Desktop** y confirma que el motor continúa activo antes de utilizar Minikube.
+
+- {% include step_label.html id="s002" %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio correspondiente a este laboratorio.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab5
   cd /c/LABS/kubernetes/lab5
   ```
 
-- {% include step_label.html %} Verifica que Minikube se encuentra disponible y que los nodos continúan en estado `Ready`.
+- {% include step_label.html id="s003" %} Verifica que Minikube se encuentra disponible y que los nodos continúan en estado `Ready`.
 
   ```bash
   minikube status
   kubectl get nodes
   ```
 
-- {% include step_label.html %} Crea el namespace `lab5` para mantener aislados todos los recursos utilizados durante esta práctica.
+- {% include step_label.html id="s004" %} Crea el namespace `lab5` para mantener aislados todos los recursos utilizados durante esta práctica.
 
   ```bash
   kubectl create namespace lab5
@@ -80,7 +87,7 @@ En esta práctica crearás un namespace dedicado llamado `lab5` y un directorio 
 namespace/lab5 created
 ```
 
-- {% include step_label.html %} Establece temporalmente `lab5` como namespace predeterminado del contexto activo para reducir errores durante los comandos posteriores.
+- {% include step_label.html id="s005" %} Establece temporalmente `lab5` como namespace predeterminado del contexto activo para reducir errores durante los comandos posteriores.
 
   ```bash
   kubectl config set-context --current --namespace=lab5
@@ -92,7 +99,7 @@ namespace/lab5 created
 Context "<nombre-del-contexto>" modified.
 ```
 
-- {% include step_label.html %} Confirma que el contexto actual utiliza `lab5` antes de comenzar con los recursos de configuración.
+- {% include step_label.html id="s006" %} Confirma que el contexto actual utiliza `lab5` antes de comenzar con los recursos de configuración.
 
   ```bash
   kubectl config view --minify | grep namespace
@@ -112,7 +119,10 @@ En esta tarea externalizarás configuración no sensible utilizando ConfigMaps. 
 
 ### Tarea 1.1. Crear un ConfigMap desde literales
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear `app-config` con tres parámetros básicos que simulan la configuración de una aplicación.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s007" %} Ejecuta el comando siguiente para crear `app-config` con tres parámetros básicos que simulan la configuración de una aplicación.
 
   ```bash
   kubectl create configmap app-config \
@@ -127,7 +137,7 @@ En esta tarea externalizarás configuración no sensible utilizando ConfigMaps. 
 configmap/app-config created
 ```
 
-- {% include step_label.html %} Comprueba las claves almacenadas y revisa sus valores para confirmar que Kubernetes registró correctamente el ConfigMap.
+- {% include step_label.html id="s008" %} Comprueba las claves almacenadas y revisa sus valores para confirmar que Kubernetes registró correctamente el ConfigMap.
 
   ```bash
   kubectl describe configmap app-config
@@ -154,13 +164,13 @@ debug
 
 ### Tarea 1.2. Crear un ConfigMap declarativo
 
-- {% include step_label.html %} Crea el archivo `configmap-nginx.yaml` para almacenar una página HTML y una configuración mínima de NGINX.
+- {% include step_label.html id="s009" %} Crea el archivo `configmap-nginx.yaml` para almacenar una página HTML y una configuración mínima de NGINX.
 
   ```bash
   touch configmap-nginx.yaml
   ```
 
-- {% include step_label.html %} Abre el archivo en VS Code y agrega el manifiesto siguiente.
+- {% include step_label.html id="s010" %} Abre el archivo en VS Code y agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: v1
@@ -198,7 +208,7 @@ debug
       </html>
   ```
 
-- {% include step_label.html %} Valida y aplica el manifiesto para crear el segundo ConfigMap.
+- {% include step_label.html id="s011" %} Valida y aplica el manifiesto para crear el segundo ConfigMap.
 
   ```bash
   kubectl apply --dry-run=client -f configmap-nginx.yaml
@@ -210,7 +220,7 @@ debug
 configmap/nginx-config created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el manifiesto validado para crear `nginx-config` dentro del namespace `lab5`.
+- {% include step_label.html id="s012" %} Aplica el manifiesto validado para crear `nginx-config` dentro del namespace `lab5`.
 
   ```bash
   kubectl apply -f configmap-nginx.yaml
@@ -224,13 +234,13 @@ configmap/nginx-config created
 
 ### Tarea 1.3. Consumir variables y archivos
 
-- {% include step_label.html %} Crea el archivo `pods-configmap.yaml`, donde definirás dos Pods que consumirán ConfigMaps mediante mecanismos diferentes.
+- {% include step_label.html id="s013" %} Crea el archivo `pods-configmap.yaml`, donde definirás dos Pods que consumirán ConfigMaps mediante mecanismos diferentes.
 
   ```bash
   touch pods-configmap.yaml
   ```
 
-- {% include step_label.html %} Agrega el contenido siguiente para inyectar `app-config` como variables de entorno y montar `nginx-config` como archivos.
+- {% include step_label.html id="s014" %} Agrega el contenido siguiente para inyectar `app-config` como variables de entorno y montar `nginx-config` como archivos.
 
   ```yaml
   apiVersion: v1
@@ -279,7 +289,7 @@ configmap/nginx-config created
           name: nginx-config
   ```
 
-- {% include step_label.html %} Aplica los Pods y espera hasta que ambos recursos estén listos antes de revisar la configuración inyectada.
+- {% include step_label.html id="s015" %} Aplica los Pods y espera hasta que ambos recursos estén listos antes de revisar la configuración inyectada.
 
   ```bash
   kubectl apply -f pods-configmap.yaml
@@ -292,7 +302,7 @@ pod/config-env-pod created
 pod/config-volume-pod created
 ```
 
-- {% include step_label.html %} Espera hasta que ambos Pods estén `Ready` para evitar validar configuración mientras los contenedores todavía están iniciando.
+- {% include step_label.html id="s016" %} Espera hasta que ambos Pods estén `Ready` para evitar validar configuración mientras los contenedores todavía están iniciando.
 
   ```bash
   kubectl wait --for=condition=Ready pod/config-env-pod --timeout=60s
@@ -306,7 +316,7 @@ pod/config-env-pod condition met
 pod/config-volume-pod condition met
 ```
 
-- {% include step_label.html %} Comprueba las variables de entorno cargadas en el primer Pod.
+- {% include step_label.html id="s017" %} Comprueba las variables de entorno cargadas en el primer Pod.
 
   ```bash
   kubectl exec config-env-pod -- \
@@ -319,7 +329,7 @@ pod/config-volume-pod condition met
 LOG_LEVEL=debug APP_PORT=8080 APP_ENV=development
 ```
 
-- {% include step_label.html %} Comprueba que el segundo Pod utiliza el contenido montado desde `nginx-config`.
+- {% include step_label.html id="s018" %} Comprueba que el segundo Pod utiliza el contenido montado desde `nginx-config`.
 
   ```bash
   kubectl exec config-volume-pod -- \
@@ -341,7 +351,7 @@ LOG_LEVEL=debug APP_PORT=8080 APP_ENV=development
 > **IMPORTANTE:** En Git Bash se utiliza `sh -c` para que `/usr/share/nginx/html/index.html` sea interpretado dentro del contenedor y no sea convertido a una ruta de Windows.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Verifica el endpoint `/health` directamente desde el contenedor NGINX.
+- {% include step_label.html id="s019" %} Verifica el endpoint `/health` directamente desde el contenedor NGINX.
 
   ```bash
   kubectl exec config-volume-pod -- \
@@ -371,7 +381,10 @@ En esta tarea almacenarás información sensible en Secrets y comprobarás cómo
 
 ### Tarea 2.1. Crear un Secret Opaque
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear credenciales ficticias de base de datos en un Secret de tipo `Opaque`.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s020" %} Ejecuta el comando siguiente para crear credenciales ficticias de base de datos en un Secret de tipo `Opaque`.
 
   ```bash
   kubectl create secret generic db-credentials \
@@ -386,7 +399,7 @@ En esta tarea almacenarás información sensible en Secrets y comprobarás cómo
 secret/db-credentials created
 ```
 
-- {% include step_label.html %} Consulta el Secret en YAML para observar que los valores del campo `data` están representados mediante base64.
+- {% include step_label.html id="s021" %} Consulta el Secret en YAML para observar que los valores del campo `data` están representados mediante base64.
 
   ```bash
   kubectl get secret db-credentials -o yaml
@@ -404,7 +417,7 @@ kind: Secret
 type: Opaque
 ```
 
-- {% include step_label.html %} Extrae y decodifica únicamente `DB_USER` para comprobar la relación entre el valor original y la representación almacenada.
+- {% include step_label.html id="s022" %} Extrae y decodifica únicamente `DB_USER` para comprobar la relación entre el valor original y la representación almacenada.
 
   ```bash
   kubectl get secret db-credentials \
@@ -424,7 +437,7 @@ labadmin
 
 ### Tarea 2.2. Crear un Secret TLS
 
-- {% include step_label.html %} Genera una clave privada y un certificado autofirmado de 30 días para demostrar la estructura requerida por un Secret `kubernetes.io/tls`.
+- {% include step_label.html id="s023" %} Genera una clave privada y un certificado autofirmado de 30 días para demostrar la estructura requerida por un Secret `kubernetes.io/tls`.
 
   ```bash
   MSYS_NO_PATHCONV=1 openssl req -x509 -nodes -days 30 \
@@ -437,7 +450,7 @@ labadmin
 > **IMPORTANTE:** `MSYS_NO_PATHCONV=1` evita que Git Bash transforme `/CN=...` en una ruta de Windows como `C:/Program Files/Git/...`.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Comprueba que OpenSSL generó los dos archivos antes de intentar crear el Secret TLS, evitando continuar con archivos inexistentes.
+- {% include step_label.html id="s024" %} Comprueba que OpenSSL generó los dos archivos antes de intentar crear el Secret TLS, evitando continuar con archivos inexistentes.
 
   ```bash
   ls -lh tls.crt tls.key
@@ -450,7 +463,7 @@ labadmin
 -rw-r--r-- ... tls.key
 ```
 
-- {% include step_label.html %} Inspecciona el sujeto y la vigencia del certificado para confirmar que el Common Name corresponde con `lab5.local`.
+- {% include step_label.html id="s025" %} Inspecciona el sujeto y la vigencia del certificado para confirmar que el Common Name corresponde con `lab5.local`.
 
   ```bash
   openssl x509 \
@@ -468,7 +481,7 @@ notBefore=...
 notAfter=...
 ```
 
-- {% include step_label.html %} Crea `tls-certificate` utilizando el certificado y la clave privada que acabas de validar.
+- {% include step_label.html id="s026" %} Crea `tls-certificate` utilizando el certificado y la clave privada que acabas de validar.
 
   ```bash
   kubectl create secret tls tls-certificate \
@@ -482,7 +495,7 @@ notAfter=...
 secret/tls-certificate created
 ```
 
-- {% include step_label.html %} Consulta únicamente el tipo del Secret para confirmar que Kubernetes lo registró como un recurso TLS y no como un Secret Opaque genérico.
+- {% include step_label.html id="s027" %} Consulta únicamente el tipo del Secret para confirmar que Kubernetes lo registró como un recurso TLS y no como un Secret Opaque genérico.
 
   ```bash
   kubectl get secret tls-certificate \
@@ -497,13 +510,13 @@ kubernetes.io/tls
 
 ### Tarea 2.3. Consumir el Secret desde un Pod
 
-- {% include step_label.html %} Crea `pod-secret.yaml` para consumir el mismo Secret como variables de entorno y como archivo proyectado de solo lectura.
+- {% include step_label.html id="s028" %} Crea `pod-secret.yaml` para consumir el mismo Secret como variables de entorno y como archivo proyectado de solo lectura.
 
   ```bash
   touch pod-secret.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente; la proyección `items` crea explícitamente el archivo `db-user`, evitando depender del nombre automático de la clave.
+- {% include step_label.html id="s029" %} Agrega el manifiesto siguiente; la proyección `items` crea explícitamente el archivo `db-user`, evitando depender del nombre automático de la clave.
 
   ```yaml
   apiVersion: v1
@@ -549,7 +562,7 @@ kubernetes.io/tls
     restartPolicy: Never
   ```
 
-- {% include step_label.html %} Valida el manifiesto localmente antes de crear el Pod, comprobando sintaxis y estructura sin modificar todavía el clúster.
+- {% include step_label.html id="s030" %} Valida el manifiesto localmente antes de crear el Pod, comprobando sintaxis y estructura sin modificar todavía el clúster.
 
   ```bash
   kubectl apply --dry-run=client -f pod-secret.yaml
@@ -561,7 +574,7 @@ kubernetes.io/tls
 pod/secret-demo-pod created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el manifiesto y espera a que el contenedor quede `Ready` antes de consultar las variables y el archivo proyectado.
+- {% include step_label.html id="s031" %} Aplica el manifiesto y espera a que el contenedor quede `Ready` antes de consultar las variables y el archivo proyectado.
 
   ```bash
   kubectl apply -f pod-secret.yaml
@@ -578,7 +591,7 @@ pod/secret-demo-pod created
 pod/secret-demo-pod condition met
 ```
 
-- {% include step_label.html %} Revisa los logs para confirmar que las variables se inyectaron y que el archivo proyectado contiene exactamente el mismo usuario.
+- {% include step_label.html id="s032" %} Revisa los logs para confirmar que las variables se inyectaron y que el archivo proyectado contiene exactamente el mismo usuario.
 
   ```bash
   kubectl logs secret-demo-pod
@@ -593,7 +606,7 @@ DB_PASSWORD definida correctamente
 Archivo DB_USER=labadmin
 ```
 
-- {% include step_label.html %} Valida directamente el archivo montado para demostrar que su contenido proviene del Secret y no únicamente de la variable `DB_USER`.
+- {% include step_label.html id="s033" %} Valida directamente el archivo montado para demostrar que su contenido proviene del Secret y no únicamente de la variable `DB_USER`.
 
   ```bash
   kubectl exec secret-demo-pod -- \
@@ -623,7 +636,10 @@ En esta tarea crearás una identidad de aplicación y definirás exactamente qu�
 
 ### Tarea 3.1. Crear la ServiceAccount
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear una ServiceAccount denominada `app-reader`, que representará una identidad independiente del usuario administrador.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s034" %} Ejecuta el comando siguiente para crear una ServiceAccount denominada `app-reader`, que representará una identidad independiente del usuario administrador.
 
   ```bash
   kubectl create serviceaccount app-reader
@@ -635,7 +651,7 @@ En esta tarea crearás una identidad de aplicación y definirás exactamente qu�
 serviceaccount/app-reader created
 ```
 
-- {% include step_label.html %} Comprueba que la nueva identidad aparece junto con la ServiceAccount `default` del namespace.
+- {% include step_label.html id="s035" %} Comprueba que la nueva identidad aparece junto con la ServiceAccount `default` del namespace.
 
   ```bash
   kubectl get serviceaccounts
@@ -654,13 +670,13 @@ default      0         ...
 
 ### Tarea 3.2. Crear el Role
 
-- {% include step_label.html %} Crea el archivo `role-reader.yaml` para definir permisos de solo lectura sobre Pods, logs y ConfigMaps.
+- {% include step_label.html id="s036" %} Crea el archivo `role-reader.yaml` para definir permisos de solo lectura sobre Pods, logs y ConfigMaps.
 
   ```bash
   touch role-reader.yaml
   ```
 
-- {% include step_label.html %} Agrega las reglas siguientes, excluyendo deliberadamente cualquier permiso sobre Secrets.
+- {% include step_label.html id="s037" %} Agrega las reglas siguientes, excluyendo deliberadamente cualquier permiso sobre Secrets.
 
   ```yaml
   apiVersion: rbac.authorization.k8s.io/v1
@@ -680,7 +696,7 @@ default      0         ...
       verbs: ["get", "list", "watch"]
   ```
 
-- {% include step_label.html %} Valida y aplica el Role antes de vincularlo con la ServiceAccount.
+- {% include step_label.html id="s038" %} Valida y aplica el Role antes de vincularlo con la ServiceAccount.
 
   ```bash
   kubectl apply --dry-run=client -f role-reader.yaml
@@ -692,7 +708,7 @@ default      0         ...
 role.rbac.authorization.k8s.io/pod-configmap-reader created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el Role después de validar su sintaxis.
+- {% include step_label.html id="s039" %} Aplica el Role después de validar su sintaxis.
 
   ```bash
   kubectl apply -f role-reader.yaml
@@ -706,13 +722,13 @@ role.rbac.authorization.k8s.io/pod-configmap-reader created
 
 ### Tarea 3.3. Crear el RoleBinding
 
-- {% include step_label.html %} Crea `rolebinding-reader.yaml` para asignar las reglas del Role `pod-configmap-reader` a la ServiceAccount `app-reader`.
+- {% include step_label.html id="s040" %} Crea `rolebinding-reader.yaml` para asignar las reglas del Role `pod-configmap-reader` a la ServiceAccount `app-reader`.
 
   ```bash
   touch rolebinding-reader.yaml
   ```
 
-- {% include step_label.html %} Agrega la relación siguiente entre la identidad y el Role.
+- {% include step_label.html id="s041" %} Agrega la relación siguiente entre la identidad y el Role.
 
   ```yaml
   apiVersion: rbac.authorization.k8s.io/v1
@@ -730,7 +746,7 @@ role.rbac.authorization.k8s.io/pod-configmap-reader created
     name: pod-configmap-reader
   ```
 
-- {% include step_label.html %} Aplica el RoleBinding y revisa su descripción para comprobar que subject y roleRef apuntan a los recursos correctos.
+- {% include step_label.html id="s042" %} Aplica el RoleBinding y revisa su descripción para comprobar que subject y roleRef apuntan a los recursos correctos.
 
   ```bash
   kubectl apply -f rolebinding-reader.yaml
@@ -742,7 +758,7 @@ role.rbac.authorization.k8s.io/pod-configmap-reader created
 rolebinding.rbac.authorization.k8s.io/app-reader-binding created
 ```
 
-- {% include step_label.html %} Describe el RoleBinding para verificar que `app-reader` es el subject y que `pod-configmap-reader` es el Role asignado.
+- {% include step_label.html id="s043" %} Describe el RoleBinding para verificar que `app-reader` es el subject y que `pod-configmap-reader` es el Role asignado.
 
   ```bash
   kubectl describe rolebinding app-reader-binding
@@ -779,7 +795,10 @@ En esta tarea comprobarás explícitamente qué operaciones puede realizar `app-
 
 ### Tarea 4.1. Validar operaciones permitidas
 
-- {% include step_label.html %} Ejecuta las consultas siguientes impersonando la ServiceAccount para comprobar que puede leer Pods y ConfigMaps dentro de `lab5`.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s044" %} Ejecuta las consultas siguientes impersonando la ServiceAccount para comprobar que puede leer Pods y ConfigMaps dentro de `lab5`.
 
   ```bash
   kubectl auth can-i get pods \
@@ -807,7 +826,7 @@ yes
 
 ### Tarea 4.2. Validar operaciones denegadas
 
-- {% include step_label.html %} Comprueba que la misma identidad no puede crear Pods, eliminar Pods ni consultar Secrets porque esos permisos nunca fueron incluidos en el Role.
+- {% include step_label.html id="s045" %} Comprueba que la misma identidad no puede crear Pods, eliminar Pods ni consultar Secrets porque esos permisos nunca fueron incluidos en el Role.
 
   ```bash
   kubectl auth can-i create pods \
@@ -835,7 +854,7 @@ no
 
 ### Tarea 4.3. Comprobar el alcance del namespace
 
-- {% include step_label.html %} Ejecuta la consulta siguiente para demostrar que el Role creado en `lab5` no otorga automáticamente permisos sobre Pods de `kube-system`.
+- {% include step_label.html id="s046" %} Ejecuta la consulta siguiente para demostrar que el Role creado en `lab5` no otorga automáticamente permisos sobre Pods de `kube-system`.
 
   ```bash
   kubectl auth can-i get pods \
@@ -849,7 +868,7 @@ no
 no
 ```
 
-- {% include step_label.html %} Utiliza `--list` para obtener una vista consolidada de las acciones que Kubernetes autoriza a la identidad dentro del namespace.
+- {% include step_label.html id="s047" %} Utiliza `--list` para obtener una vista consolidada de las acciones que Kubernetes autoriza a la identidad dentro del namespace.
 
   ```bash
   kubectl auth can-i --list \
@@ -885,13 +904,16 @@ En esta tarea asignarás la ServiceAccount al Pod y utilizarás su identidad rea
 
 ### Tarea 5.1. Crear el Pod con la ServiceAccount
 
-- {% include step_label.html %} Crea el archivo `pod-rbac.yaml`, que utilizará una imagen con kubectl y ejecutará consultas contra la API con la identidad `app-reader`.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s048" %} Crea el archivo `pod-rbac.yaml`, que utilizará una imagen con kubectl y ejecutará consultas contra la API con la identidad `app-reader`.
 
   ```bash
   touch pod-rbac.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente para montar automáticamente las credenciales de la ServiceAccount dentro del Pod.
+- {% include step_label.html id="s049" %} Agrega el manifiesto siguiente para montar automáticamente las credenciales de la ServiceAccount dentro del Pod.
 
   ```yaml
   apiVersion: v1
@@ -926,7 +948,7 @@ En esta tarea asignarás la ServiceAccount al Pod y utilizarás su identidad rea
             sleep 3600
   ```
 
-- {% include step_label.html %} Aplica el Pod y espera hasta que esté disponible antes de consultar sus logs.
+- {% include step_label.html id="s050" %} Aplica el Pod y espera hasta que esté disponible antes de consultar sus logs.
 
   ```bash
   kubectl apply -f pod-rbac.yaml
@@ -938,7 +960,7 @@ En esta tarea asignarás la ServiceAccount al Pod y utilizarás su identidad rea
 pod/rbac-demo-pod created
 ```
 
-- {% include step_label.html %} Espera hasta que el Pod esté `Ready` antes de leer los resultados generados por kubectl dentro del contenedor.
+- {% include step_label.html id="s051" %} Espera hasta que el Pod esté `Ready` antes de leer los resultados generados por kubectl dentro del contenedor.
 
   ```bash
   kubectl wait --for=condition=Ready pod/rbac-demo-pod --timeout=90s
@@ -950,7 +972,7 @@ pod/rbac-demo-pod created
 pod/rbac-demo-pod condition met
 ```
 
-- {% include step_label.html %} Revisa los logs y confirma que la ServiceAccount puede listar Pods y ConfigMaps, pero recibe `Forbidden` al intentar consultar Secrets.
+- {% include step_label.html id="s052" %} Revisa los logs y confirma que la ServiceAccount puede listar Pods y ConfigMaps, pero recibe `Forbidden` al intentar consultar Secrets.
 
   ```bash
   kubectl logs rbac-demo-pod
@@ -981,7 +1003,7 @@ La línea `Forbidden` es esperada y demuestra que el Role aplica mínimo privile
 
 ### Tarea 5.2. Verificar la identidad asignada
 
-- {% include step_label.html %} Ejecuta la consulta siguiente para comprobar que el Pod utiliza realmente `app-reader` y no la ServiceAccount predeterminada.
+- {% include step_label.html id="s053" %} Ejecuta la consulta siguiente para comprobar que el Pod utiliza realmente `app-reader` y no la ServiceAccount predeterminada.
 
   ```bash
   kubectl get pod rbac-demo-pod \
@@ -996,7 +1018,7 @@ app-reader
 
 ### Tarea 5.3. Ejecutar la validación final
 
-- {% include step_label.html %} Copia y ejecuta el bloque siguiente para comprobar los recursos principales y los permisos críticos de la práctica.
+- {% include step_label.html id="s054" %} Copia y ejecuta el bloque siguiente para comprobar los recursos principales y los permisos críticos de la práctica.
 
   ```bash
   echo "=== Verificacion final de la Practica 5 ==="

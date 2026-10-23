@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l010
+tracking: true
+position: 10
 layout: lab
 title: "Práctica 6: Exposición de aplicaciones con Services e Ingress"
 permalink: /lab10/lab10/
@@ -51,16 +55,19 @@ En esta práctica crearás un namespace independiente y los manifiestos necesari
 
 ### 🗂️ Preparar el entorno
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que el motor está activo antes de utilizar Minikube y desplegar los recursos.
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio del laboratorio.
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Abre **Docker Desktop** y confirma que el motor está activo antes de utilizar Minikube y desplegar los recursos.
+
+- {% include step_label.html id="s002" %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio del laboratorio.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab6
   cd /c/LABS/kubernetes/lab6
   ```
 
-- {% include step_label.html %} Confirma que Minikube continúa activo y que los tres nodos están disponibles antes de crear los workloads.
+- {% include step_label.html id="s003" %} Confirma que Minikube continúa activo y que los tres nodos están disponibles antes de crear los workloads.
 
   ```bash
   minikube status
@@ -84,7 +91,7 @@ minikube-m03   Ready    <none>          ...   ...
 
 Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos deben estar en estado `Ready`.
 
-- {% include step_label.html %} Crea el namespace `lab6` para aislar todos los Deployments, Services e Ingress utilizados durante esta práctica.
+- {% include step_label.html id="s004" %} Crea el namespace `lab6` para aislar todos los Deployments, Services e Ingress utilizados durante esta práctica.
 
   ```bash
   kubectl create namespace lab6
@@ -96,7 +103,7 @@ Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos d
 namespace/lab6 created
 ```
 
-- {% include step_label.html %} Configura `lab6` como namespace predeterminado del contexto activo para reducir errores en los comandos posteriores.
+- {% include step_label.html id="s005" %} Configura `lab6` como namespace predeterminado del contexto activo para reducir errores en los comandos posteriores.
 
   ```bash
   kubectl config set-context --current --namespace=lab6
@@ -108,7 +115,7 @@ namespace/lab6 created
 Context "<nombre-del-contexto>" modified.
 ```
 
-- {% include step_label.html %} Verifica que el contexto activo utiliza el namespace correcto para evitar crear recursos accidentalmente en `default`.
+- {% include step_label.html id="s006" %} Verifica que el contexto activo utiliza el namespace correcto para evitar crear recursos accidentalmente en `default`.
 
   ```bash
   kubectl config view --minify | grep namespace
@@ -128,13 +135,16 @@ En esta tarea crearás dos Deployments con respuestas HTML diferentes para poder
 
 ### Tarea 1.1. Crear el backend
 
-- {% include step_label.html %} Crea el archivo `backend.yaml` para definir dos réplicas de NGINX que representarán una API interna.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s007" %} Crea el archivo `backend.yaml` para definir dos réplicas de NGINX que representarán una API interna.
 
   ```bash
   touch backend.yaml
   ```
 
-- {% include step_label.html %} Abre el archivo en VS Code y agrega el Deployment siguiente.
+- {% include step_label.html id="s008" %} Abre el archivo en VS Code y agrega el Deployment siguiente.
 
   ```yaml
   apiVersion: apps/v1
@@ -170,13 +180,13 @@ En esta tarea crearás dos Deployments con respuestas HTML diferentes para poder
 
 ### Tarea 1.2. Crear el frontend
 
-- {% include step_label.html %} Crea el archivo `frontend.yaml` y define dos réplicas para representar la capa web de la aplicación.
+- {% include step_label.html id="s009" %} Crea el archivo `frontend.yaml` y define dos réplicas para representar la capa web de la aplicación.
 
   ```bash
   touch frontend.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente.
+- {% include step_label.html id="s010" %} Agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: apps/v1
@@ -212,7 +222,7 @@ En esta tarea crearás dos Deployments con respuestas HTML diferentes para poder
 
 ### Tarea 1.3. Aplicar y validar
 
-- {% include step_label.html %} Valida ambos manifiestos antes de crearlos para detectar problemas de sintaxis o estructura.
+- {% include step_label.html id="s011" %} Valida ambos manifiestos antes de crearlos para detectar problemas de sintaxis o estructura.
 
   ```bash
   kubectl apply --dry-run=client -f backend.yaml
@@ -226,7 +236,7 @@ deployment.apps/backend created (dry run)
 deployment.apps/frontend created (dry run)
 ```
 
-- {% include step_label.html %} Aplica los Deployments y espera hasta que sus réplicas se encuentren disponibles.
+- {% include step_label.html id="s012" %} Aplica los Deployments y espera hasta que sus réplicas se encuentren disponibles.
 
   ```bash
   kubectl apply -f backend.yaml
@@ -240,7 +250,7 @@ deployment.apps/backend created
 deployment.apps/frontend created
 ```
 
-- {% include step_label.html %} Espera a que ambos Deployments completen su rollout y alcancen las dos réplicas disponibles antes de probar conectividad.
+- {% include step_label.html id="s013" %} Espera a que ambos Deployments completen su rollout y alcancen las dos réplicas disponibles antes de probar conectividad.
 
   ```bash
   kubectl rollout status deployment/backend
@@ -254,7 +264,7 @@ deployment "backend" successfully rolled out
 deployment "frontend" successfully rolled out
 ```
 
-- {% include step_label.html %} Consulta los Pods con información extendida y observa sus IPs y nodos de ejecución.
+- {% include step_label.html id="s014" %} Consulta los Pods con información extendida y observa sus IPs y nodos de ejecución.
 
   ```bash
   kubectl get pods -o wide
@@ -286,13 +296,16 @@ En esta tarea proporcionarás identidades de red estables para frontend y backen
 
 ### Tarea 2.1. Crear los Services
 
-- {% include step_label.html %} Crea el archivo `services-clusterip.yaml` para definir un Service interno para cada componente.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s015" %} Crea el archivo `services-clusterip.yaml` para definir un Service interno para cada componente.
 
   ```bash
   touch services-clusterip.yaml
   ```
 
-- {% include step_label.html %} Agrega los dos Services siguientes, ambos de tipo `ClusterIP`.
+- {% include step_label.html id="s016" %} Agrega los dos Services siguientes, ambos de tipo `ClusterIP`.
 
   ```yaml
   apiVersion: v1
@@ -326,7 +339,7 @@ En esta tarea proporcionarás identidades de red estables para frontend y backen
         targetPort: 80
   ```
 
-- {% include step_label.html %} Valida y aplica los dos Services, comprobando primero que el manifiesto sea aceptado por el cliente de Kubernetes.
+- {% include step_label.html id="s017" %} Valida y aplica los dos Services, comprobando primero que el manifiesto sea aceptado por el cliente de Kubernetes.
 
   ```bash
   kubectl apply --dry-run=client -f services-clusterip.yaml
@@ -339,7 +352,7 @@ service/backend-svc created (dry run)
 service/frontend-svc created (dry run)
 ```
 
-- {% include step_label.html %} Aplica los Services y revisa las ClusterIP asignadas, que proporcionarán direcciones estables independientes de las IP de los Pods.
+- {% include step_label.html id="s018" %} Aplica los Services y revisa las ClusterIP asignadas, que proporcionarán direcciones estables independientes de las IP de los Pods.
 
   ```bash
   kubectl apply -f services-clusterip.yaml
@@ -354,7 +367,7 @@ backend-svc    ClusterIP   10.96.x.x     <none>        80/TCP
 frontend-svc   ClusterIP   10.96.y.y     <none>        80/TCP
 ```
 
-- {% include step_label.html %} Comprueba que cada Service descubrió dos backends antes de realizar solicitudes, validando la relación entre selectors y labels.
+- {% include step_label.html id="s019" %} Comprueba que cada Service descubrió dos backends antes de realizar solicitudes, validando la relación entre selectors y labels.
 
   ```bash
   kubectl get endpoints backend-svc frontend-svc
@@ -372,7 +385,7 @@ Las IP exactas cambian entre ejecuciones; cada Service debe mostrar dos endpoint
 
 ### Tarea 2.2. Validar conectividad interna básica
 
-- {% include step_label.html %} Obtén el nombre de uno de los Pods frontend para utilizarlo como origen de una prueba interna.
+- {% include step_label.html id="s020" %} Obtén el nombre de uno de los Pods frontend para utilizarlo como origen de una prueba interna.
 
   ```bash
   FRONTEND_POD=$(kubectl get pod \
@@ -388,7 +401,7 @@ Las IP exactas cambian entre ejecuciones; cada Service debe mostrar dos endpoint
 frontend-<hash>-<id>
 ```
 
-- {% include step_label.html %} Desde el Pod frontend, realiza una petición HTTP hacia `backend-svc` utilizando el nombre estable del Service.
+- {% include step_label.html id="s021" %} Desde el Pod frontend, realiza una petición HTTP hacia `backend-svc` utilizando el nombre estable del Service.
 
   ```bash
   kubectl exec "$FRONTEND_POD" -- \
@@ -401,7 +414,7 @@ frontend-<hash>-<id>
 <html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
 ```
 
-- {% include step_label.html %} Ejecuta varias solicitudes para comprobar que el Service puede dirigir tráfico hacia las réplicas disponibles del backend.
+- {% include step_label.html id="s022" %} Ejecuta varias solicitudes para comprobar que el Service puede dirigir tráfico hacia las réplicas disponibles del backend.
 
   ```bash
   for i in 1 2 3 4; do
@@ -435,13 +448,16 @@ En esta tarea crearás un segundo Service para frontend que pueda ser alcanzado 
 
 ### Tarea 3.1. Crear el NodePort
 
-- {% include step_label.html %} Crea el archivo `frontend-nodeport.yaml` y define un Service que exponga el frontend mediante el puerto `30080`.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s023" %} Crea el archivo `frontend-nodeport.yaml` y define un Service que exponga el frontend mediante el puerto `30080`.
 
   ```bash
   touch frontend-nodeport.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente.
+- {% include step_label.html id="s024" %} Agrega el manifiesto siguiente.
 
   ```yaml
   apiVersion: v1
@@ -461,7 +477,7 @@ En esta tarea crearás un segundo Service para frontend que pueda ser alcanzado 
         nodePort: 30080
   ```
 
-- {% include step_label.html %} Valida el manifiesto antes de crearlo para confirmar que `30080` pertenece al rango estándar de NodePort y que la estructura es correcta.
+- {% include step_label.html id="s025" %} Valida el manifiesto antes de crearlo para confirmar que `30080` pertenece al rango estándar de NodePort y que la estructura es correcta.
 
   ```bash
   kubectl apply --dry-run=client -f frontend-nodeport.yaml
@@ -473,7 +489,7 @@ En esta tarea crearás un segundo Service para frontend que pueda ser alcanzado 
 service/frontend-nodeport created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el manifiesto y comprueba la relación entre `port: 80`, `targetPort: 80` y el puerto externo `30080`.
+- {% include step_label.html id="s026" %} Aplica el manifiesto y comprueba la relación entre `port: 80`, `targetPort: 80` y el puerto externo `30080`.
 
   ```bash
   kubectl apply -f frontend-nodeport.yaml
@@ -487,7 +503,7 @@ NAME                TYPE       CLUSTER-IP   EXTERNAL-IP   PORT(S)
 frontend-nodeport   NodePort   10.96.x.x    <none>        80:30080/TCP
 ```
 
-- {% include step_label.html %} Comprueba que el NodePort selecciona las dos réplicas frontend antes de intentar acceder desde el equipo host.
+- {% include step_label.html id="s027" %} Comprueba que el NodePort selecciona las dos réplicas frontend antes de intentar acceder desde el equipo host.
 
   ```bash
   kubectl get endpoints frontend-nodeport
@@ -502,7 +518,7 @@ frontend-nodeport   10.244.x.x:80,10.244.x.x:80
 
 ### Tarea 3.2. Obtener una URL accesible desde el host
 
-- {% include step_label.html %} Abre una segunda terminal Git Bash y ejecuta `minikube service --url`; con el driver Docker puede crearse un túnel local que debe permanecer activo durante la prueba.
+- {% include step_label.html id="s028" %} Abre una segunda terminal Git Bash y ejecuta `minikube service --url`; con el driver Docker puede crearse un túnel local que debe permanecer activo durante la prueba.
 
   ```bash
   minikube service frontend-nodeport \
@@ -521,7 +537,7 @@ En algunos entornos puede devolverse una dirección basada en la IP de Minikube.
 > **IMPORTANTE:** Si el comando muestra mensajes indicando que la terminal debe permanecer abierta por utilizar el driver Docker, no la cierres hasta terminar la prueba con `curl`.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Copia la URL generada y, desde la terminal principal, realiza una solicitud HTTP para comprobar acceso externo hacia el frontend.
+- {% include step_label.html id="s029" %} Copia la URL generada y, desde la terminal principal, realiza una solicitud HTTP para comprobar acceso externo hacia el frontend.
 
   ```bash
   curl -s URL_DEVUELTA_POR_MINIKUBE
@@ -539,7 +555,7 @@ La respuesta debe contener:
 FRONTEND WEB
 ```
 
-- {% include step_label.html %} Regresa a la segunda terminal y presiona `Ctrl+C` si `minikube service --url` mantiene un túnel activo después de completar la validación.
+- {% include step_label.html id="s030" %} Regresa a la segunda terminal y presiona `Ctrl+C` si `minikube service --url` mantiene un túnel activo después de completar la validación.
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -553,7 +569,10 @@ En esta tarea utilizarás Ingress para consolidar la exposición HTTP de fronten
 
 ### Tarea 4.1. Habilitar el Ingress Controller
 
-- {% include step_label.html %} Habilita el addon `ingress` de Minikube para instalar el NGINX Ingress Controller utilizado por las reglas HTTP.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s031" %} Habilita el addon `ingress` de Minikube para instalar el NGINX Ingress Controller utilizado por las reglas HTTP.
 
   ```bash
   minikube addons enable ingress
@@ -567,7 +586,7 @@ The 'ingress' addon is enabled
 
 El texto exacto puede variar entre versiones de Minikube.
 
-- {% include step_label.html %} Espera hasta que el Deployment del controlador indique que está disponible antes de aplicar reglas de Ingress.
+- {% include step_label.html id="s032" %} Espera hasta que el Deployment del controlador indique que está disponible antes de aplicar reglas de Ingress.
 
   ```bash
   kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=180s
@@ -579,7 +598,7 @@ El texto exacto puede variar entre versiones de Minikube.
 deployment "ingress-nginx-controller" successfully rolled out
 ```
 
-- {% include step_label.html %} Comprueba que el controlador y la clase `nginx` existen en el clúster.
+- {% include step_label.html id="s033" %} Comprueba que el controlador y la clase `nginx` existen en el clúster.
 
   ```bash
   kubectl get pods -n ingress-nginx
@@ -598,13 +617,13 @@ nginx   k8s.io/ingress-nginx
 
 ### Tarea 4.2. Crear reglas para frontend y backend
 
-- {% include step_label.html %} Crea el archivo `ingress.yaml`, que enviará `/` hacia frontend y `/api` hacia backend.
+- {% include step_label.html id="s034" %} Crea el archivo `ingress.yaml`, que enviará `/` hacia frontend y `/api` hacia backend.
 
   ```bash
   touch ingress.yaml
   ```
 
-- {% include step_label.html %} Agrega el manifiesto siguiente utilizando `ingressClassName: nginx`.
+- {% include step_label.html id="s035" %} Agrega el manifiesto siguiente utilizando `ingressClassName: nginx`.
 
   ```yaml
   apiVersion: networking.k8s.io/v1
@@ -636,7 +655,7 @@ nginx   k8s.io/ingress-nginx
                     number: 80
   ```
 
-- {% include step_label.html %} Valida y aplica el recurso Ingress para registrar las reglas de enrutamiento en el controlador NGINX.
+- {% include step_label.html id="s036" %} Valida y aplica el recurso Ingress para registrar las reglas de enrutamiento en el controlador NGINX.
 
   ```bash
   kubectl apply --dry-run=client -f ingress.yaml
@@ -648,7 +667,7 @@ nginx   k8s.io/ingress-nginx
 ingress.networking.k8s.io/app-ingress created (dry run)
 ```
 
-- {% include step_label.html %} Aplica el Ingress después de validar el archivo para registrar las reglas `/` y `/api` en el clúster.
+- {% include step_label.html id="s037" %} Aplica el Ingress después de validar el archivo para registrar las reglas `/` y `/api` en el clúster.
 
   ```bash
   kubectl apply -f ingress.yaml
@@ -660,7 +679,7 @@ ingress.networking.k8s.io/app-ingress created (dry run)
 ingress.networking.k8s.io/app-ingress created
 ```
 
-- {% include step_label.html %} Revisa el recurso y confirma que cada path apunta al Service esperado.
+- {% include step_label.html id="s038" %} Revisa el recurso y confirma que cada path apunta al Service esperado.
 
   ```bash
   kubectl get ingress app-ingress
@@ -683,7 +702,7 @@ La salida puede incluir dirección, annotations y Events adicionales.
 
 ### Tarea 4.3. Probar Ingress desde el host
 
-- {% include step_label.html %} Abre una segunda terminal Git Bash y crea un port-forward temporal hacia el Service del Ingress Controller.
+- {% include step_label.html id="s039" %} Abre una segunda terminal Git Bash y crea un port-forward temporal hacia el Service del Ingress Controller.
 
   ```bash
   kubectl port-forward \
@@ -704,7 +723,7 @@ Puede aparecer una sola línea o ambas, según la configuración de red del host
 > **IMPORTANTE:** Mantén esta segunda terminal abierta mientras realizas las pruebas siguientes. `port-forward` solo se utiliza como puente local hacia el controlador; las decisiones `/` y `/api` siguen siendo realizadas por Ingress.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Desde la terminal principal, realiza una petición a `/` para comprobar que Ingress dirige la solicitud hacia `frontend-svc`.
+- {% include step_label.html id="s040" %} Desde la terminal principal, realiza una petición a `/` para comprobar que Ingress dirige la solicitud hacia `frontend-svc`.
 
   ```bash
   curl -s http://127.0.0.1:8080/
@@ -718,7 +737,7 @@ Puede aparecer una sola línea o ambas, según la configuración de red del host
 
 La respuesta debe contener `FRONTEND WEB`.
 
-- {% include step_label.html %} Realiza una segunda petición a `/api` para comprobar que la regla correspondiente dirige el tráfico hacia `backend-svc`.
+- {% include step_label.html id="s041" %} Realiza una segunda petición a `/api` para comprobar que la regla correspondiente dirige el tráfico hacia `backend-svc`.
 
   ```bash
   curl -s http://127.0.0.1:8080/api
@@ -732,7 +751,7 @@ La respuesta debe contener `FRONTEND WEB`.
 
 La respuesta debe contener `BACKEND API`.
 
-- {% include step_label.html %} Regresa a la segunda terminal y presiona `Ctrl+C` para cerrar el port-forward después de completar las pruebas.
+- {% include step_label.html id="s042" %} Regresa a la segunda terminal y presiona `Ctrl+C` para cerrar el port-forward después de completar las pruebas.
 
 > **Concepto clave:** Ingress no reemplaza los Services. El controlador recibe la petición HTTP, evalúa las reglas y reenvía el tráfico al Service configurado como backend.
 {: .lab-note .info .compact}
@@ -749,7 +768,10 @@ En esta tarea comprobarás que los componentes creados durante la práctica perm
 
 ### Tarea 5.1. Revisar recursos
 
-- {% include step_label.html %} Ejecuta la consulta siguiente para obtener una vista consolidada de Deployments, Pods y Services del namespace.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s043" %} Ejecuta la consulta siguiente para obtener una vista consolidada de Deployments, Pods y Services del namespace.
 
   ```bash
   kubectl get all -n lab6
@@ -759,7 +781,7 @@ En esta tarea comprobarás que los componentes creados durante la práctica perm
 
 La consulta debe mostrar dos Deployments, cuatro Pods `Running` y los Services `backend-svc`, `frontend-svc` y `frontend-nodeport`.
 
-- {% include step_label.html %} Comprueba que el Ingress existe y utiliza la clase `nginx`.
+- {% include step_label.html id="s044" %} Comprueba que el Ingress existe y utiliza la clase `nginx`.
 
   ```bash
   kubectl get ingress app-ingress -n lab6 -o wide
@@ -776,7 +798,7 @@ El campo `ADDRESS` puede tardar en poblarse o permanecer vacío en Minikube; la 
 
 ### Tarea 5.2. Ejecutar la validación automática
 
-- {% include step_label.html %} Copia y ejecuta el bloque siguiente para validar réplicas, tipos de Service, NodePort, endpoints e Ingress sin depender de valores de IP dinámicos.
+- {% include step_label.html id="s045" %} Copia y ejecuta el bloque siguiente para validar réplicas, tipos de Service, NodePort, endpoints e Ingress sin depender de valores de IP dinámicos.
 
   ```bash
   echo "=== Verificacion final de la Practica 6 ==="

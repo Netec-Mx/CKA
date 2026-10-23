@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l004
+tracking: true
+position: 4
 layout: lab
 title: "Práctica complementaria 2.1: Diagnóstico con labels, selectors y ReplicaSets"
 permalink: /lab4/lab4/
@@ -79,7 +83,10 @@ Total               20 min
 
 ## Paso 1. Confirmar el estado base
 
-- {% include step_label.html %} Ubícate en el directorio utilizado por la Práctica 2 y confirma que `webapp` continúa disponible.
+
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Ubícate en el directorio utilizado por la Práctica 2 y confirma que `webapp` continúa disponible.
 
   ```bash
   cd /c/LABS/kubernetes/lab2
@@ -100,19 +107,22 @@ El Deployment debe tener sus réplicas disponibles y deben existir ReplicaSets a
 
 ## Paso 2. Aplicar el cambio que originó el incidente
 
-- {% include step_label.html %} Descarga el archivo en la siguiente ruta.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s002" %} Descarga el archivo en la siguiente ruta.
 
   ```bash
   curl -L -o lab2-1-scenario.sh https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab4/lab2-1-scenario.sh
   ```
 
-- {% include step_label.html %} Ejecuta el escenario proporcionado sin abrir el archivo ni revisar previamente su contenido.
+- {% include step_label.html id="s003" %} Ejecuta el escenario proporcionado sin abrir el archivo ni revisar previamente su contenido.
 
   ```bash
   bash lab2-1-scenario.sh
   ```
 
-- {% include step_label.html %} Espera unos segundos para permitir que el controlador reaccione al cambio aplicado.
+- {% include step_label.html id="s004" %} Espera unos segundos para permitir que el controlador reaccione al cambio aplicado.
 
   ```bash
   sleep 5
@@ -131,7 +141,10 @@ No modifiques recursos todavía. Primero determina qué objetos existen y cómo 
 
 ## Reto 1.1. Revisar el Deployment
 
-- {% include step_label.html %} Comprueba el estado deseado y disponible de `webapp`.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s005" %} Comprueba el estado deseado y disponible de `webapp`.
 
   ```bash
   kubectl get deployment webapp
@@ -149,7 +162,10 @@ Responde:
 
 ## Reto 1.2. Analizar los Pods visibles con el selector habitual
 
-- {% include step_label.html %} Consulta únicamente los Pods que todavía coinciden con `app=webapp`.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s006" %} Consulta únicamente los Pods que todavía coinciden con `app=webapp`.
 
   ```bash
   kubectl get pods \
@@ -157,7 +173,7 @@ Responde:
     -o wide
   ```
 
-- {% include step_label.html %} Consulta después todos los Pods del namespace sin selector.
+- {% include step_label.html id="s007" %} Consulta después todos los Pods del namespace sin selector.
 
   ```bash
   kubectl get pods \
@@ -177,7 +193,10 @@ Responde:
 
 ## Reto 1.3. Identificar propietarios
 
-- {% include step_label.html %} Consulta `ownerReferences` para diferenciar Pods administrados de recursos que quedaron fuera del conjunto efectivo.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s008" %} Consulta `ownerReferences` para diferenciar Pods administrados de recursos que quedaron fuera del conjunto efectivo.
 
   ```bash
   kubectl get pods \
@@ -208,14 +227,17 @@ Ahora relaciona el comportamiento observado con los selectors y el estado desead
 
 ## Reto 2.1. Identificar selector y Pod template
 
-- {% include step_label.html %} Obtén el selector estable del Deployment.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s009" %} Obtén el selector estable del Deployment.
 
   ```bash
   kubectl get deployment webapp \
     -o jsonpath='{.spec.selector.matchLabels}{"\n"}'
   ```
 
-- {% include step_label.html %} Consulta los labels definidos en el Pod template actual.
+- {% include step_label.html id="s010" %} Consulta los labels definidos en el Pod template actual.
 
   ```bash
   kubectl get deployment webapp \
@@ -226,7 +248,10 @@ Ahora relaciona el comportamiento observado con los selectors y el estado desead
 
 ## Reto 2.2. Analizar ReplicaSets activos e históricos
 
-- {% include step_label.html %} Muestra todos los ReplicaSets de `webapp` y diferencia el activo de las revisiones históricas.
+
+{% assign tracking_task_id = "t007" %}
+
+- {% include step_label.html id="s011" %} Muestra todos los ReplicaSets de `webapp` y diferencia el activo de las revisiones históricas.
 
   ```bash
   kubectl get replicasets \
@@ -234,7 +259,7 @@ Ahora relaciona el comportamiento observado con los selectors y el estado desead
     --show-labels
   ```
 
-- {% include step_label.html %} Consulta el historial del Deployment.
+- {% include step_label.html id="s012" %} Consulta el historial del Deployment.
 
   ```bash
   kubectl rollout history deployment/webapp
@@ -302,7 +327,10 @@ Debes corregir el incidente sin cambiar la definición del Deployment.
 
 ## Reto 3.1. Identificar el recurso que debe retirarse
 
-- {% include step_label.html %} Localiza el Pod que permanece fuera del selector `app=webapp`.
+
+{% assign tracking_task_id = "t008" %}
+
+- {% include step_label.html id="s013" %} Localiza el Pod que permanece fuera del selector `app=webapp`.
 
 ### Pistas permitidas
 
@@ -319,7 +347,10 @@ kubectl get pods -l 'app!=webapp'
 
 ## Reto 3.2. Aplicar la corrección mínima
 
-- {% include step_label.html %} Elimina únicamente el Pod que quedó fuera del conjunto administrado.
+
+{% assign tracking_task_id = "t009" %}
+
+- {% include step_label.html id="s014" %} Elimina únicamente el Pod que quedó fuera del conjunto administrado.
 
 No se proporciona el comando exacto: debes construirlo a partir del nombre identificado durante el diagnóstico.
 
@@ -327,7 +358,10 @@ No se proporciona el comando exacto: debes construirlo a partir del nombre ident
 
 ## Reto 3.3. Validar recuperación
 
-- {% include step_label.html %} Confirma que únicamente permanecen los Pods administrados con `app=webapp`.
+
+{% assign tracking_task_id = "t010" %}
+
+- {% include step_label.html id="s015" %} Confirma que únicamente permanecen los Pods administrados con `app=webapp`.
 
   ```bash
   kubectl get pods \
@@ -335,14 +369,14 @@ No se proporciona el comando exacto: debes construirlo a partir del nombre ident
     --show-labels
   ```
 
-- {% include step_label.html %} Revisa el ReplicaSet activo.
+- {% include step_label.html id="s016" %} Revisa el ReplicaSet activo.
 
   ```bash
   kubectl get replicasets \
     -l app=webapp
   ```
 
-- {% include step_label.html %} Confirma que el Deployment se encuentra estable y sin operaciones pendientes.
+- {% include step_label.html id="s017" %} Confirma que el Deployment se encuentra estable y sin operaciones pendientes.
 
   ```bash
   kubectl rollout status deployment/webapp

@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l015
+tracking: true
+position: 15
 layout: lab
 title: "Práctica 9: Simulación integral tipo CKA"
 permalink: /lab15/lab15/
@@ -112,7 +116,10 @@ T10 [ ] 10 pts
 
 ## Preparación 1. Verificar el clúster
 
-- {% include step_label.html %} Confirma que Minikube tiene tres nodos disponibles.
+
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Confirma que Minikube tiene tres nodos disponibles.
 
   ```bash
   minikube status
@@ -129,7 +136,10 @@ minikube-m03
 
 ## Preparación 2. Verificar Ingress y almacenamiento
 
-- {% include step_label.html %} Asegura que el Ingress Controller y el provisioner de almacenamiento estén disponibles antes de iniciar.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s002" %} Asegura que el Ingress Controller y el provisioner de almacenamiento estén disponibles antes de iniciar.
 
   ```bash
   minikube addons enable ingress
@@ -137,7 +147,7 @@ minikube-m03
   minikube addons enable default-storageclass
   ```
 
-- {% include step_label.html %} Espera a que el controlador Ingress quede disponible.
+- {% include step_label.html id="s003" %} Espera a que el controlador Ingress quede disponible.
 
   ```bash
   kubectl rollout status \
@@ -148,7 +158,10 @@ minikube-m03
 
 ## Preparación 3. Crear directorio
 
-- {% include step_label.html %} Crea el directorio de trabajo.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s004" %} Crea el directorio de trabajo.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab9
@@ -157,7 +170,10 @@ minikube-m03
 
 ## Preparación 4. Crear alias de sesión
 
-- {% include step_label.html %} Define un alias temporal para reducir escritura durante el examen.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s005" %} Define un alias temporal para reducir escritura durante el examen.
 
   ```bash
   alias k=kubectl
@@ -168,13 +184,16 @@ minikube-m03
 
 ## Preparación 5. Crear escenarios iniciales
 
-- {% include step_label.html %} Crea el archivo `exam-setup.yaml`.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s006" %} Crea el archivo `exam-setup.yaml`.
 
   ```bash
   touch exam-setup.yaml
   ```
 
-- {% include step_label.html %} Agrega el contenido siguiente sin modificar los errores intencionales.
+- {% include step_label.html id="s007" %} Agrega el contenido siguiente sin modificar los errores intencionales.
 
   ```yaml
   apiVersion: v1
@@ -369,13 +388,13 @@ minikube-m03
         targetPort: 80
   ```
 
-- {% include step_label.html %} Aplica la configuración inicial.
+- {% include step_label.html id="s008" %} Aplica la configuración inicial.
 
   ```bash
   kubectl apply -f exam-setup.yaml
   ```
 
-- {% include step_label.html %} Espera 20 segundos y observa únicamente el estado general, sin resolver todavía los fallos.
+- {% include step_label.html id="s009" %} Espera 20 segundos y observa únicamente el estado general, sin resolver todavía los fallos.
 
   ```bash
   sleep 20
@@ -998,7 +1017,10 @@ Cuando el cronómetro llegue a cero:
 
 ## Crear el evaluador
 
-- {% include step_label.html %} Crea `validate-exam.sh` con el contenido siguiente.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s010" %} Crea `validate-exam.sh` con el contenido siguiente.
 
   ```bash
   cat > validate-exam.sh <<'EOF'
@@ -1219,7 +1241,7 @@ Cuando el cronómetro llegue a cero:
   EOF
   ```
 
-- {% include step_label.html %} Ejecuta el evaluador.
+- {% include step_label.html id="s011" %} Ejecuta el evaluador.
 
   ```bash
   chmod +x validate-exam.sh

@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l009
+tracking: true
+position: 9
 layout: lab
 title: "Práctica complementaria 5.1: Diagnóstico y ajuste de permisos con ServiceAccount"
 permalink: /lab9/lab9/
@@ -73,7 +77,10 @@ Total               20 min
 
 ### Confirmar los recursos reutilizados
 
-- {% include step_label.html %} Verifica que el namespace `lab5` continúa activo, porque todos los objetos RBAC de la práctica principal fueron creados dentro de ese ámbito.
+
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Verifica que el namespace `lab5` continúa activo, porque todos los objetos RBAC de la práctica principal fueron creados dentro de ese ámbito.
 
   ```bash
   kubectl get namespace lab5
@@ -86,7 +93,7 @@ NAME   STATUS   AGE
 lab5   Active   ...
 ```
 
-- {% include step_label.html %} Comprueba que la ServiceAccount y el RoleBinding siguen disponibles antes de modificar cualquier permiso.
+- {% include step_label.html id="s002" %} Comprueba que la ServiceAccount y el RoleBinding siguen disponibles antes de modificar cualquier permiso.
 
   ```bash
   kubectl get serviceaccount app-reader \
@@ -111,7 +118,7 @@ app-reader-binding   Role/pod-configmap-reader    ...
 
 ### Aplicar el estado inicial del reto
 
-- {% include step_label.html %} Descarga `rbac-scenario5-1.yaml`; el archivo restablece únicamente el Role utilizado en el ejercicio para garantizar un punto de partida conocido.
+- {% include step_label.html id="s003" %} Descarga `rbac-scenario5-1.yaml`; el archivo restablece únicamente el Role utilizado en el ejercicio para garantizar un punto de partida conocido.
 
   ```bash
   curl -L \
@@ -122,7 +129,7 @@ app-reader-binding   Role/pod-configmap-reader    ...
 > **IMPORTANTE:** No abras ni modifiques el archivo antes de completar el primer reto. La causa debe identificarse mediante los permisos efectivos de Kubernetes.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Aplica el escenario para dejar `pod-configmap-reader` en el estado base esperado antes de iniciar el diagnóstico.
+- {% include step_label.html id="s004" %} Aplica el escenario para dejar `pod-configmap-reader` en el estado base esperado antes de iniciar el diagnóstico.
 
   ```bash
   kubectl apply -f rbac-scenario5-1.yaml
@@ -147,7 +154,7 @@ En este reto no debes modificar RBAC. Primero construye evidencia suficiente par
 
 ### Reto 1.1. Comprobar permisos conocidos
 
-- {% include step_label.html %} Verifica que `app-reader` conserva lectura de Pods, confirmando que la identidad y su RoleBinding funcionan antes de investigar el nuevo requerimiento.
+- {% include step_label.html id="s005" %} Verifica que `app-reader` conserva lectura de Pods, confirmando que la identidad y su RoleBinding funcionan antes de investigar el nuevo requerimiento.
 
   ```bash
   kubectl auth can-i get pods \
@@ -161,7 +168,7 @@ En este reto no debes modificar RBAC. Primero construye evidencia suficiente par
 yes
 ```
 
-- {% include step_label.html %} Comprueba también lectura de ConfigMaps para validar otra autorización definida originalmente en `pod-configmap-reader`.
+- {% include step_label.html id="s006" %} Comprueba también lectura de ConfigMaps para validar otra autorización definida originalmente en `pod-configmap-reader`.
 
   ```bash
   kubectl auth can-i get configmaps \
@@ -177,7 +184,7 @@ yes
 
 ### Reto 1.2. Reproducir el nuevo problema
 
-- {% include step_label.html %} Consulta si la identidad puede obtener Services dentro de `lab5`; esta prueba reproduce directamente la operación requerida por la nueva funcionalidad.
+- {% include step_label.html id="s007" %} Consulta si la identidad puede obtener Services dentro de `lab5`; esta prueba reproduce directamente la operación requerida por la nueva funcionalidad.
 
   ```bash
   kubectl auth can-i get services \
@@ -185,7 +192,7 @@ yes
     --namespace=lab5
   ```
 
-- {% include step_label.html %} Comprueba también `list services`, porque una función de descubrimiento normalmente necesita enumerar los Services disponibles y no solo consultar uno conocido.
+- {% include step_label.html id="s008" %} Comprueba también `list services`, porque una función de descubrimiento normalmente necesita enumerar los Services disponibles y no solo consultar uno conocido.
 
   ```bash
   kubectl auth can-i list services \
@@ -202,7 +209,7 @@ no
 
 ### Reto 1.3. Verificar límites sensibles
 
-- {% include step_label.html %} Confirma que la ServiceAccount no puede leer Secrets, estableciendo una línea base de seguridad que deberá conservarse después de la corrección.
+- {% include step_label.html id="s009" %} Confirma que la ServiceAccount no puede leer Secrets, estableciendo una línea base de seguridad que deberá conservarse después de la corrección.
 
   ```bash
   kubectl auth can-i get secrets \
@@ -210,7 +217,7 @@ no
     --namespace=lab5
   ```
 
-- {% include step_label.html %} Comprueba que tampoco puede crear Pods, demostrando que el Role actual mantiene separados los permisos de lectura y escritura.
+- {% include step_label.html id="s010" %} Comprueba que tampoco puede crear Pods, demostrando que el Role actual mantiene separados los permisos de lectura y escritura.
 
   ```bash
   kubectl auth can-i create pods \
@@ -218,7 +225,7 @@ no
     --namespace=lab5
   ```
 
-- {% include step_label.html %} Verifica que un Role de `lab5` no otorga acceso equivalente sobre Pods de `kube-system`.
+- {% include step_label.html id="s011" %} Verifica que un Role de `lab5` no otorga acceso equivalente sobre Pods de `kube-system`.
 
   ```bash
   kubectl auth can-i get pods \
@@ -263,7 +270,7 @@ Ahora debes localizar la regla responsable y aplicar solamente los permisos requ
 
 ### Reto 2.1. Inspeccionar el Role efectivo
 
-- {% include step_label.html %} Describe `pod-configmap-reader` para identificar los recursos y verbos actualmente autorizados sin depender de una copia local del manifiesto.
+- {% include step_label.html id="s012" %} Describe `pod-configmap-reader` para identificar los recursos y verbos actualmente autorizados sin depender de una copia local del manifiesto.
 
   ```bash
   kubectl describe role pod-configmap-reader \
@@ -280,7 +287,7 @@ pods/log       [get]
 configmaps     [get list watch]
 ```
 
-- {% include step_label.html %} Consulta el YAML efectivo para relacionar cada regla con `apiGroups`, `resources` y `verbs`.
+- {% include step_label.html id="s013" %} Consulta el YAML efectivo para relacionar cada regla con `apiGroups`, `resources` y `verbs`.
 
   ```bash
   kubectl get role pod-configmap-reader \
@@ -313,7 +320,7 @@ verbos exclusivamente de lectura
 
 ### Reto 2.3. Corregir el manifiesto del escenario
 
-- {% include step_label.html %} Abre `rbac-scenario5-1.yaml` únicamente después de haber formulado el diagnóstico y agrega la regla mínima necesaria para Services.
+- {% include step_label.html id="s014" %} Abre `rbac-scenario5-1.yaml` únicamente después de haber formulado el diagnóstico y agrega la regla mínima necesaria para Services.
 
   ```bash
   code rbac-scenario5-1.yaml
@@ -322,7 +329,7 @@ verbos exclusivamente de lectura
 > **IMPORTANTE:** No reemplaces los recursos o verbos existentes por `*`. Tampoco cambies el Role por ClusterRole.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Valida la sintaxis del archivo corregido antes de modificar el Role almacenado en Kubernetes.
+- {% include step_label.html id="s015" %} Valida la sintaxis del archivo corregido antes de modificar el Role almacenado en Kubernetes.
 
   ```bash
   kubectl apply \
@@ -336,7 +343,7 @@ verbos exclusivamente de lectura
 role.rbac.authorization.k8s.io/pod-configmap-reader configured (dry run)
 ```
 
-- {% include step_label.html %} Aplica el manifiesto corregido para actualizar exclusivamente las reglas del Role dentro de `lab5`.
+- {% include step_label.html id="s016" %} Aplica el manifiesto corregido para actualizar exclusivamente las reglas del Role dentro de `lab5`.
 
   ```bash
   kubectl apply -f rbac-scenario5-1.yaml
@@ -350,7 +357,7 @@ role.rbac.authorization.k8s.io/pod-configmap-reader configured
 
 ### Reto 2.4. Confirmar la configuración efectiva
 
-- {% include step_label.html %} Describe nuevamente el Role y confirma que ahora aparece una regla de lectura para `services` sin alterar las reglas existentes.
+- {% include step_label.html id="s017" %} Describe nuevamente el Role y confirma que ahora aparece una regla de lectura para `services` sin alterar las reglas existentes.
 
   ```bash
   kubectl describe role pod-configmap-reader \
@@ -382,7 +389,7 @@ La corrección no queda terminada hasta comprobar que resuelve el requerimiento 
 
 ### Reto 3.1. Validar la nueva autorización
 
-- {% include step_label.html %} Comprueba `get`, `list` y `watch` sobre Services utilizando impersonación de la ServiceAccount.
+- {% include step_label.html id="s018" %} Comprueba `get`, `list` y `watch` sobre Services utilizando impersonación de la ServiceAccount.
 
   ```bash
   for verb in get list watch; do
@@ -400,7 +407,7 @@ yes
 yes
 ```
 
-- {% include step_label.html %} Verifica inmediatamente que las operaciones de escritura sobre Services continúan bloqueadas.
+- {% include step_label.html id="s019" %} Verifica inmediatamente que las operaciones de escritura sobre Services continúan bloqueadas.
 
   ```bash
   for verb in create update delete; do
@@ -420,7 +427,7 @@ no
 
 ### Reto 3.2. Volver a comprobar permisos sensibles
 
-- {% include step_label.html %} Confirma que la ampliación del Role no concedió accidentalmente lectura de Secrets ni creación de Pods.
+- {% include step_label.html id="s020" %} Confirma que la ampliación del Role no concedió accidentalmente lectura de Secrets ni creación de Pods.
 
   ```bash
   kubectl auth can-i get secrets \
@@ -439,7 +446,7 @@ no
 no
 ```
 
-- {% include step_label.html %} Confirma nuevamente que el Role sigue limitado al namespace `lab5`.
+- {% include step_label.html id="s021" %} Confirma nuevamente que el Role sigue limitado al namespace `lab5`.
 
   ```bash
   kubectl auth can-i get pods \
@@ -455,7 +462,7 @@ no
 
 ### Reto 3.3. Validar desde rbac-demo-pod
 
-- {% include step_label.html %} Comprueba si el Pod de validación de la práctica principal continúa disponible y confirma que utiliza la ServiceAccount correcta.
+- {% include step_label.html id="s022" %} Comprueba si el Pod de validación de la práctica principal continúa disponible y confirma que utiliza la ServiceAccount correcta.
 
   ```bash
   kubectl get pod rbac-demo-pod \
@@ -475,7 +482,7 @@ app-reader
 > **NOTA:** Si `rbac-demo-pod` no existe, vuelve a aplicar `pod-rbac.yaml` del Lab 8 antes de continuar con esta comprobación.
 {: .lab-note .info .compact}
 
-- {% include step_label.html %} Ejecuta `kubectl get services` desde el Pod para demostrar que el token real de `app-reader` recibe ahora la nueva autorización.
+- {% include step_label.html id="s023" %} Ejecuta `kubectl get services` desde el Pod para demostrar que el token real de `app-reader` recibe ahora la nueva autorización.
 
   ```bash
   kubectl exec rbac-demo-pod \
@@ -492,7 +499,7 @@ NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
 
 La lista puede variar según los Services existentes en `lab5`; lo importante es que la operación ya no responda `Forbidden`.
 
-- {% include step_label.html %} Intenta listar Secrets desde el mismo Pod para confirmar que la API continúa bloqueando el recurso sensible.
+- {% include step_label.html id="s024" %} Intenta listar Secrets desde el mismo Pod para confirmar que la API continúa bloqueando el recurso sensible.
 
   ```bash
   kubectl exec rbac-demo-pod \
@@ -514,7 +521,10 @@ Error from server (Forbidden): secrets is forbidden: User "system:serviceaccount
 
 ## ✅ Validación final del reto
 
-- {% include step_label.html %} Ejecuta el bloque siguiente para obtener una comprobación resumida del estado final de autorización de `app-reader`.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s025" %} Ejecuta el bloque siguiente para obtener una comprobación resumida del estado final de autorización de `app-reader`.
 
   ```bash
   echo "=== Validacion complementaria 5.1 ==="

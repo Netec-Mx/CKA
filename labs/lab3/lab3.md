@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l003
+tracking: true
+position: 3
 layout: lab
 title: "Práctica 2: Gestión de Deployments con escalamiento, rolling updates y rollback"
 permalink: /lab3/lab3/
@@ -50,23 +54,26 @@ En esta práctica conservarás el directorio raíz del curso y crearás únicame
 
 ### 🗂️ Crear el subdirectorio de la práctica
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que el motor se encuentra activo, porque el nodo Minikube utiliza Docker como runtime del entorno local.
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y confirma que el directorio raíz del curso continúa disponible.
+{% assign tracking_task_id = "t001" %}
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear el subdirectorio `lab2` dentro de la estructura existente del curso sin alterar los archivos de las prácticas anteriores.
+- {% include step_label.html id="s001" %} Abre **Docker Desktop** y confirma que el motor se encuentra activo, porque el nodo Minikube utiliza Docker como runtime del entorno local.
+
+- {% include step_label.html id="s002" %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y confirma que el directorio raíz del curso continúa disponible.
+
+- {% include step_label.html id="s003" %} Ejecuta el comando siguiente para crear el subdirectorio `lab2` dentro de la estructura existente del curso sin alterar los archivos de las prácticas anteriores.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab2
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para cambiar la ubicación activa de Git Bash al directorio correspondiente al nuevo laboratorio.
+- {% include step_label.html id="s004" %} Ejecuta el comando siguiente para cambiar la ubicación activa de Git Bash al directorio correspondiente al nuevo laboratorio.
 
   ```bash
   cd /c/LABS/kubernetes/lab2
   ```
 
-- {% include step_label.html %} Ejecuta `pwd` para verificar que la terminal se encuentra en la ruta correcta antes de crear los manifiestos de esta práctica.
+- {% include step_label.html id="s005" %} Ejecuta `pwd` para verificar que la terminal se encuentra en la ruta correcta antes de crear los manifiestos de esta práctica.
 
   ```bash
   pwd
@@ -78,13 +85,13 @@ En esta práctica conservarás el directorio raíz del curso y crearás únicame
 /c/LABS/kubernetes/lab2
 ```
 
-- {% include step_label.html %} Ejecuta `minikube status` para confirmar que el clúster conserva sus componentes principales activos y puede recibir nuevas operaciones.
+- {% include step_label.html id="s006" %} Ejecuta `minikube status` para confirmar que el clúster conserva sus componentes principales activos y puede recibir nuevas operaciones.
 
   ```bash
   minikube status
   ```
 
-- {% include step_label.html %} Ejecuta `kubectl get nodes` para comprobar que el nodo utilizado por el laboratorio aparece en estado `Ready`.
+- {% include step_label.html id="s007" %} Ejecuta `kubectl get nodes` para comprobar que el nodo utilizado por el laboratorio aparece en estado `Ready`.
 
   ```bash
   kubectl get nodes
@@ -105,13 +112,16 @@ En esta tarea crearás un Deployment con tres réplicas de NGINX y observarás c
 
 ### Tarea 1.1. Crear el manifiesto inicial
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear el archivo `deployment-webapp.yaml`, donde conservarás la definición declarativa principal utilizada durante toda la práctica.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s008" %} Ejecuta el comando siguiente para crear el archivo `deployment-webapp.yaml`, donde conservarás la definición declarativa principal utilizada durante toda la práctica.
 
   ```bash
   touch deployment-webapp.yaml
   ```
 
-- {% include step_label.html %} Abre `deployment-webapp.yaml` desde el Explorador de VS Code y agrega el manifiesto siguiente para definir tres réplicas con estrategia RollingUpdate explícita.
+- {% include step_label.html id="s009" %} Abre `deployment-webapp.yaml` desde el Explorador de VS Code y agrega el manifiesto siguiente para definir tres réplicas con estrategia RollingUpdate explícita.
 
   ```yaml
   apiVersion: apps/v1
@@ -158,7 +168,7 @@ En esta tarea crearás un Deployment con tres réplicas de NGINX y observarás c
 
 ### Tarea 1.2. Validar y aplicar el Deployment
 
-- {% include step_label.html %} Ejecuta una validación local para comprobar que la estructura del manifiesto es aceptada por kubectl antes de modificar el estado del clúster.
+- {% include step_label.html id="s010" %} Ejecuta una validación local para comprobar que la estructura del manifiesto es aceptada por kubectl antes de modificar el estado del clúster.
 
   ```bash
   kubectl apply --dry-run=client -f deployment-webapp.yaml
@@ -170,13 +180,13 @@ En esta tarea crearás un Deployment con tres réplicas de NGINX y observarás c
 deployment.apps/webapp created (dry run)
 ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para aplicar el manifiesto y permitir que Kubernetes comience a crear el ReplicaSet y los Pods declarados.
+- {% include step_label.html id="s011" %} Ejecuta el comando siguiente para aplicar el manifiesto y permitir que Kubernetes comience a crear el ReplicaSet y los Pods declarados.
 
   ```bash
   kubectl apply -f deployment-webapp.yaml
   ```
 
-- {% include step_label.html %} Espera a que Kubernetes confirme que las tres réplicas solicitadas se encuentran disponibles antes de continuar con las operaciones del Deployment.
+- {% include step_label.html id="s012" %} Espera a que Kubernetes confirme que las tres réplicas solicitadas se encuentran disponibles antes de continuar con las operaciones del Deployment.
 
   ```bash
   kubectl rollout status deployment/webapp
@@ -190,7 +200,7 @@ deployment "webapp" successfully rolled out
 
 ### Tarea 1.3. Explorar Deployment, ReplicaSet y Pods
 
-- {% include step_label.html %} Ejecuta los comandos siguientes para observar de forma separada el Deployment, el ReplicaSet creado automáticamente y los Pods administrados por ese ReplicaSet.
+- {% include step_label.html id="s013" %} Ejecuta los comandos siguientes para observar de forma separada el Deployment, el ReplicaSet creado automáticamente y los Pods administrados por ese ReplicaSet.
 
   ```bash
   kubectl get deployment webapp
@@ -213,7 +223,7 @@ webapp-xxxxxxxxxx-bbbbb   1/1     Running   0          ...
 webapp-xxxxxxxxxx-ccccc   1/1     Running   0          ...
 ```
 
-- {% include step_label.html %} Ejecuta `kubectl describe` para revisar la configuración activa, la estrategia RollingUpdate y los eventos generados durante la reconciliación.
+- {% include step_label.html id="s014" %} Ejecuta `kubectl describe` para revisar la configuración activa, la estrategia RollingUpdate y los eventos generados durante la reconciliación.
 
   ```bash
   kubectl describe deployment webapp
@@ -236,13 +246,16 @@ En esta tarea modificarás el número de réplicas para observar cómo Kubernete
 
 ### Tarea 2.1. Escalar de tres a seis réplicas
 
-- {% include step_label.html %} Ejecuta `kubectl scale` para modificar temporalmente el estado deseado del Deployment de tres a seis réplicas utilizando un comando imperativo.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s015" %} Ejecuta `kubectl scale` para modificar temporalmente el estado deseado del Deployment de tres a seis réplicas utilizando un comando imperativo.
 
   ```bash
   kubectl scale deployment webapp --replicas=6
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para observar cómo aparecen nuevos Pods hasta que el Deployment alcance las seis réplicas solicitadas.
+- {% include step_label.html id="s016" %} Ejecuta el comando siguiente para observar cómo aparecen nuevos Pods hasta que el Deployment alcance las seis réplicas solicitadas.
 
   ```bash
   kubectl get pods -l app=webapp -w
@@ -250,7 +263,7 @@ En esta tarea modificarás el número de réplicas para observar cómo Kubernete
 
 Cuando los seis Pods aparezcan en estado `Running`, presiona `Ctrl+C` para salir del modo de observación.
 
-- {% include step_label.html %} Ejecuta los comandos siguientes para verificar que el mismo ReplicaSet ahora administra seis Pods sin haberse creado una nueva revisión de plantilla.
+- {% include step_label.html id="s017" %} Ejecuta los comandos siguientes para verificar que el mismo ReplicaSet ahora administra seis Pods sin haberse creado una nueva revisión de plantilla.
 
   ```bash
   kubectl get deployment webapp
@@ -263,25 +276,25 @@ El Deployment debe mostrar `6/6` réplicas disponibles y el ReplicaSet activo de
 
 ### Tarea 2.2. Reducir las réplicas desde el manifiesto
 
-- {% include step_label.html %} Abre `deployment-webapp.yaml` en VS Code y modifica únicamente el campo `replicas` para establecer dos instancias como nuevo estado declarativo.
+- {% include step_label.html id="s018" %} Abre `deployment-webapp.yaml` en VS Code y modifica únicamente el campo `replicas` para establecer dos instancias como nuevo estado declarativo.
 
   ```yaml
   replicas: 2
   ```
 
-- {% include step_label.html %} Guarda el archivo y valida nuevamente el manifiesto antes de aplicar la modificación declarativa al clúster.
+- {% include step_label.html id="s019" %} Guarda el archivo y valida nuevamente el manifiesto antes de aplicar la modificación declarativa al clúster.
 
   ```bash
   kubectl apply --dry-run=client -f deployment-webapp.yaml
   ```
 
-- {% include step_label.html %} Ejecuta `kubectl apply` para reconciliar el estado actual de seis Pods con las dos réplicas declaradas en el archivo.
+- {% include step_label.html id="s020" %} Ejecuta `kubectl apply` para reconciliar el estado actual de seis Pods con las dos réplicas declaradas en el archivo.
 
   ```bash
   kubectl apply -f deployment-webapp.yaml
   ```
 
-- {% include step_label.html %} Ejecuta los comandos siguientes para confirmar que Kubernetes terminó los Pods excedentes y mantuvo únicamente dos réplicas disponibles.
+- {% include step_label.html id="s021" %} Ejecuta los comandos siguientes para confirmar que Kubernetes terminó los Pods excedentes y mantuvo únicamente dos réplicas disponibles.
 
   ```bash
   kubectl get deployment webapp
@@ -313,13 +326,16 @@ En esta tarea actualizarás la imagen utilizada por el Deployment y observarás 
 
 ### Tarea 3.1. Preparar el Deployment para observar la actualización
 
-- {% include step_label.html %} Ejecuta el comando siguiente para escalar temporalmente el Deployment a cuatro réplicas y facilitar la observación del proceso de actualización progresiva.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s022" %} Ejecuta el comando siguiente para escalar temporalmente el Deployment a cuatro réplicas y facilitar la observación del proceso de actualización progresiva.
 
   ```bash
   kubectl scale deployment webapp --replicas=4
   ```
 
-- {% include step_label.html %} Confirma que las cuatro réplicas actuales están disponibles antes de iniciar el cambio de versión de la imagen.
+- {% include step_label.html id="s023" %} Confirma que las cuatro réplicas actuales están disponibles antes de iniciar el cambio de versión de la imagen.
 
   ```bash
   kubectl rollout status deployment/webapp
@@ -328,13 +344,13 @@ En esta tarea actualizarás la imagen utilizada por el Deployment y observarás 
 
 ### Tarea 3.2. Actualizar la imagen del contenedor
 
-- {% include step_label.html %} Ejecuta el comando siguiente para cambiar la imagen del contenedor `nginx` desde `nginx:1.25` hacia `nginx:1.26`, iniciando automáticamente un nuevo rollout.
+- {% include step_label.html id="s024" %} Ejecuta el comando siguiente para cambiar la imagen del contenedor `nginx` desde `nginx:1.25` hacia `nginx:1.26`, iniciando automáticamente un nuevo rollout.
 
   ```bash
   kubectl set image deployment/webapp nginx=nginx:1.26
   ```
 
-- {% include step_label.html %} Registra una descripción de la modificación para que el historial del Deployment permita reconocer el motivo de esta nueva revisión.
+- {% include step_label.html id="s025" %} Registra una descripción de la modificación para que el historial del Deployment permita reconocer el motivo de esta nueva revisión.
 
   ```bash
   kubectl annotate deployment webapp \
@@ -342,7 +358,7 @@ En esta tarea actualizarás la imagen utilizada por el Deployment y observarás 
     --overwrite
   ```
 
-- {% include step_label.html %} Ejecuta `kubectl rollout status` para observar el avance de la actualización hasta que las cuatro nuevas réplicas queden disponibles.
+- {% include step_label.html id="s026" %} Ejecuta `kubectl rollout status` para observar el avance de la actualización hasta que las cuatro nuevas réplicas queden disponibles.
 
   ```bash
   kubectl rollout status deployment/webapp
@@ -357,7 +373,7 @@ deployment "webapp" successfully rolled out
 
 ### Tarea 3.3. Comparar los ReplicaSets antes y después
 
-- {% include step_label.html %} Ejecuta el comando siguiente para observar que ahora existen dos ReplicaSets: el anterior retenido con cero réplicas y el nuevo con las réplicas activas.
+- {% include step_label.html id="s027" %} Ejecuta el comando siguiente para observar que ahora existen dos ReplicaSets: el anterior retenido con cero réplicas y el nuevo con las réplicas activas.
 
   ```bash
   kubectl get replicasets -l app=webapp
@@ -371,7 +387,7 @@ webapp-<hash-v1>    0         0         0       ...
 webapp-<hash-v2>    4         4         4       ...
 ```
 
-- {% include step_label.html %} Ejecuta la consulta siguiente para comprobar directamente qué imagen utiliza cada Pod activo después del rolling update.
+- {% include step_label.html id="s028" %} Ejecuta la consulta siguiente para comprobar directamente qué imagen utiliza cada Pod activo después del rolling update.
 
   ```bash
   kubectl get pods -l app=webapp \
@@ -384,7 +400,7 @@ Todos los Pods activos deben utilizar `nginx:1.26`.
 
 ### Tarea 3.4. Sincronizar el manifiesto con el estado actual
 
-- {% include step_label.html %} Abre `deployment-webapp.yaml` y actualiza los campos siguientes para que el archivo represente el estado que acabas de establecer en el clúster.
+- {% include step_label.html id="s029" %} Abre `deployment-webapp.yaml` y actualiza los campos siguientes para que el archivo represente el estado que acabas de establecer en el clúster.
 
   ```yaml
   metadata:
@@ -405,7 +421,7 @@ Todos los Pods activos deben utilizar `nginx:1.26`.
             image: nginx:1.26
   ```
 
-- {% include step_label.html %} Guarda el archivo y ejecuta una validación local para comprobar que la edición conserva una estructura válida antes de continuar.
+- {% include step_label.html id="s030" %} Guarda el archivo y ejecuta una validación local para comprobar que la edición conserva una estructura válida antes de continuar.
 
   ```bash
   kubectl apply --dry-run=client -f deployment-webapp.yaml
@@ -428,7 +444,10 @@ En esta tarea revisarás las revisiones almacenadas por el Deployment y restaura
 
 ### Tarea 4.1. Consultar el historial del Deployment
 
-- {% include step_label.html %} Ejecuta el comando siguiente para listar las revisiones disponibles y revisar la causa registrada para cada cambio de plantilla.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s031" %} Ejecuta el comando siguiente para listar las revisiones disponibles y revisar la causa registrada para cada cambio de plantilla.
 
   ```bash
   kubectl rollout history deployment/webapp
@@ -443,7 +462,7 @@ REVISION  CHANGE-CAUSE
 2         Actualizacion a nginx:1.26
 ```
 
-- {% include step_label.html %} Ejecuta los comandos siguientes para consultar individualmente las revisiones disponibles y comparar los valores conservados por Kubernetes.
+- {% include step_label.html id="s032" %} Ejecuta los comandos siguientes para consultar individualmente las revisiones disponibles y comparar los valores conservados por Kubernetes.
 
   ```bash
   kubectl rollout history deployment/webapp --revision=1
@@ -452,13 +471,13 @@ REVISION  CHANGE-CAUSE
 
 ### Tarea 4.2. Ejecutar rollback hacia la versión anterior
 
-- {% include step_label.html %} Ejecuta `kubectl rollout undo` para solicitar que Kubernetes restaure la revisión inmediatamente anterior del Deployment.
+- {% include step_label.html id="s033" %} Ejecuta `kubectl rollout undo` para solicitar que Kubernetes restaure la revisión inmediatamente anterior del Deployment.
 
   ```bash
   kubectl rollout undo deployment/webapp
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para seguir el proceso de reversión hasta que Kubernetes confirme que el Deployment volvió a quedar disponible.
+- {% include step_label.html id="s034" %} Ejecuta el comando siguiente para seguir el proceso de reversión hasta que Kubernetes confirme que el Deployment volvió a quedar disponible.
 
   ```bash
   kubectl rollout status deployment/webapp
@@ -470,7 +489,7 @@ REVISION  CHANGE-CAUSE
 deployment "webapp" successfully rolled out
 ```
 
-- {% include step_label.html %} Ejecuta la consulta siguiente para confirmar que los Pods activos volvieron a utilizar la imagen correspondiente a la versión inicial.
+- {% include step_label.html id="s035" %} Ejecuta la consulta siguiente para confirmar que los Pods activos volvieron a utilizar la imagen correspondiente a la versión inicial.
 
   ```bash
   kubectl get pods -l app=webapp \
@@ -487,13 +506,13 @@ nginx:1.25
 
 ### Tarea 4.3. Observar la reutilización de ReplicaSets
 
-- {% include step_label.html %} Ejecuta el comando siguiente para comparar los ReplicaSets después del rollback y comprobar cuál volvió a recibir réplicas activas.
+- {% include step_label.html id="s036" %} Ejecuta el comando siguiente para comparar los ReplicaSets después del rollback y comprobar cuál volvió a recibir réplicas activas.
 
   ```bash
   kubectl get replicasets -l app=webapp
   ```
 
-- {% include step_label.html %} Ejecuta nuevamente el historial para observar cómo Kubernetes registra la reversión dentro de la secuencia de revisiones.
+- {% include step_label.html id="s037" %} Ejecuta nuevamente el historial para observar cómo Kubernetes registra la reversión dentro de la secuencia de revisiones.
 
   ```bash
   kubectl rollout history deployment/webapp
@@ -516,7 +535,10 @@ En esta tarea comprobarás que el Deployment quedó operativo después de las op
 
 ### Tarea 5.1. Revisar el estado general
 
-- {% include step_label.html %} Ejecuta el comando siguiente para mostrar el Deployment, sus ReplicaSets y los Pods activos asociados con `app=webapp`.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s038" %} Ejecuta el comando siguiente para mostrar el Deployment, sus ReplicaSets y los Pods activos asociados con `app=webapp`.
 
   ```bash
   kubectl get deployment webapp
@@ -524,7 +546,7 @@ En esta tarea comprobarás que el Deployment quedó operativo después de las op
   kubectl get pods -l app=webapp -o wide
   ```
 
-- {% include step_label.html %} Ejecuta `kubectl rollout status` para confirmar que no existe ninguna actualización pendiente y que el Deployment se encuentra estable.
+- {% include step_label.html id="s039" %} Ejecuta `kubectl rollout status` para confirmar que no existe ninguna actualización pendiente y que el Deployment se encuentra estable.
 
   ```bash
   kubectl rollout status deployment/webapp
@@ -532,7 +554,7 @@ En esta tarea comprobarás que el Deployment quedó operativo después de las op
 
 ### Tarea 5.2. Ejecutar la verificación final
 
-- {% include step_label.html %} Copia y ejecuta el bloque completo para validar automáticamente la disponibilidad, cantidad de réplicas, imagen activa, historial y ReplicaSets del Deployment.
+- {% include step_label.html id="s040" %} Copia y ejecuta el bloque completo para validar automáticamente la disponibilidad, cantidad de réplicas, imagen activa, historial y ReplicaSets del Deployment.
 
   ```bash
   echo "=== Verificacion final de la Practica 1.1 ==="

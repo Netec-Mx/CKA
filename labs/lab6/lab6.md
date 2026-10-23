@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l006
+tracking: true
+position: 6
 layout: lab
 title: "Práctica 4: Gestión de namespaces y despliegue de recursos"
 permalink: /lab6/lab6/
@@ -49,21 +53,24 @@ En esta práctica crearás el directorio `lab4` y comprobarás que el clúster M
 
 ### 🗂️ Crear el subdirectorio de la práctica
 
-- {% include step_label.html %} Abre **Docker Desktop** y confirma que el motor se encuentra activo antes de interactuar con el clúster Minikube.
 
-- {% include step_label.html %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio correspondiente al Lab 6.
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Abre **Docker Desktop** y confirma que el motor se encuentra activo antes de interactuar con el clúster Minikube.
+
+- {% include step_label.html id="s002" %} Abre **Visual Studio Code**, selecciona **Git Bash** como terminal integrada y crea el directorio correspondiente al Lab 6.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab4
   ```
 
-- {% include step_label.html %} Cambia la ubicación activa de Git Bash al directorio de trabajo para almacenar los manifiestos de namespaces y aplicaciones.
+- {% include step_label.html id="s003" %} Cambia la ubicación activa de Git Bash al directorio de trabajo para almacenar los manifiestos de namespaces y aplicaciones.
 
   ```bash
   cd /c/LABS/kubernetes/lab4
   ```
 
-- {% include step_label.html %} Confirma que la terminal se encuentra en la ruta correcta antes de crear los archivos de esta práctica.
+- {% include step_label.html id="s004" %} Confirma que la terminal se encuentra en la ruta correcta antes de crear los archivos de esta práctica.
 
   ```bash
   pwd
@@ -75,7 +82,7 @@ En esta práctica crearás el directorio `lab4` y comprobarás que el clúster M
 /c/LABS/kubernetes/lab4
 ```
 
-- {% include step_label.html %} Ejecuta los comandos siguientes para confirmar que Minikube está activo y que los nodos continúan disponibles.
+- {% include step_label.html id="s005" %} Ejecuta los comandos siguientes para confirmar que Minikube está activo y que los nodos continúan disponibles.
 
   ```bash
   minikube status
@@ -94,7 +101,10 @@ En esta tarea identificarás los namespaces creados automáticamente por Kuberne
 
 ### Tarea 1.1. Listar namespaces existentes
 
-- {% include step_label.html %} Ejecuta el comando siguiente para obtener la lista completa de namespaces disponibles en el clúster.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s006" %} Ejecuta el comando siguiente para obtener la lista completa de namespaces disponibles en el clúster.
 
   ```bash
   kubectl get namespaces
@@ -110,19 +120,19 @@ kube-public       Active   ...
 kube-system       Active   ...
 ```
 
-- {% include step_label.html %} Ejecuta `kubectl describe` para revisar los metadatos y estado del namespace utilizado por los componentes internos de Kubernetes.
+- {% include step_label.html id="s007" %} Ejecuta `kubectl describe` para revisar los metadatos y estado del namespace utilizado por los componentes internos de Kubernetes.
 
   ```bash
   kubectl describe namespace kube-system
   ```
 
-- {% include step_label.html %} Lista los Pods de `kube-system` para comprobar que los componentes del clúster se encuentran aislados de los workloads de usuario.
+- {% include step_label.html id="s008" %} Lista los Pods de `kube-system` para comprobar que los componentes del clúster se encuentran aislados de los workloads de usuario.
 
   ```bash
   kubectl get pods -n kube-system
   ```
 
-- {% include step_label.html %} Consulta los objetos Lease del namespace `kube-node-lease` para observar los recursos utilizados para mantener información de heartbeat de los nodos.
+- {% include step_label.html id="s009" %} Consulta los objetos Lease del namespace `kube-node-lease` para observar los recursos utilizados para mantener información de heartbeat de los nodos.
 
   ```bash
   kubectl get leases -n kube-node-lease
@@ -145,13 +155,16 @@ En esta tarea crearás `development`, `staging` y `production`, utilizando tanto
 
 ### Tarea 2.1. Crear development de forma imperativa
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear directamente el namespace `development` mediante kubectl.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s010" %} Ejecuta el comando siguiente para crear directamente el namespace `development` mediante kubectl.
 
   ```bash
   kubectl create namespace development
   ```
 
-- {% include step_label.html %} Agrega labels descriptivos al namespace para identificar el ambiente y el equipo responsable.
+- {% include step_label.html id="s011" %} Agrega labels descriptivos al namespace para identificar el ambiente y el equipo responsable.
 
   ```bash
   kubectl label namespace development \
@@ -161,13 +174,13 @@ En esta tarea crearás `development`, `staging` y `production`, utilizando tanto
 
 ### Tarea 2.2. Crear staging y production mediante YAML
 
-- {% include step_label.html %} Crea el archivo `namespaces.yaml`, donde almacenarás la definición declarativa de los otros dos ambientes.
+- {% include step_label.html id="s012" %} Crea el archivo `namespaces.yaml`, donde almacenarás la definición declarativa de los otros dos ambientes.
 
   ```bash
   touch namespaces.yaml
   ```
 
-- {% include step_label.html %} Abre `namespaces.yaml` en VS Code y agrega los manifiestos siguientes para crear `staging` y `production`.
+- {% include step_label.html id="s013" %} Abre `namespaces.yaml` en VS Code y agrega los manifiestos siguientes para crear `staging` y `production`.
 
   ```yaml
   apiVersion: v1
@@ -189,13 +202,13 @@ En esta tarea crearás `development`, `staging` y `production`, utilizando tanto
       description: "Namespace para el ambiente de produccion"
   ```
 
-- {% include step_label.html %} Valida el archivo antes de aplicarlo para comprobar que ambos recursos tienen una estructura YAML válida.
+- {% include step_label.html id="s014" %} Valida el archivo antes de aplicarlo para comprobar que ambos recursos tienen una estructura YAML válida.
 
   ```bash
   kubectl apply --dry-run=client -f namespaces.yaml
   ```
 
-- {% include step_label.html %} Aplica el manifiesto para crear los dos namespaces declarativos en el clúster.
+- {% include step_label.html id="s015" %} Aplica el manifiesto para crear los dos namespaces declarativos en el clúster.
 
   ```bash
   kubectl apply -f namespaces.yaml
@@ -203,7 +216,7 @@ En esta tarea crearás `development`, `staging` y `production`, utilizando tanto
 
 ### Tarea 2.3. Verificar los tres ambientes
 
-- {% include step_label.html %} Ejecuta la consulta siguiente para confirmar que los tres namespaces están activos y disponibles.
+- {% include step_label.html id="s016" %} Ejecuta la consulta siguiente para confirmar que los tres namespaces están activos y disponibles.
 
   ```bash
   kubectl get namespaces development staging production
@@ -218,7 +231,7 @@ staging       Active   ...
 production    Active   ...
 ```
 
-- {% include step_label.html %} Consulta los labels de los namespaces para comprobar que las etiquetas añadidas permiten clasificarlos por ambiente o equipo.
+- {% include step_label.html id="s017" %} Consulta los labels de los namespaces para comprobar que las etiquetas añadidas permiten clasificarlos por ambiente o equipo.
 
   ```bash
   kubectl get namespaces --show-labels
@@ -238,7 +251,10 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
 
 ### Tarea 3.1. Crear los manifiestos de aplicación
 
-- {% include step_label.html %} Crea tres archivos independientes para conservar la definición correspondiente a cada ambiente.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s018" %} Crea tres archivos independientes para conservar la definición correspondiente a cada ambiente.
 
   ```bash
   touch deploy-development.yaml
@@ -246,7 +262,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
   touch deploy-production.yaml
   ```
 
-- {% include step_label.html %} Abre `deploy-development.yaml` y agrega una réplica de NGINX junto con un Service interno para el ambiente de desarrollo.
+- {% include step_label.html id="s019" %} Abre `deploy-development.yaml` y agrega una réplica de NGINX junto con un Service interno para el ambiente de desarrollo.
 
   ```yaml
   apiVersion: apps/v1
@@ -295,7 +311,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
     type: ClusterIP
   ```
 
-- {% include step_label.html %} Abre `deploy-staging.yaml` y agrega la misma aplicación con dos réplicas para representar un ambiente intermedio.
+- {% include step_label.html id="s020" %} Abre `deploy-staging.yaml` y agrega la misma aplicación con dos réplicas para representar un ambiente intermedio.
 
   ```yaml
   apiVersion: apps/v1
@@ -344,7 +360,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
     type: ClusterIP
   ```
 
-- {% include step_label.html %} Abre `deploy-production.yaml` y agrega tres réplicas para representar el ambiente de producción con mayor disponibilidad.
+- {% include step_label.html id="s021" %} Abre `deploy-production.yaml` y agrega tres réplicas para representar el ambiente de producción con mayor disponibilidad.
 
   ```yaml
   apiVersion: apps/v1
@@ -395,7 +411,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
 
 ### Tarea 3.2. Aplicar los manifiestos
 
-- {% include step_label.html %} Valida los tres archivos antes de crear los recursos para detectar errores de sintaxis o estructura.
+- {% include step_label.html id="s022" %} Valida los tres archivos antes de crear los recursos para detectar errores de sintaxis o estructura.
 
   ```bash
   kubectl apply --dry-run=client -f deploy-development.yaml
@@ -403,7 +419,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
   kubectl apply --dry-run=client -f deploy-production.yaml
   ```
 
-- {% include step_label.html %} Aplica los tres manifiestos para crear Deployments y Services independientes en cada namespace.
+- {% include step_label.html id="s023" %} Aplica los tres manifiestos para crear Deployments y Services independientes en cada namespace.
 
   ```bash
   kubectl apply -f deploy-development.yaml
@@ -411,7 +427,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
   kubectl apply -f deploy-production.yaml
   ```
 
-- {% include step_label.html %} Espera a que los tres Deployments queden disponibles antes de comprobar el aislamiento entre ambientes.
+- {% include step_label.html id="s024" %} Espera a que los tres Deployments queden disponibles antes de comprobar el aislamiento entre ambientes.
 
   ```bash
   kubectl rollout status deployment/webapp -n development
@@ -421,7 +437,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
 
 ### Tarea 3.3. Comprobar el aislamiento lógico
 
-- {% include step_label.html %} Ejecuta las consultas siguientes para observar que el Deployment `webapp` existe simultáneamente en los tres namespaces sin conflicto de nombres.
+- {% include step_label.html id="s025" %} Ejecuta las consultas siguientes para observar que el Deployment `webapp` existe simultáneamente en los tres namespaces sin conflicto de nombres.
 
   ```bash
   kubectl get deployment webapp -n development
@@ -429,7 +445,7 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
   kubectl get deployment webapp -n production
   ```
 
-- {% include step_label.html %} Utiliza `--all-namespaces` para obtener una vista global y comparar los mismos recursos dentro de ambientes diferentes.
+- {% include step_label.html id="s026" %} Utiliza `--all-namespaces` para obtener una vista global y comparar los mismos recursos dentro de ambientes diferentes.
 
   ```bash
   kubectl get deployments --all-namespaces | grep webapp
@@ -461,13 +477,16 @@ En esta tarea aplicarás controles de consumo al namespace `development`. Resour
 
 ### Tarea 4.1. Crear una ResourceQuota
 
-- {% include step_label.html %} Crea el archivo `resource-controls.yaml`, donde almacenarás los controles de recursos del ambiente de desarrollo.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s027" %} Crea el archivo `resource-controls.yaml`, donde almacenarás los controles de recursos del ambiente de desarrollo.
 
   ```bash
   touch resource-controls.yaml
   ```
 
-- {% include step_label.html %} Abre `resource-controls.yaml` y agrega una ResourceQuota que limite Pods, Services, CPU y memoria disponibles para el namespace.
+- {% include step_label.html id="s028" %} Abre `resource-controls.yaml` y agrega una ResourceQuota que limite Pods, Services, CPU y memoria disponibles para el namespace.
 
   ```yaml
   apiVersion: v1
@@ -485,7 +504,7 @@ En esta tarea aplicarás controles de consumo al namespace `development`. Resour
       limits.memory: "1Gi"
   ```
 
-- {% include step_label.html %} Aplica el manifiesto y revisa el consumo actual del namespace después de considerar el Deployment y Service ya existentes.
+- {% include step_label.html id="s029" %} Aplica el manifiesto y revisa el consumo actual del namespace después de considerar el Deployment y Service ya existentes.
 
   ```bash
   kubectl apply -f resource-controls.yaml
@@ -494,7 +513,7 @@ En esta tarea aplicarás controles de consumo al namespace `development`. Resour
 
 ### Tarea 4.2. Crear un LimitRange
 
-- {% include step_label.html %} Agrega al mismo archivo el recurso siguiente para establecer requests y limits predeterminados para los contenedores creados en `development`.
+- {% include step_label.html id="s030" %} Agrega al mismo archivo el recurso siguiente para establecer requests y limits predeterminados para los contenedores creados en `development`.
 
   ```yaml
   ---
@@ -520,13 +539,13 @@ En esta tarea aplicarás controles de consumo al namespace `development`. Resour
           memory: "32Mi"
   ```
 
-- {% include step_label.html %} Aplica nuevamente el archivo para crear el LimitRange junto con la ResourceQuota ya existente.
+- {% include step_label.html id="s031" %} Aplica nuevamente el archivo para crear el LimitRange junto con la ResourceQuota ya existente.
 
   ```bash
   kubectl apply -f resource-controls.yaml
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para revisar los valores mínimos, máximos y predeterminados configurados para los contenedores.
+- {% include step_label.html id="s032" %} Ejecuta el comando siguiente para revisar los valores mínimos, máximos y predeterminados configurados para los contenedores.
 
   ```bash
   kubectl describe limitrange development-limits -n development
@@ -534,7 +553,7 @@ En esta tarea aplicarás controles de consumo al namespace `development`. Resour
 
 ### Tarea 4.3. Validar la asignación automática de recursos
 
-- {% include step_label.html %} Crea un Pod de prueba sin especificar `resources` para comprobar que el LimitRange inyecta automáticamente los valores definidos.
+- {% include step_label.html id="s033" %} Crea un Pod de prueba sin especificar `resources` para comprobar que el LimitRange inyecta automáticamente los valores definidos.
 
   ```bash
   kubectl run test-limitrange \
@@ -543,7 +562,7 @@ En esta tarea aplicarás controles de consumo al namespace `development`. Resour
     -n development
   ```
 
-- {% include step_label.html %} Consulta el Pod en YAML y revisa la sección `resources` añadida automáticamente durante su admisión.
+- {% include step_label.html id="s034" %} Consulta el Pod en YAML y revisa la sección `resources` añadida automáticamente durante su admisión.
 
   ```bash
   kubectl get pod test-limitrange \
@@ -562,7 +581,7 @@ requests:
   memory: 64Mi
 ```
 
-- {% include step_label.html %} Ejecuta las consultas siguientes para confirmar que ResourceQuota y LimitRange están activos en el namespace.
+- {% include step_label.html id="s035" %} Ejecuta las consultas siguientes para confirmar que ResourceQuota y LimitRange están activos en el namespace.
 
   ```bash
   kubectl get resourcequota -n development
@@ -586,13 +605,16 @@ En esta tarea eliminarás `staging` y comprobarás que Kubernetes elimina autom�
 
 ### Tarea 5.1. Registrar los recursos antes de eliminar
 
-- {% include step_label.html %} Ejecuta el comando siguiente para listar todos los recursos principales de `staging` antes de eliminar el namespace.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s036" %} Ejecuta el comando siguiente para listar todos los recursos principales de `staging` antes de eliminar el namespace.
 
   ```bash
   kubectl get all -n staging
   ```
 
-- {% include step_label.html %} Comprueba que `development` y `production` continúan operativos para utilizarlos posteriormente como referencia de comparación.
+- {% include step_label.html id="s037" %} Comprueba que `development` y `production` continúan operativos para utilizarlos posteriormente como referencia de comparación.
 
   ```bash
   kubectl get deployment webapp -n development
@@ -601,19 +623,19 @@ En esta tarea eliminarás `staging` y comprobarás que Kubernetes elimina autom�
 
 ### Tarea 5.2. Eliminar staging
 
-- {% include step_label.html %} Ejecuta el comando siguiente para eliminar el namespace y permitir que Kubernetes procese la eliminación en cascada de los recursos namespaced contenidos.
+- {% include step_label.html id="s038" %} Ejecuta el comando siguiente para eliminar el namespace y permitir que Kubernetes procese la eliminación en cascada de los recursos namespaced contenidos.
 
   ```bash
   kubectl delete namespace staging
   ```
 
-- {% include step_label.html %} Comprueba que `staging` dejó de aparecer en la lista de namespaces activos.
+- {% include step_label.html id="s039" %} Comprueba que `staging` dejó de aparecer en la lista de namespaces activos.
 
   ```bash
   kubectl get namespaces
   ```
 
-- {% include step_label.html %} Intenta consultar nuevamente el Deployment que pertenecía a `staging` para confirmar que el namespace y sus recursos ya no existen.
+- {% include step_label.html id="s040" %} Intenta consultar nuevamente el Deployment que pertenecía a `staging` para confirmar que el namespace y sus recursos ya no existen.
 
   ```bash
   kubectl get deployment webapp -n staging
@@ -625,7 +647,7 @@ En esta tarea eliminarás `staging` y comprobarás que Kubernetes elimina autom�
 Error from server (NotFound): namespaces "staging" not found
 ```
 
-- {% include step_label.html %} Confirma que los recursos con el mismo nombre en `development` y `production` permanecen disponibles y no fueron afectados por la eliminación.
+- {% include step_label.html id="s041" %} Confirma que los recursos con el mismo nombre en `development` y `production` permanecen disponibles y no fueron afectados por la eliminación.
 
   ```bash
   kubectl get deployment webapp -n development
@@ -634,7 +656,7 @@ Error from server (NotFound): namespaces "staging" not found
 
 ### Tarea 5.3. Ejecutar la verificación final
 
-- {% include step_label.html %} Copia y ejecuta el bloque siguiente para validar automáticamente los principales resultados de la práctica.
+- {% include step_label.html id="s042" %} Copia y ejecuta el bloque siguiente para validar automáticamente los principales resultados de la práctica.
 
   ```bash
   echo "=== Verificacion final de la Practica 4 ==="

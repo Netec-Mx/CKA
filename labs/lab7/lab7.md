@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l007
+tracking: true
+position: 7
 layout: lab
 title: "Práctica complementaria 4.1: Diagnóstico de separación lógica por ambiente"
 permalink: /lab7/lab7/
@@ -78,19 +82,22 @@ Total               20 min
 
 ### Confirmar los ambientes reutilizados
 
-- {% include step_label.html %} Comprueba que los namespaces `development` y `production` siguen activos antes de iniciar el diagnóstico, porque el escenario depende de recursos creados en la práctica principal.
+
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Comprueba que los namespaces `development` y `production` siguen activos antes de iniciar el diagnóstico, porque el escenario depende de recursos creados en la práctica principal.
 
   ```bash
   kubectl get namespaces development production
   ```
 
-- {% include step_label.html %} Consulta los Deployments y Services de `development` para confirmar que la aplicación local continúa disponible y que no existe un fallo previo en ese ambiente.
+- {% include step_label.html id="s002" %} Consulta los Deployments y Services de `development` para confirmar que la aplicación local continúa disponible y que no existe un fallo previo en ese ambiente.
 
   ```bash
   kubectl get deployment,service -n development
   ```
 
-- {% include step_label.html %} Consulta los mismos tipos de recursos en `production` para verificar que el Service remoto también existe antes de evaluar la resolución DNS del cliente.
+- {% include step_label.html id="s003" %} Consulta los mismos tipos de recursos en `production` para verificar que el Service remoto también existe antes de evaluar la resolución DNS del cliente.
 
   ```bash
   kubectl get deployment,service -n production
@@ -98,7 +105,7 @@ Total               20 min
 
 ### Registrar las direcciones internas
 
-- {% include step_label.html %} Obtén la ClusterIP de `webapp-svc` en `development`; esta dirección servirá como referencia para identificar posteriormente qué ambiente está resolviendo el cliente.
+- {% include step_label.html id="s004" %} Obtén la ClusterIP de `webapp-svc` en `development`; esta dirección servirá como referencia para identificar posteriormente qué ambiente está resolviendo el cliente.
 
   ```bash
   echo "Service development:"
@@ -107,7 +114,7 @@ Total               20 min
     -o jsonpath='{.spec.clusterIP}{"\n"}'
   ```
 
-- {% include step_label.html %} Obtén la ClusterIP del Service con el mismo nombre en `production` para disponer de una segunda referencia y comparar ambas respuestas DNS.
+- {% include step_label.html id="s005" %} Obtén la ClusterIP del Service con el mismo nombre en `production` para disponer de una segunda referencia y comparar ambas respuestas DNS.
 
   ```bash
   echo "Service production:"
@@ -121,7 +128,7 @@ Total               20 min
 
 ### Descargar y aplicar el escenario
 
-- {% include step_label.html %} Descarga el manifiesto del cliente de diagnóstico desde el repositorio del curso; este archivo contiene la configuración que originó el comportamiento que deberás investigar.
+- {% include step_label.html id="s006" %} Descarga el manifiesto del cliente de diagnóstico desde el repositorio del curso; este archivo contiene la configuración que originó el comportamiento que deberás investigar.
 
   ```bash
   curl -L \
@@ -132,13 +139,13 @@ Total               20 min
 > **IMPORTANTE:** No abras ni modifiques `dns-client4-1.yaml` antes de completar los primeros dos retos. El objetivo es diagnosticar el problema utilizando el estado efectivo del recurso.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Aplica el manifiesto para crear el Pod `environment-client` dentro de `development`, reproduciendo el estado defectuoso que analizarás durante la práctica.
+- {% include step_label.html id="s007" %} Aplica el manifiesto para crear el Pod `environment-client` dentro de `development`, reproduciendo el estado defectuoso que analizarás durante la práctica.
 
   ```bash
   kubectl apply -f dns-client4-1.yaml
   ```
 
-- {% include step_label.html %} Espera a que el Pod alcance condición `Ready`, evitando interpretar errores de inicio del contenedor como parte del problema DNS planteado en el reto.
+- {% include step_label.html id="s008" %} Espera a que el Pod alcance condición `Ready`, evitando interpretar errores de inicio del contenedor como parte del problema DNS planteado en el reto.
 
   ```bash
   kubectl wait \
@@ -158,7 +165,7 @@ En este reto debes demostrar primero qué recurso está alcanzando realmente el 
 
 ### Reto 1.1. Confirmar la ubicación del cliente
 
-- {% include step_label.html %} Consulta el Pod con salida extendida para confirmar que `environment-client` está ejecutándose específicamente dentro del namespace `development`.
+- {% include step_label.html id="s009" %} Consulta el Pod con salida extendida para confirmar que `environment-client` está ejecutándose específicamente dentro del namespace `development`.
 
   ```bash
   kubectl get pod environment-client \
@@ -168,7 +175,7 @@ En este reto debes demostrar primero qué recurso está alcanzando realmente el 
 
 ### Reto 1.2. Consultar el destino configurado
 
-- {% include step_label.html %} Extrae el valor efectivo de la variable `TARGET_SERVICE` directamente desde la especificación del Pod para conocer el nombre que intenta resolver la aplicación cliente.
+- {% include step_label.html id="s010" %} Extrae el valor efectivo de la variable `TARGET_SERVICE` directamente desde la especificación del Pod para conocer el nombre que intenta resolver la aplicación cliente.
 
   ```bash
   kubectl get pod environment-client \
@@ -178,7 +185,7 @@ En este reto debes demostrar primero qué recurso está alcanzando realmente el 
 
 ### Reto 1.3. Resolver el nombre desde el Pod
 
-- {% include step_label.html %} Ejecuta `nslookup` desde el propio cliente utilizando la variable configurada, de forma que la prueba utilice exactamente el mismo nombre que recibe el contenedor.
+- {% include step_label.html id="s011" %} Ejecuta `nslookup` desde el propio cliente utilizando la variable configurada, de forma que la prueba utilice exactamente el mismo nombre que recibe el contenedor.
 
   ```bash
   kubectl exec environment-client \
@@ -186,7 +193,7 @@ En este reto debes demostrar primero qué recurso está alcanzando realmente el 
     sh -c 'nslookup "$TARGET_SERVICE"'
   ```
 
-- {% include step_label.html %} Compara la dirección devuelta por DNS con las dos ClusterIP registradas durante la preparación para identificar a qué ambiente pertenece realmente la respuesta.
+- {% include step_label.html id="s012" %} Compara la dirección devuelta por DNS con las dos ClusterIP registradas durante la preparación para identificar a qué ambiente pertenece realmente la respuesta.
 
 ### Evidencias que debes obtener
 
@@ -216,7 +223,7 @@ Ahora debes explicar por qué Kubernetes resolvió ese Service y demostrar cómo
 
 ### Reto 2.1. Inspeccionar la configuración DNS del Pod
 
-- {% include step_label.html %} Consulta `/etc/resolv.conf` dentro del cliente para identificar el servidor DNS y los dominios de búsqueda que Kubernetes configuró para un Pod ubicado en `development`.
+- {% include step_label.html id="s013" %} Consulta `/etc/resolv.conf` dentro del cliente para identificar el servidor DNS y los dominios de búsqueda que Kubernetes configuró para un Pod ubicado en `development`.
 
   ```bash
   kubectl exec environment-client \
@@ -237,7 +244,7 @@ options ndots:5
 
 ### Reto 2.2. Comparar tres formas de resolución
 
-- {% include step_label.html %} Resuelve únicamente el nombre corto para observar cómo Kubernetes utiliza el namespace local del Pod como contexto de búsqueda.
+- {% include step_label.html id="s014" %} Resuelve únicamente el nombre corto para observar cómo Kubernetes utiliza el namespace local del Pod como contexto de búsqueda.
 
   ```bash
   kubectl exec environment-client \
@@ -245,7 +252,7 @@ options ndots:5
     nslookup webapp-svc.production.svc.cluster.local
   ```
 
-- {% include step_label.html %} Resuelve el nombre incluyendo explícitamente `production` para comprobar que el namespace forma parte de la identidad DNS del Service remoto.
+- {% include step_label.html id="s015" %} Resuelve el nombre incluyendo explícitamente `production` para comprobar que el namespace forma parte de la identidad DNS del Service remoto.
 
   ```bash
   kubectl exec environment-client \
@@ -323,7 +330,7 @@ Ya identificaste la causa. La corrección debe limitarse al cliente que utiliza 
 
 ### Reto 3.1. Corregir el manifiesto
 
-- {% include step_label.html %} Abre `dns-client4-1.yaml` y modifica únicamente el valor de `TARGET_SERVICE` para que identifique explícitamente `webapp-svc` dentro de `production`.
+- {% include step_label.html id="s016" %} Abre `dns-client4-1.yaml` y modifica únicamente el valor de `TARGET_SERVICE` para que identifique explícitamente `webapp-svc` dentro de `production`.
 
 Puedes utilizar una de estas referencias:
 
@@ -337,20 +344,20 @@ webapp-svc.production.svc.cluster.local
 
 ### Reto 3.2. Recrear únicamente el cliente
 
-- {% include step_label.html %} Elimina el Pod existente porque las variables de entorno definidas en la especificación de un Pod no se actualizan modificando el contenedor que ya está ejecutándose.
+- {% include step_label.html id="s017" %} Elimina el Pod existente porque las variables de entorno definidas en la especificación de un Pod no se actualizan modificando el contenedor que ya está ejecutándose.
 
   ```bash
   kubectl delete pod environment-client \
     -n development
   ```
 
-- {% include step_label.html %} Aplica nuevamente el manifiesto corregido para crear el cliente con el nuevo valor de `TARGET_SERVICE`.
+- {% include step_label.html id="s018" %} Aplica nuevamente el manifiesto corregido para crear el cliente con el nuevo valor de `TARGET_SERVICE`.
 
   ```bash
   kubectl apply -f dns-client4-1.yaml
   ```
 
-- {% include step_label.html %} Espera a que el nuevo Pod esté listo antes de ejecutar las comprobaciones finales de DNS y conectividad.
+- {% include step_label.html id="s019" %} Espera a que el nuevo Pod esté listo antes de ejecutar las comprobaciones finales de DNS y conectividad.
 
   ```bash
   kubectl wait \
@@ -362,7 +369,7 @@ webapp-svc.production.svc.cluster.local
 
 ### Reto 3.3. Validar el destino corregido
 
-- {% include step_label.html %} Comprueba el valor final de `TARGET_SERVICE` para confirmar que el nuevo Pod utiliza la referencia remota esperada.
+- {% include step_label.html id="s020" %} Comprueba el valor final de `TARGET_SERVICE` para confirmar que el nuevo Pod utiliza la referencia remota esperada.
 
   ```bash
   kubectl get pod environment-client \
@@ -370,7 +377,7 @@ webapp-svc.production.svc.cluster.local
     -o jsonpath='{.spec.containers[0].env[?(@.name=="TARGET_SERVICE")].value}{"\n"}'
   ```
 
-- {% include step_label.html %} Resuelve nuevamente la variable desde el contenedor y confirma que la dirección ahora coincide con la ClusterIP de `production`.
+- {% include step_label.html id="s021" %} Resuelve nuevamente la variable desde el contenedor y confirma que la dirección ahora coincide con la ClusterIP de `production`.
 
   ```bash
   kubectl exec environment-client \
@@ -378,7 +385,7 @@ webapp-svc.production.svc.cluster.local
     sh -c 'nslookup "$TARGET_SERVICE"'
   ```
 
-- {% include step_label.html %} Realiza una solicitud HTTP al destino configurado para validar que la corrección no solo resuelve DNS, sino que también permite alcanzar el Service remoto.
+- {% include step_label.html id="s022" %} Realiza una solicitud HTTP al destino configurado para validar que la corrección no solo resuelve DNS, sino que también permite alcanzar el Service remoto.
 
   ```bash
   kubectl exec environment-client \
@@ -388,7 +395,7 @@ webapp-svc.production.svc.cluster.local
 
 ### Reto 3.4. Retirar el recurso temporal
 
-- {% include step_label.html %} Elimina únicamente `environment-client` después de conservar la evidencia, manteniendo intactos los recursos de ambos ambientes para prácticas posteriores.
+- {% include step_label.html id="s023" %} Elimina únicamente `environment-client` después de conservar la evidencia, manteniendo intactos los recursos de ambos ambientes para prácticas posteriores.
 
   ```bash
   kubectl delete pod environment-client \
@@ -418,20 +425,23 @@ La práctica se considera completada cuando puedes demostrar que el problema est
 [✓] environment-client fue eliminado al finalizar.
 ```
 
-- {% include step_label.html %} Comprueba los recursos finales de ambos ambientes para confirmar que ningún Deployment o Service fue alterado durante el troubleshooting.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s024" %} Comprueba los recursos finales de ambos ambientes para confirmar que ningún Deployment o Service fue alterado durante el troubleshooting.
 
   ```bash
   kubectl get deployment,service -n development
   kubectl get deployment,service -n production
   ```
 
-- {% include step_label.html %} Genera una vista global de los Services `webapp-svc` para observar que el namespace distingue recursos con nombres equivalentes.
+- {% include step_label.html id="s025" %} Genera una vista global de los Services `webapp-svc` para observar que el namespace distingue recursos con nombres equivalentes.
 
   ```bash
   kubectl get services --all-namespaces | grep webapp-svc
   ```
 
-- {% include step_label.html %} Confirma que el Pod temporal ya no permanece en `development` después de terminar la validación.
+- {% include step_label.html id="s026" %} Confirma que el Pod temporal ya no permanece en `development` después de terminar la validación.
 
   ```bash
   kubectl get pod environment-client \

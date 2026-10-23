@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l001
+tracking: true
+position: 1
 layout: lab
 title: "Práctica 1: Despliegue de una aplicación Node.js en Kubernetes"
 permalink: /lab1/lab1/
@@ -51,42 +55,45 @@ En esta preparación crearás el directorio raíz del curso y el subdirectorio d
 
 ### 🗂️ Crear el directorio raíz y el subdirectorio de la práctica
 
-- {% include step_label.html %} Abre **Docker Desktop** y espera a que el motor indique que está activo, porque Minikube utilizará Docker para ejecutar el nodo local del clúster.
 
-- {% include step_label.html %} Abre **Visual Studio Code** y espera a que cargue completamente, ya que desde su terminal integrada crearás los archivos y administrarás Kubernetes.
+{% assign tracking_task_id = "t001" %}
 
-- {% include step_label.html %} En VS Code, selecciona **Terminal → New Terminal** para abrir una consola integrada desde la cual ejecutarás todos los comandos requeridos.
+- {% include step_label.html id="s001" %} Abre **Docker Desktop** y espera a que el motor indique que está activo, porque Minikube utilizará Docker para ejecutar el nodo local del clúster.
 
-- {% include step_label.html %} En la flecha desplegable situada junto al botón **+** del panel Terminal, selecciona **Git Bash** para trabajar con la sintaxis Bash utilizada en esta práctica.
+- {% include step_label.html id="s002" %} Abre **Visual Studio Code** y espera a que cargue completamente, ya que desde su terminal integrada crearás los archivos y administrarás Kubernetes.
 
-- {% include step_label.html %} Ejecuta el comando siguiente para crear el directorio raíz del curso y el subdirectorio `lab1`, manteniendo los laboratorios organizados en una sola ubicación.
+- {% include step_label.html id="s003" %} En VS Code, selecciona **Terminal → New Terminal** para abrir una consola integrada desde la cual ejecutarás todos los comandos requeridos.
+
+- {% include step_label.html id="s004" %} En la flecha desplegable situada junto al botón **+** del panel Terminal, selecciona **Git Bash** para trabajar con la sintaxis Bash utilizada en esta práctica.
+
+- {% include step_label.html id="s005" %} Ejecuta el comando siguiente para crear el directorio raíz del curso y el subdirectorio `lab1`, manteniendo los laboratorios organizados en una sola ubicación.
 
   ```bash
   mkdir -p /c/LABS/kubernetes/lab1
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para abrir `C:\LABS\kubernetes` como carpeta de trabajo en VS Code y visualizar desde el Explorador los archivos del curso.
+- {% include step_label.html id="s006" %} Ejecuta el comando siguiente para abrir `C:\LABS\kubernetes` como carpeta de trabajo en VS Code y visualizar desde el Explorador los archivos del curso.
 
   ```bash
   code /c/LABS/kubernetes
   ```
 
-- {% include step_label.html %} Si VS Code solicita confirmar la confianza de la carpeta, acepta la acción para habilitar la terminal integrada, el Explorador y la edición de archivos.
+- {% include step_label.html id="s007" %} Si VS Code solicita confirmar la confianza de la carpeta, acepta la acción para habilitar la terminal integrada, el Explorador y la edición de archivos.
 
-- {% include step_label.html %} En el Explorador de VS Code, confirma que aparezcan el directorio raíz `kubernetes` y el subdirectorio `lab1`, donde trabajarás durante esta práctica.
+- {% include step_label.html id="s008" %} En el Explorador de VS Code, confirma que aparezcan el directorio raíz `kubernetes` y el subdirectorio `lab1`, donde trabajarás durante esta práctica.
 
   ```text
   C:\LABS\kubernetes
   └── lab1
   ```
 
-- {% include step_label.html %} Ejecuta el siguiente comando para cambiar la ubicación activa de Git Bash al directorio `lab1` y evitar crear archivos en una ruta incorrecta.
+- {% include step_label.html id="s009" %} Ejecuta el siguiente comando para cambiar la ubicación activa de Git Bash al directorio `lab1` y evitar crear archivos en una ruta incorrecta.
 
   ```bash
   cd /c/LABS/kubernetes/lab1
   ```
 
-- {% include step_label.html %} Ejecuta `pwd` para comprobar la ruta actual y confirma que la terminal se encuentre exactamente en `/c/LABS/kubernetes/lab1` antes de continuar.
+- {% include step_label.html id="s010" %} Ejecuta `pwd` para comprobar la ruta actual y confirma que la terminal se encuentre exactamente en `/c/LABS/kubernetes/lab1` antes de continuar.
 
   ```bash
   pwd
@@ -111,7 +118,10 @@ En esta tarea crearás una aplicación web sencilla con Node.js. La página most
 
 ### Tarea 1.1. Crear la estructura del proyecto
 
-- {% include step_label.html %} Ejecuta el bloque siguiente para crear las carpetas `app` y `k8s`; la primera contendrá la aplicación y la segunda almacenará los manifiestos de Kubernetes.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s011" %} Ejecuta el bloque siguiente para crear las carpetas `app` y `k8s`; la primera contendrá la aplicación y la segunda almacenará los manifiestos de Kubernetes.
 
   ```bash
   mkdir -p app k8s
@@ -120,7 +130,7 @@ En esta tarea crearás una aplicación web sencilla con Node.js. La página most
   touch k8s/deployment.yaml k8s/service.yaml
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para comprobar que los archivos fueron creados en las rutas esperadas antes de agregar código o configuración.
+- {% include step_label.html id="s012" %} Ejecuta el comando siguiente para comprobar que los archivos fueron creados en las rutas esperadas antes de agregar código o configuración.
 
   ```bash
   find . -maxdepth 2 -type f | sort
@@ -142,7 +152,7 @@ Comprueba que la estructura general corresponda con la referencia siguiente ante
 
 ### Tarea 1.2. Crear la aplicación web
 
-- {% include step_label.html %} Abre `app/package.json` desde el Explorador de VS Code y agrega la definición mínima del proyecto para iniciar el servidor mediante `npm start`.
+- {% include step_label.html id="s013" %} Abre `app/package.json` desde el Explorador de VS Code y agrega la definición mínima del proyecto para iniciar el servidor mediante `npm start`.
 
   ```json
   {
@@ -159,7 +169,7 @@ Comprueba que la estructura general corresponda con la referencia siguiente ante
   }
   ```
 
-- {% include step_label.html %} Abre `app/server.js` y agrega el servidor HTTP que entregará la página principal y un endpoint `/health` utilizado para validar el estado de la aplicación.
+- {% include step_label.html id="s014" %} Abre `app/server.js` y agrega el servidor HTTP que entregará la página principal y un endpoint `/health` utilizado para validar el estado de la aplicación.
 
   ```javascript
   const http = require('http');
@@ -197,7 +207,7 @@ Comprueba que la estructura general corresponda con la referencia siguiente ante
   });
   ```
 
-- {% include step_label.html %} Abre `app/index.html` y agrega la interfaz visual que permitirá reconocer la aplicación desplegada y observar el hostname de la instancia que responde.
+- {% include step_label.html id="s015" %} Abre `app/index.html` y agrega la interfaz visual que permitirá reconocer la aplicación desplegada y observar el hostname de la instancia que responde.
 
   ```html
   <!DOCTYPE html>
@@ -269,7 +279,7 @@ Comprueba que la estructura general corresponda con la referencia siguiente ante
 
 ### Tarea 1.3. Probar la aplicación localmente
 
-- {% include step_label.html %} Ejecuta el servidor directamente con Node.js para comprobar primero que el código funciona correctamente antes de introducir Docker y Kubernetes en el flujo.
+- {% include step_label.html id="s016" %} Ejecuta el servidor directamente con Node.js para comprobar primero que el código funciona correctamente antes de introducir Docker y Kubernetes en el flujo.
 
   ```bash
   cd app
@@ -285,13 +295,13 @@ Aplicación disponible en el puerto 3000
 Hostname: <nombre_del_equipo>
 ```
 
-- {% include step_label.html %} Abre un navegador y visita `http://localhost:3000` para confirmar que la página se renderiza correctamente antes de empaquetar la aplicación.
+- {% include step_label.html id="s017" %} Abre un navegador y visita `http://localhost:3000` para confirmar que la página se renderiza correctamente antes de empaquetar la aplicación.
 
   ```text
   http://localhost:3000
   ```
 
-- {% include step_label.html %} Abre otra pestaña con `http://localhost:3000/health` para validar que el endpoint de comprobación devuelve un documento JSON con estado `ok`.
+- {% include step_label.html id="s018" %} Abre otra pestaña con `http://localhost:3000/health` para validar que el endpoint de comprobación devuelve un documento JSON con estado `ok`.
 
   ```text
   http://localhost:3000/health
@@ -306,7 +316,7 @@ Hostname: <nombre_del_equipo>
 }
 ```
 
-- {% include step_label.html %} Regresa a la terminal, presiona `Ctrl+C` para detener Node.js y vuelve al directorio raíz `lab1` antes de comenzar la construcción de la imagen.
+- {% include step_label.html id="s019" %} Regresa a la terminal, presiona `Ctrl+C` para detener Node.js y vuelve al directorio raíz `lab1` antes de comenzar la construcción de la imagen.
 
   ```bash
   cd ..
@@ -326,7 +336,10 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
 
 ### Tarea 2.1. Crear los archivos de construcción
 
-- {% include step_label.html %} Abre `.dockerignore` y agrega las exclusiones siguientes para impedir que archivos innecesarios del host formen parte del contexto utilizado por Docker.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s020" %} Abre `.dockerignore` y agrega las exclusiones siguientes para impedir que archivos innecesarios del host formen parte del contexto utilizado por Docker.
 
   ```gitignore
   .git
@@ -337,7 +350,7 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
   *.md
   ```
 
-- {% include step_label.html %} Abre `Dockerfile` y agrega la configuración siguiente para construir una imagen ligera basada en Node.js 24 LTS y ejecutar el proceso como usuario no root.
+- {% include step_label.html id="s021" %} Abre `Dockerfile` y agrega la configuración siguiente para construir una imagen ligera basada en Node.js 24 LTS y ejecutar el proceso como usuario no root.
 
   ```dockerfile
   FROM node:24-alpine
@@ -359,19 +372,19 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
 
 ### Tarea 2.2. Construir y probar la imagen
 
-- {% include step_label.html %} Ejecuta `docker build` desde la raíz de `lab1` para crear la imagen `k8s-node-web:1.0`, utilizando los archivos preparados en la tarea anterior.
+- {% include step_label.html id="s022" %} Ejecuta `docker build` desde la raíz de `lab1` para crear la imagen `k8s-node-web:1.0`, utilizando los archivos preparados en la tarea anterior.
 
   ```bash
   docker build -t k8s-node-web:1.0 .
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para comprobar que Docker registró la imagen con el repositorio y la etiqueta esperados antes de cargarla en Minikube.
+- {% include step_label.html id="s023" %} Ejecuta el comando siguiente para comprobar que Docker registró la imagen con el repositorio y la etiqueta esperados antes de cargarla en Minikube.
 
   ```bash
   docker images k8s-node-web:1.0
   ```
 
-- {% include step_label.html %} Ejecuta temporalmente el contenedor en el puerto 3000 para validar que la imagen funciona de manera independiente antes de desplegarla en Kubernetes.
+- {% include step_label.html id="s024" %} Ejecuta temporalmente el contenedor en el puerto 3000 para validar que la imagen funciona de manera independiente antes de desplegarla en Kubernetes.
 
   ```bash
   docker run --rm -d \
@@ -380,7 +393,7 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
     k8s-node-web:1.0
   ```
 
-- {% include step_label.html %} Ejecuta `curl` contra el endpoint `/health` para confirmar que el contenedor responde con HTTP 200 y que Node.js inició correctamente dentro de la imagen.
+- {% include step_label.html id="s025" %} Ejecuta `curl` contra el endpoint `/health` para confirmar que el contenedor responde con HTTP 200 y que Node.js inició correctamente dentro de la imagen.
 
   ```bash
   curl http://localhost:3000/health
@@ -392,7 +405,7 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
 {"status":"ok","pod":"<id_del_contenedor>"}
 ```
 
-- {% include step_label.html %} Detén el contenedor temporal para liberar el puerto 3000 y conservar únicamente la imagen que será utilizada posteriormente por Kubernetes.
+- {% include step_label.html id="s026" %} Detén el contenedor temporal para liberar el puerto 3000 y conservar únicamente la imagen que será utilizada posteriormente por Kubernetes.
 
   ```bash
   docker stop k8s-node-web-test
@@ -400,13 +413,13 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
 
 ### Tarea 2.3. Iniciar Minikube y cargar la imagen
 
-- {% include step_label.html %} Ejecuta el comando siguiente para iniciar un clúster Minikube local con driver Docker y un nodo, suficiente para trabajar el flujo fundamental de esta práctica.
+- {% include step_label.html id="s027" %} Ejecuta el comando siguiente para iniciar un clúster Minikube local con driver Docker y un nodo, suficiente para trabajar el flujo fundamental de esta práctica.
 
   ```bash
   minikube start --driver=docker
   ```
 
-- {% include step_label.html %} Ejecuta `kubectl get nodes` para confirmar que el nodo de Minikube alcanzó el estado `Ready` antes de intentar crear cualquier workload de la aplicación.
+- {% include step_label.html id="s028" %} Ejecuta `kubectl get nodes` para confirmar que el nodo de Minikube alcanzó el estado `Ready` antes de intentar crear cualquier workload de la aplicación.
 
   ```bash
   kubectl get nodes
@@ -419,13 +432,13 @@ NAME       STATUS   ROLES           AGE   VERSION
 minikube   Ready    control-plane   ...   ...
 ```
 
-- {% include step_label.html %} Ejecuta `minikube image load` para copiar la imagen construida con Docker Desktop al almacenamiento de imágenes disponible para el nodo local de Minikube.
+- {% include step_label.html id="s029" %} Ejecuta `minikube image load` para copiar la imagen construida con Docker Desktop al almacenamiento de imágenes disponible para el nodo local de Minikube.
 
   ```bash
   minikube image load k8s-node-web:1.0
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para confirmar desde Minikube que la imagen local se encuentra disponible antes de crear el Deployment.
+- {% include step_label.html id="s030" %} Ejecuta el comando siguiente para confirmar desde Minikube que la imagen local se encuentra disponible antes de crear el Deployment.
 
   ```bash
   minikube image ls | grep k8s-node-web
@@ -451,7 +464,10 @@ En esta tarea definirás el estado deseado de la aplicación mediante un manifie
 
 ### Tarea 3.1. Crear el manifiesto deployment.yaml
 
-- {% include step_label.html %} Abre `k8s/deployment.yaml` y agrega el manifiesto siguiente para declarar un Deployment con una réplica de la aplicación Node.js preparada previamente.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s031" %} Abre `k8s/deployment.yaml` y agrega el manifiesto siguiente para declarar un Deployment con una réplica de la aplicación Node.js preparada previamente.
 
   ```yaml
   apiVersion: apps/v1
@@ -484,7 +500,7 @@ En esta tarea definirás el estado deseado de la aplicación mediante un manifie
 
 ### Tarea 3.2. Validar el manifiesto antes de aplicarlo
 
-- {% include step_label.html %} Ejecuta una validación local con `--dry-run=client` para comprobar la estructura del manifiesto sin crear todavía ningún recurso dentro del clúster.
+- {% include step_label.html id="s032" %} Ejecuta una validación local con `--dry-run=client` para comprobar la estructura del manifiesto sin crear todavía ningún recurso dentro del clúster.
 
   ```bash
   kubectl apply \
@@ -498,7 +514,7 @@ En esta tarea definirás el estado deseado de la aplicación mediante un manifie
 deployment.apps/node-web-deployment created (dry run)
 ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para mostrar el manifiesto interpretado por kubectl y detectar errores básicos de indentación, nombres o estructura antes del despliegue.
+- {% include step_label.html id="s033" %} Ejecuta el comando siguiente para mostrar el manifiesto interpretado por kubectl y detectar errores básicos de indentación, nombres o estructura antes del despliegue.
 
   ```bash
   kubectl apply \
@@ -509,13 +525,13 @@ deployment.apps/node-web-deployment created (dry run)
 
 ### Tarea 3.3. Aplicar el Deployment y observar los recursos
 
-- {% include step_label.html %} Ejecuta `kubectl apply` para enviar la declaración al API Server y permitir que Kubernetes cree los recursos requeridos para alcanzar el estado deseado.
+- {% include step_label.html id="s034" %} Ejecuta `kubectl apply` para enviar la declaración al API Server y permitir que Kubernetes cree los recursos requeridos para alcanzar el estado deseado.
 
   ```bash
   kubectl apply -f k8s/deployment.yaml
   ```
 
-- {% include step_label.html %} Ejecuta `kubectl rollout status` para esperar hasta que el Deployment confirme que la réplica solicitada se encuentra creada y disponible correctamente.
+- {% include step_label.html id="s035" %} Ejecuta `kubectl rollout status` para esperar hasta que el Deployment confirme que la réplica solicitada se encuentra creada y disponible correctamente.
 
   ```bash
   kubectl rollout status deployment/node-web-deployment
@@ -527,7 +543,7 @@ deployment.apps/node-web-deployment created (dry run)
 deployment "node-web-deployment" successfully rolled out
 ```
 
-- {% include step_label.html %} Ejecuta los comandos siguientes para observar el Deployment, el ReplicaSet creado automáticamente y el Pod que ejecuta la aplicación dentro del clúster.
+- {% include step_label.html id="s036" %} Ejecuta los comandos siguientes para observar el Deployment, el ReplicaSet creado automáticamente y el Pod que ejecuta la aplicación dentro del clúster.
 
   ```bash
   kubectl get deployments
@@ -539,7 +555,7 @@ deployment "node-web-deployment" successfully rolled out
 
 El Deployment debe mostrar `1/1` disponible y el Pod asociado debe encontrarse en estado `Running` con `READY 1/1`.
 
-- {% include step_label.html %} Ejecuta `kubectl describe` sobre el Deployment para revisar selector, estrategia, plantilla del Pod y eventos registrados durante la creación del workload.
+- {% include step_label.html id="s037" %} Ejecuta `kubectl describe` sobre el Deployment para revisar selector, estrategia, plantilla del Pod y eventos registrados durante la creación del workload.
 
   ```bash
   kubectl describe deployment node-web-deployment
@@ -559,7 +575,10 @@ En esta tarea crearás un Service que proporcione un punto estable de acceso hac
 
 ### Tarea 4.1. Crear el manifiesto service.yaml
 
-- {% include step_label.html %} Abre `k8s/service.yaml` y agrega el manifiesto siguiente para crear un Service NodePort que dirija las solicitudes recibidas hacia el puerto 3000 del Pod.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s038" %} Abre `k8s/service.yaml` y agrega el manifiesto siguiente para crear un Service NodePort que dirija las solicitudes recibidas hacia el puerto 3000 del Pod.
 
   ```yaml
   apiVersion: v1
@@ -584,7 +603,7 @@ En esta tarea crearás un Service que proporcione un punto estable de acceso hac
 
 ### Tarea 4.2. Validar y aplicar el Service
 
-- {% include step_label.html %} Ejecuta la validación local del archivo `service.yaml` para comprobar que kubectl reconoce correctamente la definición antes de enviarla al API Server.
+- {% include step_label.html id="s039" %} Ejecuta la validación local del archivo `service.yaml` para comprobar que kubectl reconoce correctamente la definición antes de enviarla al API Server.
 
   ```bash
   kubectl apply \
@@ -598,13 +617,13 @@ En esta tarea crearás un Service que proporcione un punto estable de acceso hac
 service/node-web-service created (dry run)
 ```
 
-- {% include step_label.html %} Ejecuta `kubectl apply` para crear el Service y establecer un punto de acceso estable hacia los Pods identificados mediante la etiqueta `app=node-web`.
+- {% include step_label.html id="s040" %} Ejecuta `kubectl apply` para crear el Service y establecer un punto de acceso estable hacia los Pods identificados mediante la etiqueta `app=node-web`.
 
   ```bash
   kubectl apply -f k8s/service.yaml
   ```
 
-- {% include step_label.html %} Ejecuta el comando siguiente para comprobar el tipo del Service, su ClusterIP y el puerto NodePort asignado automáticamente por Kubernetes.
+- {% include step_label.html id="s041" %} Ejecuta el comando siguiente para comprobar el tipo del Service, su ClusterIP y el puerto NodePort asignado automáticamente por Kubernetes.
 
   ```bash
   kubectl get service node-web-service
@@ -619,7 +638,7 @@ node-web-service   NodePort   10.96.xxx.xxx   <none>        80:3xxxx/TCP   ...
 
 ### Tarea 4.3. Acceder a la aplicación desde el navegador
 
-- {% include step_label.html %} Ejecuta `minikube service` con la opción `--url` para obtener una dirección accesible desde el host sin depender de la topología interna utilizada por Minikube.
+- {% include step_label.html id="s042" %} Ejecuta `minikube service` con la opción `--url` para obtener una dirección accesible desde el host sin depender de la topología interna utilizada por Minikube.
 
   ```bash
   minikube service node-web-service --url
@@ -631,14 +650,14 @@ node-web-service   NodePort   10.96.xxx.xxx   <none>        80:3xxxx/TCP   ...
 http://127.0.0.1:<puerto_asignado>
 ```
 
-- {% include step_label.html %} Mantén activa la terminal si Minikube crea un túnel temporal y copia exactamente la URL mostrada para utilizarla durante las pruebas de navegador.
+- {% include step_label.html id="s043" %} Mantén activa la terminal si Minikube crea un túnel temporal y copia exactamente la URL mostrada para utilizarla durante las pruebas de navegador.
 
 > **NOTA:** Con el driver Docker en Windows, el proceso puede permanecer activo mientras mantiene el túnel. Utiliza otra terminal de VS Code para continuar con las validaciones.
 {: .lab-note .info .compact}
 
-- {% include step_label.html %} Abre la URL obtenida en Chrome, Edge o Firefox y confirma que aparezca la página **Aplicación Node.js desplegada correctamente**.
+- {% include step_label.html id="s044" %} Abre la URL obtenida en Chrome, Edge o Firefox y confirma que aparezca la página **Aplicación Node.js desplegada correctamente**.
 
-- {% include step_label.html %} Observa el valor mostrado en **Instancia que respondió** y comprueba que ahora corresponde al nombre del Pod, no al nombre del equipo Windows.
+- {% include step_label.html id="s045" %} Observa el valor mostrado en **Instancia que respondió** y comprueba que ahora corresponde al nombre del Pod, no al nombre del equipo Windows.
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -654,7 +673,10 @@ En esta tarea reunirás las comprobaciones esenciales del laboratorio para relac
 
 ### Tarea 5.1. Revisar todos los recursos de la aplicación
 
-- {% include step_label.html %} Ejecuta el comando siguiente para listar en una sola vista los recursos asociados con `app=node-web` y comprobar que Kubernetes mantiene el estado esperado.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s046" %} Ejecuta el comando siguiente para listar en una sola vista los recursos asociados con `app=node-web` y comprobar que Kubernetes mantiene el estado esperado.
 
   ```bash
   kubectl get all -l app=node-web
@@ -678,7 +700,7 @@ replicaset.apps/node-web-deployment-xxxxxxxxxx   1         1         1       ...
 
 ### Tarea 5.2. Validar la relación entre Service y Pod
 
-- {% include step_label.html %} Ejecuta el comando siguiente para comprobar los endpoints asociados con el Service y verificar que existe una dirección interna apuntando al puerto 3000 del Pod.
+- {% include step_label.html id="s047" %} Ejecuta el comando siguiente para comprobar los endpoints asociados con el Service y verificar que existe una dirección interna apuntando al puerto 3000 del Pod.
 
   ```bash
   kubectl get endpoints node-web-service
@@ -696,7 +718,7 @@ node-web-service   10.244.x.x:3000     ...
 
 ### Tarea 5.3. Consultar los logs de la aplicación
 
-- {% include step_label.html %} Ejecuta el comando siguiente para recuperar los logs del contenedor administrado por el Deployment y confirmar que Node.js inició correctamente dentro del Pod.
+- {% include step_label.html id="s048" %} Ejecuta el comando siguiente para recuperar los logs del contenedor administrado por el Deployment y confirmar que Node.js inició correctamente dentro del Pod.
 
   ```bash
   kubectl logs deployment/node-web-deployment
@@ -711,7 +733,7 @@ Hostname: node-web-deployment-xxxxxxxxxx-xxxxx
 
 ### Tarea 5.4. Ejecutar la verificación final
 
-- {% include step_label.html %} Copia y ejecuta el bloque completo para comprobar automáticamente el nodo, Deployment, Pod, Service y endpoints antes de cerrar la práctica.
+- {% include step_label.html id="s049" %} Copia y ejecuta el bloque completo para comprobar automáticamente el nodo, Deployment, Pod, Service y endpoints antes de cerrar la práctica.
 
   ```bash
   echo "=== Verificación final de la Práctica 1 ==="

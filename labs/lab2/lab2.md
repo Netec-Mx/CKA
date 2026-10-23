@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l002
+tracking: true
+position: 2
 layout: lab
 title: "Práctica complementaria 1.1: Validación básica y diagnóstico con kubectl"
 permalink: /lab2/lab2/
@@ -72,7 +76,10 @@ Total               20 min
 
 ## Paso 1. Confirmar los recursos de la Práctica 1
 
-- {% include step_label.html %} Verifica que el Deployment y el Service originales continúan disponibles antes de introducir el incidente.
+
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Verifica que el Deployment y el Service originales continúan disponibles antes de introducir el incidente.
 
   ```bash
   kubectl get deployment node-web-deployment
@@ -88,13 +95,16 @@ El Deployment debe estar disponible y al menos un Pod debe encontrarse en estado
 
 ## Paso 2. Aplicar el escenario defectuoso
 
-- {% include step_label.html %} Ejecuta el siguiente comando para descargar el archivo del reto.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s002" %} Ejecuta el siguiente comando para descargar el archivo del reto.
 
   ```bash
   curl -L -o k8s/lab1-1-scenario.yaml https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab2/lab2-scenario.yaml
   ```
 
-- {% include step_label.html %} Desde el directorio donde guardaste `lab2-scenario.yaml`, aplica el archivo sin abrirlo ni inspeccionarlo todavía.
+- {% include step_label.html id="s003" %} Desde el directorio donde guardaste `lab2-scenario.yaml`, aplica el archivo sin abrirlo ni inspeccionarlo todavía.
 
   ```bash
   kubectl apply -f lab1-1-scenario.yaml
@@ -103,7 +113,7 @@ El Deployment debe estar disponible y al menos un Pod debe encontrarse en estado
 > **IMPORTANTE:** El archivo contiene el cambio que originó el incidente. No utilices `cat`, VS Code ni otro editor para inspeccionarlo antes de completar el diagnóstico.
 {: .lab-note .important .compact}
 
-- {% include step_label.html %} Espera unos segundos para que Kubernetes actualice el estado relacionado con el Service.
+- {% include step_label.html id="s004" %} Espera unos segundos para que Kubernetes actualice el estado relacionado con el Service.
 
   ```bash
   sleep 5
@@ -119,7 +129,10 @@ Antes de buscar la causa, separa los componentes sanos de los componentes afecta
 
 ## Reto 1.1. Revisar el workload
 
-- {% include step_label.html %} Inspecciona el Deployment y los Pods sin modificar ningún recurso.
+
+{% assign tracking_task_id = "t003" %}
+
+- {% include step_label.html id="s005" %} Inspecciona el Deployment y los Pods sin modificar ningún recurso.
 
   ```bash
   kubectl get deployment node-web-deployment
@@ -139,7 +152,10 @@ Debes responder:
 
 ## Reto 1.2. Probar la aplicación directamente dentro del Pod
 
-- {% include step_label.html %} Comprueba el endpoint `/health` directamente dentro de uno de los Pods.
+
+{% assign tracking_task_id = "t004" %}
+
+- {% include step_label.html id="s006" %} Comprueba el endpoint `/health` directamente dentro de uno de los Pods.
 
   ```bash
   kubectl exec deployment/node-web-deployment -- \
@@ -164,13 +180,16 @@ Si el Pod responde directamente pero el acceso mediante Service falla:
 
 ## Reto 1.3. Revisar el Service
 
-- {% include step_label.html %} Comprueba que el Service todavía existe y conserva una ClusterIP.
+
+{% assign tracking_task_id = "t005" %}
+
+- {% include step_label.html id="s007" %} Comprueba que el Service todavía existe y conserva una ClusterIP.
 
   ```bash
   kubectl get service node-web-service
   ```
 
-- {% include step_label.html %} Intenta acceder a la aplicación mediante el nombre del Service desde el propio workload.
+- {% include step_label.html id="s008" %} Intenta acceder a la aplicación mediante el nombre del Service desde el propio workload.
 
   ```bash
   kubectl exec deployment/node-web-deployment -- \
@@ -195,13 +214,16 @@ Ahora debes encontrar por qué un Service existente no puede llegar a una aplica
 
 ## Reto 2.1. Revisar backends asociados
 
-- {% include step_label.html %} Comprueba si `node-web-service` tiene destinos disponibles.
+
+{% assign tracking_task_id = "t006" %}
+
+- {% include step_label.html id="s009" %} Comprueba si `node-web-service` tiene destinos disponibles.
 
   ```bash
   kubectl get endpoints node-web-service
   ```
 
-- {% include step_label.html %} Revisa también el recurso moderno EndpointSlice asociado con el Service.
+- {% include step_label.html id="s010" %} Revisa también el recurso moderno EndpointSlice asociado con el Service.
 
   ```bash
   kubectl get endpointslices \
@@ -222,13 +244,16 @@ Registra:
 
 ## Reto 2.2. Inspeccionar configuración efectiva
 
-- {% include step_label.html %} Describe el Service y localiza `Selector` y `Endpoints`.
+
+{% assign tracking_task_id = "t007" %}
+
+- {% include step_label.html id="s011" %} Describe el Service y localiza `Selector` y `Endpoints`.
 
   ```bash
   kubectl describe service node-web-service
   ```
 
-- {% include step_label.html %} Muestra los labels reales de los Pods administrados por el Deployment.
+- {% include step_label.html id="s012" %} Muestra los labels reales de los Pods administrados por el Deployment.
 
   ```bash
   kubectl get pods \
@@ -236,7 +261,7 @@ Registra:
     --show-labels
   ```
 
-- {% include step_label.html %} Consulta también el selector configurado directamente en el Service.
+- {% include step_label.html id="s013" %} Consulta también el selector configurado directamente en el Service.
 
   ```bash
   kubectl get service node-web-service \
@@ -259,7 +284,10 @@ No avances hasta poder explicar qué relación está rota.
 
 ## Reto 2.3. Confirmar que el Deployment no debe modificarse
 
-- {% include step_label.html %} Revisa el selector del Deployment para comprobar que sus Pods están correctamente administrados.
+
+{% assign tracking_task_id = "t008" %}
+
+- {% include step_label.html id="s014" %} Revisa el selector del Deployment para comprobar que sus Pods están correctamente administrados.
 
   ```bash
   kubectl get deployment node-web-deployment \
@@ -303,7 +331,10 @@ Ya identificaste la causa raíz. Corrige únicamente el recurso responsable.
 
 ## Reto 3.1. Registrar la ClusterIP actual
 
-- {% include step_label.html %} Guarda la ClusterIP antes de corregir el incidente.
+
+{% assign tracking_task_id = "t009" %}
+
+- {% include step_label.html id="s015" %} Guarda la ClusterIP antes de corregir el incidente.
 
   ```bash
   SERVICE_IP=$(kubectl get service node-web-service \
@@ -316,7 +347,10 @@ Ya identificaste la causa raíz. Corrige únicamente el recurso responsable.
 
 ## Reto 3.2. Corregir el recurso
 
-- {% include step_label.html %} Utiliza `kubectl patch`, `kubectl edit` o un manifiesto corregido para restaurar la relación adecuada entre el Service y los Pods.
+
+{% assign tracking_task_id = "t010" %}
+
+- {% include step_label.html id="s016" %} Utiliza `kubectl patch`, `kubectl edit` o un manifiesto corregido para restaurar la relación adecuada entre el Service y los Pods.
 
 ### Pistas permitidas
 
@@ -333,27 +367,30 @@ No se proporciona el comando exacto porque forma parte del reto.
 
 ## Reto 3.3. Validar recuperación
 
-- {% include step_label.html %} Comprueba que Kubernetes vuelva a publicar destinos para el Service.
+
+{% assign tracking_task_id = "t011" %}
+
+- {% include step_label.html id="s017" %} Comprueba que Kubernetes vuelva a publicar destinos para el Service.
 
   ```bash
   kubectl get endpoints node-web-service
   ```
 
-- {% include step_label.html %} Verifica EndpointSlice.
+- {% include step_label.html id="s018" %} Verifica EndpointSlice.
 
   ```bash
   kubectl get endpointslices \
     -l kubernetes.io/service-name=node-web-service
   ```
 
-- {% include step_label.html %} Comprueba nuevamente `/health` utilizando el nombre del Service.
+- {% include step_label.html id="s019" %} Comprueba nuevamente `/health` utilizando el nombre del Service.
 
   ```bash
   kubectl exec deployment/node-web-deployment -- \
     wget -qO- http://node-web-service/health
   ```
 
-- {% include step_label.html %} Confirma que la ClusterIP no cambió durante la reparación.
+- {% include step_label.html id="s020" %} Confirma que la ClusterIP no cambió durante la reparación.
 
   ```bash
   NEW_SERVICE_IP=$(kubectl get service node-web-service \

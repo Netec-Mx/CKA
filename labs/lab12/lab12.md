@@ -1,4 +1,8 @@
 ---
+course_id: kubeadmin
+lab_id: l012
+tracking: true
+position: 12
 layout: lab
 title: "Práctica complementaria 6.2: Diagnóstico de DNS interno"
 permalink: /lab12/lab12/
@@ -69,7 +73,10 @@ Total               15 min
 
 ## ⚙️ Preparación del escenario
 
-- {% include step_label.html %} Comprueba que `backend-svc` existe y conserva destinos antes de iniciar un diagnóstico DNS.
+
+{% assign tracking_task_id = "t001" %}
+
+- {% include step_label.html id="s001" %} Comprueba que `backend-svc` existe y conserva destinos antes de iniciar un diagnóstico DNS.
 
   ```bash
   kubectl get service backend-svc \
@@ -89,7 +96,7 @@ NAME          ENDPOINTS
 backend-svc   10.244.x.x:80,10.244.x.x:80
 ```
 
-- {% include step_label.html %} Confirma que CoreDNS está `Running`, estableciendo una línea base antes de crear el cliente defectuoso.
+- {% include step_label.html id="s002" %} Confirma que CoreDNS está `Running`, estableciendo una línea base antes de crear el cliente defectuoso.
 
   ```bash
   kubectl get pods \
@@ -106,7 +113,7 @@ coredns-<hash>-<id>        1/1     Running
 
 ### Aplicar el estado inicial del reto
 
-- {% include step_label.html %} Descarga `dns-internal-scenario6-2.yaml`.
+- {% include step_label.html id="s003" %} Descarga `dns-internal-scenario6-2.yaml`.
 
   ```bash
   curl -L \
@@ -114,7 +121,7 @@ coredns-<hash>-<id>        1/1     Running
     https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab9/dns-internal-scenario6-2.yaml
   ```
 
-- {% include step_label.html %} Aplica `dns-internal-scenario6-2.yaml` sin inspeccionarlo previamente para crear el Pod que reproduce el incidente.
+- {% include step_label.html id="s004" %} Aplica `dns-internal-scenario6-2.yaml` sin inspeccionarlo previamente para crear el Pod que reproduce el incidente.
 
   ```bash
   kubectl apply -f dns-internal-scenario6-2.yaml
@@ -126,7 +133,7 @@ coredns-<hash>-<id>        1/1     Running
 pod/dns-client created
 ```
 
-- {% include step_label.html %} Espera hasta que el Pod esté listo antes de interpretar las pruebas de resolución.
+- {% include step_label.html id="s005" %} Espera hasta que el Pod esté listo antes de interpretar las pruebas de resolución.
 
   ```bash
   kubectl wait \
@@ -153,7 +160,7 @@ pod/dns-client condition met
 
 ### Reto 1.1. Reproducir la falla
 
-- {% include step_label.html %} Intenta resolver el nombre corto `backend-svc` desde `dns-client` y registra el resultado.
+- {% include step_label.html id="s006" %} Intenta resolver el nombre corto `backend-svc` desde `dns-client` y registra el resultado.
 
   ```bash
   kubectl exec \
@@ -168,7 +175,7 @@ La consulta debe fallar o terminar por timeout porque el Pod no utiliza correcta
 
 ### Reto 1.2. Comprobar otro cliente saludable
 
-- {% include step_label.html %} Utiliza un Pod frontend existente para comprobar que el mismo nombre puede resolverse desde otro cliente del namespace.
+- {% include step_label.html id="s007" %} Utiliza un Pod frontend existente para comprobar que el mismo nombre puede resolverse desde otro cliente del namespace.
 
   ```bash
   FRONTEND_POD=$(kubectl get pod \
@@ -212,7 +219,7 @@ La salida exacta depende de las herramientas disponibles, pero debe resolver la 
 
 ### Reto 2.1. Consultar resolv.conf
 
-- {% include step_label.html %} Revisa `/etc/resolv.conf` dentro de `dns-client` utilizando `sh -c` para impedir que Git Bash transforme la ruta Linux en una ruta de Windows.
+- {% include step_label.html id="s008" %} Revisa `/etc/resolv.conf` dentro de `dns-client` utilizando `sh -c` para impedir que Git Bash transforme la ruta Linux en una ruta de Windows.
 
   ```bash
   kubectl exec \
@@ -227,7 +234,7 @@ La configuración no debe mostrar el servidor DNS y search domains normales de K
 
 ### Reto 2.2. Revisar dnsPolicy
 
-- {% include step_label.html %} Consulta la política DNS efectiva del Pod para determinar si Kubernetes está aplicando la configuración estándar del clúster.
+- {% include step_label.html id="s009" %} Consulta la política DNS efectiva del Pod para determinar si Kubernetes está aplicando la configuración estándar del clúster.
 
   ```bash
   kubectl get pod dns-client \
@@ -235,7 +242,7 @@ La configuración no debe mostrar el servidor DNS y search domains normales de K
     -o jsonpath='{.spec.dnsPolicy}{"\n"}'
   ```
 
-- {% include step_label.html %} Consulta también una posible configuración DNS explícita para identificar si el Pod sobrescribe el resolver proporcionado por Kubernetes.
+- {% include step_label.html id="s010" %} Consulta también una posible configuración DNS explícita para identificar si el Pod sobrescribe el resolver proporcionado por Kubernetes.
 
   ```bash
   kubectl get pod dns-client \
@@ -281,7 +288,7 @@ Por tanto, la falla está en ____________________ y no en CoreDNS.
 
 ### Reto 3.1. Corregir el manifiesto
 
-- {% include step_label.html %} Abre `dns-internal-scenario6-2.yaml` después de completar el diagnóstico y elimina la configuración DNS personalizada que impide usar el resolver del clúster.
+- {% include step_label.html id="s011" %} Abre `dns-internal-scenario6-2.yaml` después de completar el diagnóstico y elimina la configuración DNS personalizada que impide usar el resolver del clúster.
 
 La configuración final debe utilizar:
 
@@ -291,7 +298,7 @@ dnsPolicy: ClusterFirst
 
 ### Reto 3.2. Recrear el Pod
 
-- {% include step_label.html %} Elimina únicamente `dns-client` y vuelve a aplicar el manifiesto corregido porque la política DNS forma parte de la especificación del Pod.
+- {% include step_label.html id="s012" %} Elimina únicamente `dns-client` y vuelve a aplicar el manifiesto corregido porque la política DNS forma parte de la especificación del Pod.
 
   ```bash
   kubectl delete pod dns-client \
@@ -316,7 +323,7 @@ pod/dns-client condition met
 
 ### Reto 3.3. Validar nombre corto y FQDN
 
-- {% include step_label.html %} Comprueba que el nombre corto ahora resuelve mediante el search domain del namespace `lab6`.
+- {% include step_label.html id="s013" %} Comprueba que el nombre corto ahora resuelve mediante el search domain del namespace `lab6`.
 
   ```bash
   kubectl exec \
@@ -325,7 +332,7 @@ pod/dns-client condition met
     nslookup backend-svc
   ```
 
-- {% include step_label.html %} Valida también el FQDN completo para confirmar la identidad DNS absoluta del Service.
+- {% include step_label.html id="s014" %} Valida también el FQDN completo para confirmar la identidad DNS absoluta del Service.
 
   ```bash
   kubectl exec \
@@ -341,7 +348,7 @@ Name:    backend-svc.lab6.svc.cluster.local
 Address: 10.x.x.x
 ```
 
-- {% include step_label.html %} Confirma conectividad HTTP para demostrar que la resolución obtenida corresponde con un Service funcional.
+- {% include step_label.html id="s015" %} Confirma conectividad HTTP para demostrar que la resolución obtenida corresponde con un Service funcional.
 
   ```bash
   kubectl exec \
@@ -405,7 +412,10 @@ HTTP:
 === Fin de validacion ===
 ```
 
-- {% include step_label.html %} Elimina únicamente el Pod temporal después de conservar las evidencias.
+
+{% assign tracking_task_id = "t002" %}
+
+- {% include step_label.html id="s016" %} Elimina únicamente el Pod temporal después de conservar las evidencias.
 
   ```bash
   kubectl delete pod dns-client \
