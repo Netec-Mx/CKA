@@ -38,6 +38,7 @@
     10 * 60 * 1000;
 
   let flushingQueue = false;
+  let accessBlocked = false;
 
   /* ---------------------------------------------------------
      Utilidades
@@ -500,6 +501,30 @@
     );
   }
 
+  function handleBlockedLab(root) {
+    if (accessBlocked) return;
+    accessBlocked = true;
+    const courseId = getCourseId(root);
+    const labId = getLabId(root);
+    if (courseId && labId) {
+      // A 403 is an authorization decision, NOT an offline retry.
+      // Drop all changes rejected while this Lab was locked.
+      saveQueue(courseId, labId, createEmptyQueue());
+    }
+    const notice = document.createElement("div");
+    notice.setAttribute("role", "alert");
+    notice.textContent = "Lab bloqueado por el instructor. Los cambios locales no autorizados no se guardarán. Regresa a Lab Control y vuelve a abrirlo cuando esté disponible.";
+    notice.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99999;padding:15px;background:#fff1f2;color:#9f1239;font-weight:600;text-align:center;border-bottom:2px solid #fb7185";
+    document.body.appendChild(notice);
+    // Block further clicks on steps in a tab already open.
+    document.addEventListener("click", (event) => {
+      if (event.target.closest(".step-label, .step-progress-toggle, [data-step-id]")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+  }
+
   async function sendStep(
     root,
     item
@@ -551,6 +576,10 @@
       return false;
     }
 
+    if (result.response.status === 403) {
+      handleBlockedLab(root);
+      return false;
+    }
     return result.response.ok;
   }
 
@@ -563,7 +592,8 @@
   ) {
     if (
       flushingQueue ||
-      !navigator.onLine
+      !navigator.onLine ||
+      accessBlocked
     ) {
       return false;
     }
@@ -803,6 +833,7 @@
     document.addEventListener(
       PROGRESS_CHANGE_EVENT,
       event => {
+        if (accessBlocked) return;
         const detail =
           event.detail;
 

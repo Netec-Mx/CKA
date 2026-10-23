@@ -265,6 +265,13 @@ function createBrowser({
     },
   };
 
+  document.createElement = () => ({
+    setAttribute() {},
+    style: {},
+    textContent: '',
+  });
+  document.body = { appendChild() {} };
+
   document.readyState =
     'complete';
 
@@ -373,6 +380,52 @@ const QUEUE_KEY =
   'netec:trackingQueue:' +
   'terraform-aws-essentials:' +
   'l001';
+
+
+await test(
+  '403 bloquea y descarta cambios rechazados sin reenvío posterior',
+  async () => {
+    const localStorage = new MemoryStorage();
+    const sessionStorage = new MemoryStorage({
+      [ACCESS_TOKEN_KEY]: 'participant-access-token',
+    });
+    const methods = [];
+    let serverStatus = 403;
+    const browser = createBrowser({
+      localStorage, sessionStorage,
+      fetchImpl: async (url, options = {}) => {
+        methods.push(options.method || 'GET');
+        if (url.endsWith('/tracking/step')) {
+          return createResponse({ status: serverStatus });
+        }
+        if (url.endsWith('/tracking/progress')) {
+          return createResponse({ body: { labs: [] } });
+        }
+        throw new Error('Unexpected URL: ' + url);
+      },
+    });
+    browser.document.dispatchEvent(new FakeCustomEvent('lab-progress-change', {
+      detail: { labId: 'l001', changes: [
+        { taskId: 't001', stepId: 's001', isCompleted: true },
+      ] },
+    }));
+    await settle();
+    assert(methods.filter(x => x === 'PATCH').length === 1,
+      'Debe intentar un solo PATCH que devuelve 403.');
+    assert(JSON.parse(localStorage.getItem(QUEUE_KEY)).items.length === 0,
+      'El 403 debe descartar cambios no autorizados.');
+    serverStatus = 200;
+    browser.window.dispatchEvent({ type: 'online' });
+    browser.document.dispatchEvent(new FakeCustomEvent('lab-progress-change', {
+      detail: { labId: 'l001', changes: [
+        { taskId: 't001', stepId: 's002', isCompleted: true },
+      ] },
+    }));
+    await settle();
+    assert(methods.filter(x => x === 'PATCH').length === 1,
+      'Un desbloqueo posterior no debe reenviar los cambios rechazados de la pestaña.');
+  },
+);
 
 await test(
   'conserva cambios offline, reintenta y converge con la API',
