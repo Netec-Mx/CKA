@@ -26,3 +26,11 @@ exclude:
 
 logo: /assets/img/neteclogo.png
 favicon: /assets/img/favicon.ico
+
+# ============================================================
+# LAB CONTROL - Sincronización de progreso
+# ============================================================
+# API pública de Lab Control.
+# No incluir credenciales ni tokens en este archivo.
+
+labcontrol_api_url: "https://labcontrol.superwebapp.com/api"
