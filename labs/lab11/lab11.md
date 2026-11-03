@@ -280,7 +280,7 @@ Total               15 min
 
 ## ✅ Validación final
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s017" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
   curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab11/scripts/validacion.sh -o validacion.sh

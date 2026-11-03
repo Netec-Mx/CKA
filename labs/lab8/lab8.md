@@ -1018,7 +1018,7 @@ En esta tarea asignarás la ServiceAccount al Pod y utilizarás su identidad rea
 
 ### Tarea 5.3. Ejecutar la validación final
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s054" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
   curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab8/scripts/validacion.sh -o validacion.sh

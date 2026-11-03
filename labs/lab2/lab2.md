@@ -301,7 +301,7 @@ Ya identificaste la causa raíz. Corrige únicamente el recurso responsable.
 
 # ✅ Validación final
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s021" %} Ejecuta el siguiente script para validar la configuracion.
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab2/scripts/validacion.sh -o validacion.sh

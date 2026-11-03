@@ -656,7 +656,7 @@ En esta tarea eliminarás `staging` y comprobarás que Kubernetes elimina autom�
 
 ### Tarea 5.3. Ejecutar la verificación final
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s042" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
   curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab6/scripts/validacion.sh -o validacion.sh

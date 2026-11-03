@@ -381,7 +381,7 @@ La lista puede variar según los Services existentes en `lab5`; lo importante es
 
 {% assign tracking_task_id = "t002" %}
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s025" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
   curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab9/scripts/validacion.sh -o validacion.sh

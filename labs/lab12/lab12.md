@@ -275,7 +275,7 @@ La configuración final debe utilizar:
 
 ## ✅ Validación final
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s016" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
   curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab12/scripts/validacion.sh -o validacion.sh
@@ -301,7 +301,7 @@ La configuración final debe utilizar:
 
 {% assign tracking_task_id = "t002" %}
 
-- {% include step_label.html id="s016" %} Elimina únicamente el Pod temporal después de conservar las evidencias.
+- {% include step_label.html id="s017" %} Elimina únicamente el Pod temporal después de conservar las evidencias.
 
   > **IMPORTANTE:** Conserva `lab6`, sus Deployments, Services y el addon de Ingress. Solo debe eliminarse el Pod temporal `dns-client`.
   {: .lab-note .important .compact}

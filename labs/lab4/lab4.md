@@ -300,7 +300,7 @@ Debes corregir el incidente sin cambiar la definición del Deployment.
 
 # ✅ Validación final
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s018" %} Ejecuta el siguiente script para validar la configuracion.
 
   La práctica queda completada cuando puedes demostrar:
 

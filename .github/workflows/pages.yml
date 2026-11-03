@@ -31,6 +31,8 @@ jobs:
       - name: Validate LabControl tooling
         run: |
           node scripts/test_lab_manifest.mjs
+          node --test scripts/test_repair_step_ids.mjs
+          node scripts/repair_step_ids.mjs --check
           node scripts/test_sync_lab_manifests.mjs
           node scripts/test_course_catalog.mjs
           node scripts/test_lab_id_registry.mjs

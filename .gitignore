@@ -52,3 +52,6 @@ instrucciones/EquipoDC.md
 
 # Catálogo generado durante GitHub Actions
 /labcontrol/
+
+# Respaldos de normalización Step IDs
+.step-id-backup/

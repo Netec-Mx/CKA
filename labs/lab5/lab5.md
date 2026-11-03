@@ -582,7 +582,7 @@ En esta tarea ejecutarás `uncordon` para habilitar nuevamente el worker y compr
 
 ### Tarea 5.3. Ejecutar la verificación final
 
-- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
+- {% include step_label.html id="s042" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
   curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab5/scripts/validacion.sh -o validacion.sh
