@@ -126,13 +126,13 @@ T10 [ ] 10 pts
   kubectl get nodes -o wide
   ```
 
-El resultado debe incluir:
+  El resultado debe incluir:
 
-```text
-minikube
-minikube-m02
-minikube-m03
-```
+  ```text
+  minikube
+  minikube-m02
+  minikube-m03
+  ```
 
 ## Preparación 2. Verificar Ingress y almacenamiento
 
@@ -179,8 +179,8 @@ minikube-m03
   alias k=kubectl
   ```
 
-> **NOTA:** El alias se mantiene únicamente en la terminal actual. Si abres otra terminal, deberás volver a ejecutarlo.
-{: .lab-note .info .compact}
+  > **NOTA:** El alias se mantiene únicamente en la terminal actual. Si abres otra terminal, deberás volver a ejecutarlo.
+  {: .lab-note .info .compact}
 
 ## Preparación 5. Crear escenarios iniciales
 
@@ -193,199 +193,10 @@ minikube-m03
   touch exam-setup.yaml
   ```
 
-- {% include step_label.html id="s007" %} Agrega el contenido siguiente sin modificar los errores intencionales.
+- {% include step_label.html id="s007" %} Descarga el contenido.
 
-  ```yaml
-  apiVersion: v1
-  kind: Namespace
-  metadata:
-    name: cka-admin
-  ---
-  apiVersion: v1
-  kind: Namespace
-  metadata:
-    name: cka-security
-  ---
-  apiVersion: v1
-  kind: Namespace
-  metadata:
-    name: cka-workloads
-  ---
-  apiVersion: v1
-  kind: Namespace
-  metadata:
-    name: cka-network
-  ---
-  apiVersion: v1
-  kind: Namespace
-  metadata:
-    name: cka-storage
-  ---
-  apiVersion: v1
-  kind: Namespace
-  metadata:
-    name: cka-troubleshoot
-  ---
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: maintenance-app
-    namespace: cka-admin
-  spec:
-    replicas: 6
-    selector:
-      matchLabels:
-        app: maintenance-app
-    template:
-      metadata:
-        labels:
-          app: maintenance-app
-      spec:
-        containers:
-          - name: nginx
-            image: nginx:1.27-alpine
-  ---
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: broken-backend
-    namespace: cka-network
-  spec:
-    replicas: 2
-    selector:
-      matchLabels:
-        app: backend
-    template:
-      metadata:
-        labels:
-          app: backend
-      spec:
-        containers:
-          - name: nginx
-            image: nginx:1.27-alpine
-            ports:
-              - containerPort: 80
-  ---
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: broken-backend-svc
-    namespace: cka-network
-  spec:
-    type: ClusterIP
-    selector:
-      app: backend-error
-    ports:
-      - port: 80
-        targetPort: 8080
-  ---
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: image-failure
-    namespace: cka-troubleshoot
-  spec:
-    containers:
-      - name: app
-        image: nginx:tag-does-not-exist-cka
-  ---
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: crash-failure
-    namespace: cka-troubleshoot
-  spec:
-    containers:
-      - name: app
-        image: nginx:1.27-alpine
-        command: ["/bin/sh", "-c", "exit 17"]
-  ---
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: dns-backend
-    namespace: cka-troubleshoot
-  spec:
-    replicas: 2
-    selector:
-      matchLabels:
-        app: dns-backend
-    template:
-      metadata:
-        labels:
-          app: dns-backend
-      spec:
-        containers:
-          - name: nginx
-            image: nginx:1.27-alpine
-            ports:
-              - containerPort: 80
-  ---
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: dns-backend-svc
-    namespace: cka-troubleshoot
-  spec:
-    selector:
-      app: dns-wrong
-    ports:
-      - port: 80
-        targetPort: 80
-  ---
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: dns-client
-    namespace: cka-troubleshoot
-  spec:
-    dnsPolicy: None
-    dnsConfig:
-      nameservers:
-        - 1.2.3.4
-    containers:
-      - name: tools
-        image: busybox:1.36
-        command: ["sh", "-c", "sleep 7200"]
-  ---
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-    name: production-api
-    namespace: cka-troubleshoot
-  spec:
-    replicas: 3
-    selector:
-      matchLabels:
-        app: production-api
-    template:
-      metadata:
-        labels:
-          app: production-api
-      spec:
-        containers:
-          - name: nginx
-            image: nginx:1.27-alpine
-            ports:
-              - containerPort: 80
-            readinessProbe:
-              httpGet:
-                path: /ready-does-not-exist
-                port: 80
-              initialDelaySeconds: 3
-              periodSeconds: 3
-  ---
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: production-api-svc
-    namespace: cka-troubleshoot
-  spec:
-    selector:
-      app: production-api
-    ports:
-      - port: 80
-        targetPort: 80
+  ```bash
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab15/exam-setup.yaml -o exam-setup.yaml
   ```
 
 - {% include step_label.html id="s008" %} Aplica la configuración inicial.
@@ -1020,225 +831,12 @@ Cuando el cronómetro llegue a cero:
 
 {% assign tracking_task_id = "t006" %}
 
-- {% include step_label.html id="s010" %} Crea `validate-exam.sh` con el contenido siguiente.
+- {% include step_label.html id="s010" %} Descarga el archivo `validate-exam.sh` y ejecutalo.
 
   ```bash
-  cat > validate-exam.sh <<'EOF'
-  #!/usr/bin/env bash
-
-  PASS=0
-  TOTAL=100
-
-  pass() {
-    echo "✅ $1 (+$2)"
-    PASS=$((PASS + $2))
-  }
-
-  fail() {
-    echo "❌ $1 (+0/$2)"
-  }
-
-  echo "================================================"
-  echo "        EVALUACION SIMULACION TIPO CKA"
-  echo "================================================"
-
-  echo ""
-  echo "--- T1 Mantenimiento de nodo: 15 puntos ---"
-
-  UNSCHED=$(kubectl get node minikube-m02 \
-    -o jsonpath='{.spec.unschedulable}' 2>/dev/null)
-
-  READY=$(kubectl get deployment maintenance-app \
-    -n cka-admin \
-    -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-
-  if [ "$UNSCHED" != "true" ] && [ "$READY" = "6" ]; then
-    pass "T1 mantenimiento completado" 15
-  else
-    fail "T1 mantenimiento incompleto" 15
-  fi
-
-  echo ""
-  echo "--- T2 RBAC: 10 puntos ---"
-
-  CAN_GET=$(kubectl auth can-i get pods \
-    --as=system:serviceaccount:cka-security:auditor \
-    -n cka-security 2>/dev/null)
-
-  CAN_SECRET=$(kubectl auth can-i get secrets \
-    --as=system:serviceaccount:cka-security:auditor \
-    -n cka-security 2>/dev/null)
-
-  if [ "$CAN_GET" = "yes" ] && [ "$CAN_SECRET" = "no" ]; then
-    pass "T2 RBAC correcto" 10
-  else
-    fail "T2 RBAC incorrecto" 10
-  fi
-
-  echo ""
-  echo "--- T3 Rollout: 8 puntos ---"
-
-  T3_READY=$(kubectl get deployment exam-web \
-    -n cka-workloads \
-    -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-
-  T3_IMAGE=$(kubectl get deployment exam-web \
-    -n cka-workloads \
-    -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null)
-
-  if [ "$T3_READY" = "4" ] && [ "$T3_IMAGE" = "nginx:1.27-alpine" ]; then
-    pass "T3 rollout y rollback correctos" 8
-  else
-    fail "T3 rollout incompleto" 8
-  fi
-
-  echo ""
-  echo "--- T4 Scheduling: 7 puntos ---"
-
-  T4_READY=$(kubectl get deployment analytics-app \
-    -n cka-workloads \
-    -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-
-  T4_NODES=$(kubectl get pod \
-    -n cka-workloads \
-    -l app=analytics-app \
-    -o jsonpath='{.items[*].spec.nodeName}' 2>/dev/null)
-
-  if [ "$T4_READY" = "2" ] && \
-     echo "$T4_NODES" | grep -q "minikube-m03" && \
-     ! echo "$T4_NODES" | grep -q "minikube-m02"; then
-    pass "T4 scheduling correcto" 7
-  else
-    fail "T4 scheduling incorrecto" 7
-  fi
-
-  echo ""
-  echo "--- T5 Service NodePort: 10 puntos ---"
-
-  T5_TYPE=$(kubectl get service broken-backend-svc \
-    -n cka-network \
-    -o jsonpath='{.spec.type}' 2>/dev/null)
-
-  T5_NODEPORT=$(kubectl get service broken-backend-svc \
-    -n cka-network \
-    -o jsonpath='{.spec.ports[0].nodePort}' 2>/dev/null)
-
-  T5_EP=$(kubectl get endpoints broken-backend-svc \
-    -n cka-network \
-    -o jsonpath='{.subsets[0].addresses[*].ip}' 2>/dev/null | wc -w)
-
-  if [ "$T5_TYPE" = "NodePort" ] && \
-     [ "$T5_NODEPORT" = "30081" ] && \
-     [ "$T5_EP" -eq 2 ]; then
-    pass "T5 Service reparado" 10
-  else
-    fail "T5 Service incorrecto" 10
-  fi
-
-  echo ""
-  echo "--- T6 Ingress: 10 puntos ---"
-
-  PORTAL_READY=$(kubectl get deployment portal \
-    -n cka-network \
-    -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-
-  API_READY=$(kubectl get deployment api \
-    -n cka-network \
-    -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-
-  INGRESS_CLASS=$(kubectl get ingress exam-ingress \
-    -n cka-network \
-    -o jsonpath='{.spec.ingressClassName}' 2>/dev/null)
-
-  if [ "$PORTAL_READY" = "2" ] && \
-     [ "$API_READY" = "2" ] && \
-     [ "$INGRESS_CLASS" = "nginx" ]; then
-    pass "T6 Ingress creado" 10
-  else
-    fail "T6 Ingress incompleto" 10
-  fi
-
-  echo ""
-  echo "--- T7 Storage: 10 puntos ---"
-
-  PVC_PHASE=$(kubectl get pvc exam-pvc \
-    -n cka-storage \
-    -o jsonpath='{.status.phase}' 2>/dev/null)
-
-  STORAGE_DATA=$(kubectl exec storage-check \
-    -n cka-storage -- \
-    cat /data/exam.txt 2>/dev/null)
-
-  if [ "$PVC_PHASE" = "Bound" ] && \
-     [ "$STORAGE_DATA" = "CKA-STORAGE-OK" ]; then
-    pass "T7 almacenamiento correcto" 10
-  else
-    fail "T7 almacenamiento incorrecto" 10
-  fi
-
-  echo ""
-  echo "--- T8 Troubleshooting Pods: 10 puntos ---"
-
-  P1=$(kubectl get pod image-failure \
-    -n cka-troubleshoot \
-    -o jsonpath='{.status.phase}' 2>/dev/null)
-
-  P2=$(kubectl get pod crash-failure \
-    -n cka-troubleshoot \
-    -o jsonpath='{.status.phase}' 2>/dev/null)
-
-  if [ "$P1" = "Running" ] && [ "$P2" = "Running" ]; then
-    pass "T8 Pods reparados" 10
-  else
-    fail "T8 Pods continúan fallando" 10
-  fi
-
-  echo ""
-  echo "--- T9 DNS y Service: 10 puntos ---"
-
-  DNS_EP=$(kubectl get endpoints dns-backend-svc \
-    -n cka-troubleshoot \
-    -o jsonpath='{.subsets[0].addresses[*].ip}' 2>/dev/null | wc -w)
-
-  kubectl exec dns-client \
-    -n cka-troubleshoot -- \
-    nslookup dns-backend-svc >/dev/null 2>&1
-  DNS_OK=$?
-
-  if [ "$DNS_EP" -eq 2 ] && [ "$DNS_OK" -eq 0 ]; then
-    pass "T9 DNS y Service correctos" 10
-  else
-    fail "T9 DNS o Service incorrectos" 10
-  fi
-
-  echo ""
-  echo "--- T10 Incidente integral: 10 puntos ---"
-
-  PROD_READY=$(kubectl get deployment production-api \
-    -n cka-troubleshoot \
-    -o jsonpath='{.status.readyReplicas}' 2>/dev/null)
-
-  PROD_EP=$(kubectl get endpoints production-api-svc \
-    -n cka-troubleshoot \
-    -o jsonpath='{.subsets[0].addresses[*].ip}' 2>/dev/null | wc -w)
-
-  if [ "$PROD_READY" = "3" ] && [ "$PROD_EP" -eq 3 ]; then
-    pass "T10 disponibilidad restaurada" 10
-  else
-    fail "T10 incidente no resuelto" 10
-  fi
-
-  echo ""
-  echo "================================================"
-  echo "PUNTUACION FINAL: $PASS / $TOTAL"
-  echo "================================================"
-
-  if [ "$PASS" -ge 75 ]; then
-    echo "🎓 RESULTADO PEDAGOGICO: APROBADO"
-  else
-    echo "📚 RESULTADO PEDAGOGICO: REQUIERE REPASO"
-  fi
-  EOF
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab15/scripts/validate-exam.sh -o validate-exam.sh
+  chmod +x validate-exam.sh
+  ./validate-exam.sh
   ```
 
 - {% include step_label.html id="s011" %} Ejecuta el evaluador.
@@ -1248,8 +846,8 @@ Cuando el cronómetro llegue a cero:
   ./validate-exam.sh
   ```
 
-> **IMPORTANTE:** El umbral de 75 puntos utilizado aquí es una regla pedagógica de esta práctica. No debe interpretarse como el puntaje oficial vigente del examen CKA.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** El umbral de 75 puntos utilizado aquí es una regla pedagógica de esta práctica. No debe interpretarse como el puntaje oficial vigente del examen CKA.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -1283,73 +881,6 @@ Tiempo utilizado:
 ```
 
 La finalidad de esta hoja es detectar si el problema fue de conocimiento, sintaxis, diagnóstico o administración del tiempo.
-
----
-
-# 🛠️ Troubleshooting de la simulación
-
-## Problema 1. El entorno inicial no coincide con los escenarios
-
-Si un recurso de preparación fue modificado accidentalmente antes de iniciar, restablece únicamente el escenario correspondiente desde `exam-setup.yaml`.
-
-```bash
-kubectl apply -f exam-setup.yaml
-```
-
-No ejecutes esta acción durante la evaluación si ya comenzaste a resolver tareas, porque podría sobrescribir cambios válidos.
-
----
-
-## Problema 2. El Ingress Controller no está disponible
-
-Comprueba su estado:
-
-```bash
-kubectl get pods -n ingress-nginx
-kubectl get ingressclass
-```
-
-La preparación del entorno debe completarse antes de iniciar el cronómetro.
-
----
-
-## Problema 3. Un NodePort no es accesible directamente desde Windows o macOS
-
-Esto no implica necesariamente un error del Service con el driver Docker.
-
-Utiliza:
-
-```bash
-minikube service NOMBRE \
-  -n NAMESPACE \
-  --url
-```
-
-y conserva abierta la terminal si Minikube necesita mantener un túnel local.
-
----
-
-## Problema 4. T4 deja cargas ajenas sin programar
-
-El taint `dedicated=analytics:NoSchedule` afecta a nuevos Pods que no lo toleren.
-
-Esto forma parte del escenario. No elimines el taint durante el examen porque es un criterio explícito de aceptación.
-
----
-
-## Problema 5. El PV de T7 queda Available y el PVC Pending
-
-Revisa compatibilidad entre:
-
-```text
-storageClassName
-accessModes
-capacity
-volumeName
-nodeAffinity
-```
-
-No cambies aleatoriamente varios parámetros al mismo tiempo; identifica primero cuál impide el binding.
 
 ---
 

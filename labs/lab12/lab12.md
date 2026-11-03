@@ -78,38 +78,24 @@ Total               15 min
 
 - {% include step_label.html id="s001" %} Comprueba que `backend-svc` existe y conserva destinos antes de iniciar un diagnóstico DNS.
 
-  ```bash
-  kubectl get service backend-svc \
-    -n lab6
+  **Salida esperada aproximada:**
 
-  kubectl get endpoints backend-svc \
-    -n lab6
+  ```text
+  NAME          TYPE        CLUSTER-IP   PORT(S)
+  backend-svc   ClusterIP   10.x.x.x     80/TCP
+
+  NAME          ENDPOINTS
+  backend-svc   10.244.x.x:80,10.244.x.x:80
   ```
-
-**Salida esperada aproximada:**
-
-```text
-NAME          TYPE        CLUSTER-IP   PORT(S)
-backend-svc   ClusterIP   10.x.x.x     80/TCP
-
-NAME          ENDPOINTS
-backend-svc   10.244.x.x:80,10.244.x.x:80
-```
 
 - {% include step_label.html id="s002" %} Confirma que CoreDNS está `Running`, estableciendo una línea base antes de crear el cliente defectuoso.
 
-  ```bash
-  kubectl get pods \
-    -n kube-system \
-    -l k8s-app=kube-dns
+  **Salida esperada aproximada:**
+
+  ```text
+  NAME                       READY   STATUS
+  coredns-<hash>-<id>        1/1     Running
   ```
-
-**Salida esperada aproximada:**
-
-```text
-NAME                       READY   STATUS
-coredns-<hash>-<id>        1/1     Running
-```
 
 ### Aplicar el estado inicial del reto
 
@@ -123,34 +109,23 @@ coredns-<hash>-<id>        1/1     Running
 
 - {% include step_label.html id="s004" %} Aplica `dns-internal-scenario6-2.yaml` sin inspeccionarlo previamente para crear el Pod que reproduce el incidente.
 
-  ```bash
-  kubectl apply -f dns-internal-scenario6-2.yaml
+
+  **Salida esperada:**
+
+  ```text
+  pod/dns-client created
   ```
-
-**Salida esperada:**
-
-```text
-pod/dns-client created
-```
 
 - {% include step_label.html id="s005" %} Espera hasta que el Pod esté listo antes de interpretar las pruebas de resolución.
 
-  ```bash
-  kubectl wait \
-    --for=condition=Ready \
-    pod/dns-client \
-    -n lab6 \
-    --timeout=60s
-  ```
+  **Salida esperada:**
 
-**Salida esperada:**
+  ```text
+  pod/dns-client condition met
+  ``` 
 
-```text
-pod/dns-client condition met
-```
-
-> **IMPORTANTE:** No abras el manifiesto del escenario antes de completar los Retos 1 y 2. No modifiques CoreDNS durante esta práctica.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** No abras el manifiesto del escenario antes de completar los Retos 1 y 2. No modifiques CoreDNS durante esta práctica.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -162,50 +137,31 @@ pod/dns-client condition met
 
 - {% include step_label.html id="s006" %} Intenta resolver el nombre corto `backend-svc` desde `dns-client` y registra el resultado.
 
-  ```bash
-  kubectl exec \
-    -n lab6 \
-    dns-client -- \
-    nslookup backend-svc
-  ```
+  **Salida esperada durante el incidente:**
 
-**Salida esperada durante el incidente:**
-
-La consulta debe fallar o terminar por timeout porque el Pod no utiliza correctamente el DNS del clúster.
+  La consulta debe fallar o terminar por timeout porque el Pod no utiliza correctamente el DNS del clúster.
 
 ### Reto 1.2. Comprobar otro cliente saludable
 
 - {% include step_label.html id="s007" %} Utiliza un Pod frontend existente para comprobar que el mismo nombre puede resolverse desde otro cliente del namespace.
 
-  ```bash
-  FRONTEND_POD=$(kubectl get pod \
-    -n lab6 \
-    -l app=frontend \
-    -o jsonpath='{.items[0].metadata.name}')
+  **Salida esperada aproximada:**
 
-  kubectl exec \
-    -n lab6 \
-    "$FRONTEND_POD" -- \
-    sh -c 'getent hosts backend-svc 2>/dev/null || nslookup backend-svc'
+  ```text
+  10.x.x.x   backend-svc.lab6.svc.cluster.local
   ```
 
-**Salida esperada aproximada:**
-
-```text
-10.x.x.x   backend-svc.lab6.svc.cluster.local
-```
-
-La salida exacta depende de las herramientas disponibles, pero debe resolver la ClusterIP de `backend-svc`.
+  La salida exacta depende de las herramientas disponibles, pero debe resolver la ClusterIP de `backend-svc`.
 
 ### Evidencia requerida
 
-```text
-[ ] backend-svc existe.
-[ ] backend-svc tiene endpoints.
-[ ] CoreDNS está Running.
-[ ] Otro Pod puede resolver backend-svc.
-[ ] dns-client es el único cliente con falla.
-```
+  ```text
+  [ ] backend-svc existe.
+  [ ] backend-svc tiene endpoints.
+  [ ] CoreDNS está Running.
+  [ ] Otro Pod puede resolver backend-svc.
+  [ ] dns-client es el único cliente con falla.
+  ```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -221,12 +177,6 @@ La salida exacta depende de las herramientas disponibles, pero debe resolver la 
 
 - {% include step_label.html id="s008" %} Revisa `/etc/resolv.conf` dentro de `dns-client` utilizando `sh -c` para impedir que Git Bash transforme la ruta Linux en una ruta de Windows.
 
-  ```bash
-  kubectl exec \
-    -n lab6 \
-    dns-client -- \
-    sh -c 'cat /etc/resolv.conf'
-  ```
 
 ### Evidencia esperada durante el incidente
 
@@ -236,35 +186,23 @@ La configuración no debe mostrar el servidor DNS y search domains normales de K
 
 - {% include step_label.html id="s009" %} Consulta la política DNS efectiva del Pod para determinar si Kubernetes está aplicando la configuración estándar del clúster.
 
-  ```bash
-  kubectl get pod dns-client \
-    -n lab6 \
-    -o jsonpath='{.spec.dnsPolicy}{"\n"}'
-  ```
-
 - {% include step_label.html id="s010" %} Consulta también una posible configuración DNS explícita para identificar si el Pod sobrescribe el resolver proporcionado por Kubernetes.
-
-  ```bash
-  kubectl get pod dns-client \
-    -n lab6 \
-    -o jsonpath='{.spec.dnsConfig}{"\n"}'
-  ```
 
 ### Reto 2.3. Formular la causa
 
-Debes poder explicar:
+  Debes poder explicar:
 
-```text
-CoreDNS está ____________________.
+  ```text
+  CoreDNS está ____________________.
 
-Otros Pods ____________________ backend-svc.
+  Otros Pods ____________________ backend-svc.
 
-dns-client utiliza dnsPolicy ____________________.
+  dns-client utiliza dnsPolicy ____________________.
 
-Su configuración DNS apunta a ____________________.
+  Su configuración DNS apunta a ____________________.
 
-Por tanto, la falla está en ____________________ y no en CoreDNS.
-```
+  Por tanto, la falla está en ____________________ y no en CoreDNS.
+  ```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -278,13 +216,13 @@ Por tanto, la falla está en ____________________ y no en CoreDNS.
 
 ### Restricciones
 
-```text
-[ ] No modifiques CoreDNS.
-[ ] No modifiques kube-dns.
-[ ] No modifiques backend-svc.
-[ ] No cambies los Pods frontend/backend.
-[ ] Corrige únicamente dns-client.
-```
+  ```text
+  [ ] No modifiques CoreDNS.
+  [ ] No modifiques kube-dns.
+  [ ] No modifiques backend-svc.
+  [ ] No cambies los Pods frontend/backend.
+  [ ] Corrige únicamente dns-client.
+  ```
 
 ### Reto 3.1. Corregir el manifiesto
 
@@ -292,76 +230,42 @@ Por tanto, la falla está en ____________________ y no en CoreDNS.
 
 La configuración final debe utilizar:
 
-```text
-dnsPolicy: ClusterFirst
-```
+  ```text
+  dnsPolicy: ClusterFirst
+  ```
 
 ### Reto 3.2. Recrear el Pod
 
 - {% include step_label.html id="s012" %} Elimina únicamente `dns-client` y vuelve a aplicar el manifiesto corregido porque la política DNS forma parte de la especificación del Pod.
 
-  ```bash
-  kubectl delete pod dns-client \
-    -n lab6
+  **Salida esperada:**
 
-  kubectl apply -f dns-internal-scenario6-2.yaml
-
-  kubectl wait \
-    --for=condition=Ready \
-    pod/dns-client \
-    -n lab6 \
-    --timeout=60s
-  ```
-
-**Salida esperada:**
-
-```text
-pod "dns-client" deleted
-pod/dns-client created
-pod/dns-client condition met
-```
+    ```text
+    pod "dns-client" deleted
+    pod/dns-client created
+    pod/dns-client condition met
+    ```
 
 ### Reto 3.3. Validar nombre corto y FQDN
 
 - {% include step_label.html id="s013" %} Comprueba que el nombre corto ahora resuelve mediante el search domain del namespace `lab6`.
 
-  ```bash
-  kubectl exec \
-    -n lab6 \
-    dns-client -- \
-    nslookup backend-svc
-  ```
-
 - {% include step_label.html id="s014" %} Valida también el FQDN completo para confirmar la identidad DNS absoluta del Service.
 
-  ```bash
-  kubectl exec \
-    -n lab6 \
-    dns-client -- \
-    nslookup backend-svc.lab6.svc.cluster.local
+  **Salida esperada aproximada:**
+
+  ```text
+  Name:    backend-svc.lab6.svc.cluster.local
+  Address: 10.x.x.x
   ```
-
-**Salida esperada aproximada:**
-
-```text
-Name:    backend-svc.lab6.svc.cluster.local
-Address: 10.x.x.x
-```
 
 - {% include step_label.html id="s015" %} Confirma conectividad HTTP para demostrar que la resolución obtenida corresponde con un Service funcional.
 
-  ```bash
-  kubectl exec \
-    -n lab6 \
-    dns-client -- \
-    sh -c 'wget -qO- http://backend-svc | grep "BACKEND API"'
+  **Salida esperada aproximada:**
+
+  ```text
+  <html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
   ```
-
-**Salida esperada aproximada:**
-
-```text
-<html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
-```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -371,104 +275,33 @@ Address: 10.x.x.x
 
 ## ✅ Validación final
 
-```bash
-echo "=== Validacion complementaria 6.2 ==="
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
-echo "dnsPolicy:"
-kubectl get pod dns-client \
-  -n lab6 \
-  -o jsonpath='{.spec.dnsPolicy}{"\n"}'
+  ```bash
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab12/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
+  ```
 
-echo ""
-echo "Resolucion FQDN:"
-kubectl exec \
-  -n lab6 \
-  dns-client -- \
-  nslookup backend-svc.lab6.svc.cluster.local
+  **Salida esperada aproximada:**
 
-echo ""
-echo "HTTP:"
-kubectl exec \
-  -n lab6 \
-  dns-client -- \
-  sh -c 'wget -qO- http://backend-svc | grep "BACKEND API"'
+  ```text
+  === Validacion complementaria 6.2 ===
+  dnsPolicy:
+  ClusterFirst
 
-echo "=== Fin de validacion ==="
-```
+  Resolucion FQDN:
+  Name: backend-svc.lab6.svc.cluster.local
+  Address: 10.x.x.x
 
-**Salida esperada aproximada:**
-
-```text
-=== Validacion complementaria 6.2 ===
-dnsPolicy:
-ClusterFirst
-
-Resolucion FQDN:
-Name: backend-svc.lab6.svc.cluster.local
-Address: 10.x.x.x
-
-HTTP:
-<html><body><h1>BACKEND API</h1>...
-=== Fin de validacion ===
-```
-
+  HTTP:
+  <html><body><h1>BACKEND API</h1>...
+  === Fin de validacion ===
+  ```
 
 {% assign tracking_task_id = "t002" %}
 
 - {% include step_label.html id="s016" %} Elimina únicamente el Pod temporal después de conservar las evidencias.
 
-  ```bash
-  kubectl delete pod dns-client \
-    -n lab6
-  ```
-
-> **IMPORTANTE:** Conserva `lab6`, sus Deployments, Services y el addon de Ingress. Solo debe eliminarse el Pod temporal `dns-client`.
-{: .lab-note .important .compact}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. dns-client no inicia
-
-```bash
-kubectl get pod dns-client -n lab6
-kubectl describe pod dns-client -n lab6
-```
-
-Revisa scheduling e imagen antes de investigar DNS.
-
-### Problema 2. También falla DNS desde frontend
-
-Comprueba CoreDNS y el Service DNS:
-
-```bash
-kubectl get pods \
-  -n kube-system \
-  -l k8s-app=kube-dns
-
-kubectl get service kube-dns \
-  -n kube-system
-```
-
-Si otros Pods tampoco resuelven, el problema ya no corresponde al escenario previsto.
-
-### Problema 3. Git Bash transforma /etc/resolv.conf
-
-Utiliza siempre:
-
-```bash
-kubectl exec -n lab6 dns-client -- \
-  sh -c 'cat /etc/resolv.conf'
-```
-
-No ejecutes la ruta Linux directamente después de `--` en Git Bash.
-
-### Problema 4. DNS resuelve pero HTTP falla
-
-```bash
-kubectl get endpoints backend-svc -n lab6
-kubectl get pods -n lab6 -l app=backend
-```
-
-Si DNS devuelve la ClusterIP correcta, investiga Service, endpoints o Pods y no CoreDNS.
+  > **IMPORTANTE:** Conserva `lab6`, sus Deployments, Services y el addon de Ingress. Solo debe eliminarse el Pod temporal `dns-client`.
+  {: .lab-note .important .compact}

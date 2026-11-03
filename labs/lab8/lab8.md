@@ -81,11 +81,11 @@ En esta práctica crearás un namespace dedicado llamado `lab5` y un directorio 
   kubectl create namespace lab5
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-namespace/lab5 created
-```
+  ```text
+  namespace/lab5 created
+  ```
 
 - {% include step_label.html id="s005" %} Establece temporalmente `lab5` como namespace predeterminado del contexto activo para reducir errores durante los comandos posteriores.
 
@@ -93,11 +93,11 @@ namespace/lab5 created
   kubectl config set-context --current --namespace=lab5
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Context "<nombre-del-contexto>" modified.
-```
+  ```text
+  Context "<nombre-del-contexto>" modified.
+  ```
 
 - {% include step_label.html id="s006" %} Confirma que el contexto actual utiliza `lab5` antes de comenzar con los recursos de configuración.
 
@@ -105,11 +105,11 @@ Context "<nombre-del-contexto>" modified.
   kubectl config view --minify | grep namespace
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-namespace: lab5
-```
+  ```text
+  namespace: lab5
+  ```
 
 ---
 
@@ -131,11 +131,11 @@ En esta tarea externalizarás configuración no sensible utilizando ConfigMaps. 
     --from-literal=APP_ENV=development
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-configmap/app-config created
-```
+  ```text
+  configmap/app-config created
+  ```
 
 - {% include step_label.html id="s008" %} Comprueba las claves almacenadas y revisa sus valores para confirmar que Kubernetes registró correctamente el ConfigMap.
 
@@ -143,24 +143,24 @@ configmap/app-config created
   kubectl describe configmap app-config
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Name:         app-config
-Namespace:    lab5
+  ```text
+  Name:         app-config
+  Namespace:    lab5
 
-Data
-====
-APP_ENV:
-----
-development
-APP_PORT:
-----
-8080
-LOG_LEVEL:
-----
-debug
-```
+  Data
+  ====
+  APP_ENV:
+  ----
+  development
+  APP_PORT:
+  ----
+  8080
+  LOG_LEVEL:
+  ----
+  debug
+  ```
 
 ### Tarea 1.2. Crear un ConfigMap declarativo
 
@@ -214,11 +214,11 @@ debug
   kubectl apply --dry-run=client -f configmap-nginx.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-configmap/nginx-config created (dry run)
-```
+  ```text
+  configmap/nginx-config created (dry run)
+  ```
 
 - {% include step_label.html id="s012" %} Aplica el manifiesto validado para crear `nginx-config` dentro del namespace `lab5`.
 
@@ -226,11 +226,11 @@ configmap/nginx-config created (dry run)
   kubectl apply -f configmap-nginx.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-configmap/nginx-config created
-```
+  ```text
+  configmap/nginx-config created
+  ```
 
 ### Tarea 1.3. Consumir variables y archivos
 
@@ -295,12 +295,12 @@ configmap/nginx-config created
   kubectl apply -f pods-configmap.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/config-env-pod created
-pod/config-volume-pod created
-```
+  ```text
+  pod/config-env-pod created
+  pod/config-volume-pod created
+  ```
 
 - {% include step_label.html id="s016" %} Espera hasta que ambos Pods estén `Ready` para evitar validar configuración mientras los contenedores todavía están iniciando.
 
@@ -309,12 +309,12 @@ pod/config-volume-pod created
   kubectl wait --for=condition=Ready pod/config-volume-pod --timeout=90s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/config-env-pod condition met
-pod/config-volume-pod condition met
-```
+  ```text
+  pod/config-env-pod condition met
+  pod/config-volume-pod condition met
+  ```
 
 - {% include step_label.html id="s017" %} Comprueba las variables de entorno cargadas en el primer Pod.
 
@@ -323,11 +323,11 @@ pod/config-volume-pod condition met
     sh -c 'echo "LOG_LEVEL=$LOG_LEVEL APP_PORT=$APP_PORT APP_ENV=$APP_ENV"'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-LOG_LEVEL=debug APP_PORT=8080 APP_ENV=development
-```
+  ```text
+  LOG_LEVEL=debug APP_PORT=8080 APP_ENV=development
+  ```
 
 - {% include step_label.html id="s018" %} Comprueba que el segundo Pod utiliza el contenido montado desde `nginx-config`.
 
@@ -336,20 +336,20 @@ LOG_LEVEL=debug APP_PORT=8080 APP_ENV=development
     sh -c 'cat /usr/share/nginx/html/index.html'
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```html
-<!DOCTYPE html>
-<html lang="es">
-...
-<h1>Configuración desde ConfigMap</h1>
-<p>Contenido externalizado correctamente.</p>
-...
-</html>
-```
+  ```html
+  <!DOCTYPE html>
+  <html lang="es">
+  ...
+  <h1>Configuración desde ConfigMap</h1>
+  <p>Contenido externalizado correctamente.</p>
+  ...
+  </html>
+  ```
 
-> **IMPORTANTE:** En Git Bash se utiliza `sh -c` para que `/usr/share/nginx/html/index.html` sea interpretado dentro del contenedor y no sea convertido a una ruta de Windows.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** En Git Bash se utiliza `sh -c` para que `/usr/share/nginx/html/index.html` sea interpretado dentro del contenedor y no sea convertido a una ruta de Windows.
+  {: .lab-note .important .compact}
 
 - {% include step_label.html id="s019" %} Verifica el endpoint `/health` directamente desde el contenedor NGINX.
 
@@ -358,14 +358,14 @@ LOG_LEVEL=debug APP_PORT=8080 APP_ENV=development
     sh -c 'wget -qO- http://127.0.0.1/health'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-OK
-```
+  ```text
+  OK
+  ```
 
-> **NOTA:** Los valores consumidos como variables de entorno se establecen al iniciar el contenedor. Los volúmenes de ConfigMap tienen un comportamiento diferente, aunque el uso de `subPath` evita actualizaciones automáticas del archivo montado.
-{: .lab-note .info .compact}
+  > **NOTA:** Los valores consumidos como variables de entorno se establecen al iniciar el contenedor. Los volúmenes de ConfigMap tienen un comportamiento diferente, aunque el uso de `subPath` evita actualizaciones automáticas del archivo montado.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -393,11 +393,11 @@ En esta tarea almacenarás información sensible en Secrets y comprobarás cómo
     --from-literal=DB_HOST=postgres-service
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-secret/db-credentials created
-```
+  ```text
+  secret/db-credentials created
+  ```
 
 - {% include step_label.html id="s021" %} Consulta el Secret en YAML para observar que los valores del campo `data` están representados mediante base64.
 
@@ -405,17 +405,17 @@ secret/db-credentials created
   kubectl get secret db-credentials -o yaml
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```yaml
-apiVersion: v1
-data:
-  DB_HOST: cG9zdGdyZXMtc2VydmljZQ==
-  DB_PASSWORD: TGFiLVMzY3JldC0yMDI2
-  DB_USER: bGFiYWRtaW4=
-kind: Secret
-type: Opaque
-```
+  ```yaml
+  apiVersion: v1
+  data:
+    DB_HOST: cG9zdGdyZXMtc2VydmljZQ==
+    DB_PASSWORD: TGFiLVMzY3JldC0yMDI2
+    DB_USER: bGFiYWRtaW4=
+  kind: Secret
+  type: Opaque
+  ```
 
 - {% include step_label.html id="s022" %} Extrae y decodifica únicamente `DB_USER` para comprobar la relación entre el valor original y la representación almacenada.
 
@@ -426,14 +426,14 @@ type: Opaque
   echo
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-labadmin
-```
+  ```text
+  labadmin
+  ```
 
-> **IMPORTANTE:** Base64 es una codificación reversible y no proporciona cifrado. Un usuario autorizado para leer Secrets puede recuperar fácilmente sus valores originales.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Base64 es una codificación reversible y no proporciona cifrado. Un usuario autorizado para leer Secrets puede recuperar fácilmente sus valores originales.
+  {: .lab-note .important .compact}
 
 ### Tarea 2.2. Crear un Secret TLS
 
@@ -447,8 +447,8 @@ labadmin
     -subj "/CN=lab5.local/O=KubernetesLab"
   ```
 
-> **IMPORTANTE:** `MSYS_NO_PATHCONV=1` evita que Git Bash transforme `/CN=...` en una ruta de Windows como `C:/Program Files/Git/...`.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** `MSYS_NO_PATHCONV=1` evita que Git Bash transforme `/CN=...` en una ruta de Windows como `C:/Program Files/Git/...`.
+  {: .lab-note .important .compact}
 
 - {% include step_label.html id="s024" %} Comprueba que OpenSSL generó los dos archivos antes de intentar crear el Secret TLS, evitando continuar con archivos inexistentes.
 
@@ -456,12 +456,12 @@ labadmin
   ls -lh tls.crt tls.key
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
--rw-r--r-- ... tls.crt
--rw-r--r-- ... tls.key
-```
+  ```text
+  -rw-r--r-- ... tls.crt
+  -rw-r--r-- ... tls.key
+  ```
 
 - {% include step_label.html id="s025" %} Inspecciona el sujeto y la vigencia del certificado para confirmar que el Common Name corresponde con `lab5.local`.
 
@@ -473,13 +473,13 @@ labadmin
     -dates
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-subject=CN=lab5.local, O=KubernetesLab
-notBefore=...
-notAfter=...
-```
+  ```text
+  subject=CN=lab5.local, O=KubernetesLab
+  notBefore=...
+  notAfter=...
+  ```
 
 - {% include step_label.html id="s026" %} Crea `tls-certificate` utilizando el certificado y la clave privada que acabas de validar.
 
@@ -489,11 +489,11 @@ notAfter=...
     --key=tls.key
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-secret/tls-certificate created
-```
+  ```text
+  secret/tls-certificate created
+  ```
 
 - {% include step_label.html id="s027" %} Consulta únicamente el tipo del Secret para confirmar que Kubernetes lo registró como un recurso TLS y no como un Secret Opaque genérico.
 
@@ -502,11 +502,11 @@ secret/tls-certificate created
     -o jsonpath='{.type}{"\n"}'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-kubernetes.io/tls
-```
+  ```text
+  kubernetes.io/tls
+  ```
 
 ### Tarea 2.3. Consumir el Secret desde un Pod
 
@@ -568,11 +568,11 @@ kubernetes.io/tls
   kubectl apply --dry-run=client -f pod-secret.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/secret-demo-pod created (dry run)
-```
+  ```text
+  pod/secret-demo-pod created (dry run)
+  ```
 
 - {% include step_label.html id="s031" %} Aplica el manifiesto y espera a que el contenedor quede `Ready` antes de consultar las variables y el archivo proyectado.
 
@@ -584,12 +584,12 @@ pod/secret-demo-pod created (dry run)
     --timeout=60s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/secret-demo-pod created
-pod/secret-demo-pod condition met
-```
+  ```text
+  pod/secret-demo-pod created
+  pod/secret-demo-pod condition met
+  ```
 
 - {% include step_label.html id="s032" %} Revisa los logs para confirmar que las variables se inyectaron y que el archivo proyectado contiene exactamente el mismo usuario.
 
@@ -597,14 +597,14 @@ pod/secret-demo-pod condition met
   kubectl logs secret-demo-pod
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-DB_USER=labadmin
-DB_HOST=postgres-service
-DB_PASSWORD definida correctamente
-Archivo DB_USER=labadmin
-```
+  ```text
+  DB_USER=labadmin
+  DB_HOST=postgres-service
+  DB_PASSWORD definida correctamente
+  Archivo DB_USER=labadmin
+  ```
 
 - {% include step_label.html id="s033" %} Valida directamente el archivo montado para demostrar que su contenido proviene del Secret y no únicamente de la variable `DB_USER`.
 
@@ -613,14 +613,14 @@ Archivo DB_USER=labadmin
     sh -c 'printf "Contenido del archivo: "; cat /etc/db-secret/db-user; echo'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-Contenido del archivo: labadmin
-```
+  ```text
+  Contenido del archivo: labadmin
+  ```
 
-> **IMPORTANTE:** El valor correcto es `labadmin`, porque ese fue el dato creado en `DB_USER`. La práctica no utiliza `labuser`.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** El valor correcto es `labadmin`, porque ese fue el dato creado en `DB_USER`. La práctica no utiliza `labuser`.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -645,11 +645,11 @@ En esta tarea crearás una identidad de aplicación y definirás exactamente qu�
   kubectl create serviceaccount app-reader
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-serviceaccount/app-reader created
-```
+  ```text
+  serviceaccount/app-reader created
+  ```
 
 - {% include step_label.html id="s035" %} Comprueba que la nueva identidad aparece junto con la ServiceAccount `default` del namespace.
 
@@ -657,16 +657,16 @@ serviceaccount/app-reader created
   kubectl get serviceaccounts
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME         SECRETS   AGE
-app-reader   0         ...
-default      0         ...
-```
+  ```text
+  NAME         SECRETS   AGE
+  app-reader   0         ...
+  default      0         ...
+  ```
 
-> **NOTA:** En versiones actuales de Kubernetes es normal que la columna `SECRETS` muestre `0`; los tokens de ServiceAccount se obtienen mediante TokenRequest y se proyectan en los Pods.
-{: .lab-note .info .compact}
+  > **NOTA:** En versiones actuales de Kubernetes es normal que la columna `SECRETS` muestre `0`; los tokens de ServiceAccount se obtienen mediante TokenRequest y se proyectan en los Pods.
+  {: .lab-note .info .compact}
 
 ### Tarea 3.2. Crear el Role
 
@@ -702,11 +702,11 @@ default      0         ...
   kubectl apply --dry-run=client -f role-reader.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-role.rbac.authorization.k8s.io/pod-configmap-reader created (dry run)
-```
+  ```text
+  role.rbac.authorization.k8s.io/pod-configmap-reader created (dry run)
+  ```
 
 - {% include step_label.html id="s039" %} Aplica el Role después de validar su sintaxis.
 
@@ -714,11 +714,11 @@ role.rbac.authorization.k8s.io/pod-configmap-reader created (dry run)
   kubectl apply -f role-reader.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-role.rbac.authorization.k8s.io/pod-configmap-reader created
-```
+  ```text
+  role.rbac.authorization.k8s.io/pod-configmap-reader created
+  ```
 
 ### Tarea 3.3. Crear el RoleBinding
 
@@ -752,11 +752,11 @@ role.rbac.authorization.k8s.io/pod-configmap-reader created
   kubectl apply -f rolebinding-reader.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-rolebinding.rbac.authorization.k8s.io/app-reader-binding created
-```
+  ```text
+  rolebinding.rbac.authorization.k8s.io/app-reader-binding created
+  ```
 
 - {% include step_label.html id="s043" %} Describe el RoleBinding para verificar que `app-reader` es el subject y que `pod-configmap-reader` es el Role asignado.
 
@@ -764,22 +764,22 @@ rolebinding.rbac.authorization.k8s.io/app-reader-binding created
   kubectl describe rolebinding app-reader-binding
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Name:         app-reader-binding
-Namespace:    lab5
-Role:
-  Kind:  Role
-  Name:  pod-configmap-reader
-Subjects:
-  Kind            Name        Namespace
-  ----            ----        ---------
-  ServiceAccount  app-reader  lab5
-```
+  ```text
+  Name:         app-reader-binding
+  Namespace:    lab5
+  Role:
+    Kind:  Role
+    Name:  pod-configmap-reader
+  Subjects:
+    Kind            Name        Namespace
+    ----            ----        ---------
+    ServiceAccount  app-reader  lab5
+  ```
 
-> **Concepto clave:** Un Role define permisos; un RoleBinding asigna esos permisos a una identidad. Crear únicamente el Role no concede acceso a ningún usuario o ServiceAccount.
-{: .lab-note .important .compact}
+  > **Concepto clave:** Un Role define permisos; un RoleBinding asigna esos permisos a una identidad. Crear únicamente el Role no concede acceso a ningún usuario o ServiceAccount.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -816,13 +816,13 @@ En esta tarea comprobarás explícitamente qué operaciones puede realizar `app-
     --namespace=lab5
   ```
 
-**Salida esperada, en el mismo orden de ejecución:**
+  **Salida esperada, en el mismo orden de ejecución:**
 
-```text
-yes
-yes
-yes
-```
+  ```text
+  yes
+  yes
+  yes
+  ```
 
 ### Tarea 4.2. Validar operaciones denegadas
 
@@ -844,13 +844,13 @@ yes
     --namespace=lab5
   ```
 
-**Salida esperada, en el mismo orden de ejecución:**
+  **Salida esperada, en el mismo orden de ejecución:**
 
-```text
-no
-no
-no
-```
+  ```text
+  no
+  no
+  no
+  ```
 
 ### Tarea 4.3. Comprobar el alcance del namespace
 
@@ -862,11 +862,11 @@ no
     --namespace=kube-system
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-no
-```
+  ```text
+  no
+  ```
 
 - {% include step_label.html id="s047" %} Utiliza `--list` para obtener una vista consolidada de las acciones que Kubernetes autoriza a la identidad dentro del namespace.
 
@@ -876,19 +876,19 @@ no
     --namespace=lab5
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Resources      Non-Resource URLs   Resource Names   Verbs
-pods           []                  []               [get list watch]
-pods/log       []                  []               [get]
-configmaps     []                  []               [get list watch]
-```
+  ```text
+  Resources      Non-Resource URLs   Resource Names   Verbs
+  pods           []                  []               [get list watch]
+  pods/log       []                  []               [get]
+  configmaps     []                  []               [get list watch]
+  ```
 
-La tabla puede incluir permisos básicos adicionales de descubrimiento de API, pero no debe conceder lectura de `secrets` ni creación o eliminación de Pods.
+  La tabla puede incluir permisos básicos adicionales de descubrimiento de API, pero no debe conceder lectura de `secrets` ni creación o eliminación de Pods.
 
-> **NOTA:** El formato completo de identidad de una ServiceAccount es `system:serviceaccount:<namespace>:<nombre>`. Este formato es especialmente útil durante auditorías y ejercicios CKA.
-{: .lab-note .info .compact}
+  > **NOTA:** El formato completo de identidad de una ServiceAccount es `system:serviceaccount:<namespace>:<nombre>`. Este formato es especialmente útil durante auditorías y ejercicios CKA.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -954,11 +954,11 @@ En esta tarea asignarás la ServiceAccount al Pod y utilizarás su identidad rea
   kubectl apply -f pod-rbac.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/rbac-demo-pod created
-```
+  ```text
+  pod/rbac-demo-pod created
+  ```
 
 - {% include step_label.html id="s051" %} Espera hasta que el Pod esté `Ready` antes de leer los resultados generados por kubectl dentro del contenedor.
 
@@ -966,11 +966,11 @@ pod/rbac-demo-pod created
   kubectl wait --for=condition=Ready pod/rbac-demo-pod --timeout=90s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/rbac-demo-pod condition met
-```
+  ```text
+  pod/rbac-demo-pod condition met
+  ```
 
 - {% include step_label.html id="s052" %} Revisa los logs y confirma que la ServiceAccount puede listar Pods y ConfigMaps, pero recibe `Forbidden` al intentar consultar Secrets.
 
@@ -978,28 +978,28 @@ pod/rbac-demo-pod condition met
   kubectl logs rbac-demo-pod
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-=== ServiceAccount ===
-ca.crt
-namespace
-token
+  ```text
+  === ServiceAccount ===
+  ca.crt
+  namespace
+  token
 
-=== Pods permitidos ===
-NAME                READY   STATUS    ...
-...
+  === Pods permitidos ===
+  NAME                READY   STATUS    ...
+  ...
 
-=== ConfigMaps permitidos ===
-NAME               DATA   AGE
-app-config         3      ...
-nginx-config       2      ...
+  === ConfigMaps permitidos ===
+  NAME               DATA   AGE
+  app-config         3      ...
+  nginx-config       2      ...
 
-=== Secrets denegados ===
-Error from server (Forbidden): secrets is forbidden: User "system:serviceaccount:lab5:app-reader" cannot list resource "secrets" ...
-```
+  === Secrets denegados ===
+  Error from server (Forbidden): secrets is forbidden: User "system:serviceaccount:lab5:app-reader" cannot list resource "secrets" ...
+  ```
 
-La línea `Forbidden` es esperada y demuestra que el Role aplica mínimo privilegio; el `|| true` evita que el contenedor termine por esa comprobación negativa.
+  La línea `Forbidden` es esperada y demuestra que el Role aplica mínimo privilegio; el `|| true` evita que el contenedor termine por esa comprobación negativa.
 
 ### Tarea 5.2. Verificar la identidad asignada
 
@@ -1010,254 +1010,42 @@ La línea `Forbidden` es esperada y demuestra que el Role aplica mínimo privile
     -o jsonpath='{.spec.serviceAccountName}{"\n"}'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-app-reader
-```
+  ```text
+  app-reader
+  ```
 
 ### Tarea 5.3. Ejecutar la validación final
 
-- {% include step_label.html id="s054" %} Copia y ejecuta el bloque siguiente para comprobar los recursos principales y los permisos críticos de la práctica.
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Verificacion final de la Practica 5 ==="
-
-  kubectl get configmap app-config >/dev/null 2>&1 \
-    && echo "✅ ConfigMap app-config disponible" \
-    || echo "❌ ConfigMap app-config no encontrado"
-
-  kubectl get secret db-credentials >/dev/null 2>&1 \
-    && echo "✅ Secret db-credentials disponible" \
-    || echo "❌ Secret db-credentials no encontrado"
-
-  kubectl get serviceaccount app-reader >/dev/null 2>&1 \
-    && echo "✅ ServiceAccount app-reader disponible" \
-    || echo "❌ ServiceAccount no encontrada"
-
-  kubectl get role pod-configmap-reader >/dev/null 2>&1 \
-    && echo "✅ Role disponible" \
-    || echo "❌ Role no encontrado"
-
-  kubectl get rolebinding app-reader-binding >/dev/null 2>&1 \
-    && echo "✅ RoleBinding disponible" \
-    || echo "❌ RoleBinding no encontrado"
-
-  CAN_GET_PODS=$(kubectl auth can-i get pods \
-    --as=system:serviceaccount:lab5:app-reader \
-    --namespace=lab5)
-
-  CAN_GET_SECRETS=$(kubectl auth can-i get secrets \
-    --as=system:serviceaccount:lab5:app-reader \
-    --namespace=lab5)
-
-  [ "$CAN_GET_PODS" = "yes" ] \
-    && echo "✅ app-reader puede leer Pods" \
-    || echo "❌ app-reader no puede leer Pods"
-
-  [ "$CAN_GET_SECRETS" = "no" ] \
-    && echo "✅ app-reader no puede leer Secrets" \
-    || echo "❌ app-reader tiene acceso inesperado a Secrets"
-
-  SA=$(kubectl get pod rbac-demo-pod \
-    -o jsonpath='{.spec.serviceAccountName}')
-
-  [ "$SA" = "app-reader" ] \
-    && echo "✅ rbac-demo-pod usa app-reader" \
-    || echo "❌ ServiceAccount inesperada: $SA"
-
-  echo "=== Fin de verificacion ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab8/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-=== Verificacion final de la Practica 5 ===
-✅ ConfigMap app-config disponible
-✅ Secret db-credentials disponible
-✅ ServiceAccount app-reader disponible
-✅ Role disponible
-✅ RoleBinding disponible
-✅ app-reader puede leer Pods
-✅ app-reader no puede leer Secrets
-✅ rbac-demo-pod usa app-reader
-=== Fin de verificacion ===
-```
+  ```text
+  === Verificacion final de la Practica 5 ===
+  ✅ ConfigMap app-config disponible
+  ✅ Secret db-credentials disponible
+  ✅ ServiceAccount app-reader disponible
+  ✅ Role disponible
+  ✅ RoleBinding disponible
+  ✅ app-reader puede leer Pods
+  ✅ app-reader no puede leer Secrets
+  ✅ rbac-demo-pod usa app-reader
+  === Fin de verificacion ===
+  ```
 
-> **IMPORTANTE:** Conserva los recursos RBAC y el namespace `lab5`. La práctica complementaria siguiente reutilizará la ServiceAccount para profundizar en validación de permisos.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Conserva los recursos RBAC y el namespace `lab5`. La práctica complementaria siguiente reutilizará la ServiceAccount para profundizar en validación de permisos.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
 
 {% include support-prompt.html task="tarea5" %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. El Pod muestra CreateContainerConfigError
-
-**Síntoma:** Un Pod que utiliza ConfigMaps o Secrets no inicia y permanece en `CreateContainerConfigError`.
-
-**Causa probable:** El Pod referencia un ConfigMap, Secret o clave que no existe dentro del mismo namespace.
-
-**Solución:**
-
-```bash
-kubectl describe pod config-env-pod
-kubectl get configmaps
-kubectl get secrets
-```
-
-Corrige el nombre del recurso o créalo antes de recrear el Pod.
-
----
-
-### Problema 2. config-volume-pod no inicia correctamente
-
-**Síntoma:** El Pod de NGINX entra en `CrashLoopBackOff` o no responde en `/health`.
-
-**Causa probable:** El contenido de `nginx.conf` tiene un error de sintaxis o el archivo se montó en una ruta incorrecta.
-
-**Solución:**
-
-```bash
-kubectl describe pod config-volume-pod
-kubectl logs config-volume-pod
-kubectl get configmap nginx-config -o yaml
-```
-
-Corrige `configmap-nginx.yaml`, vuelve a aplicarlo y recrea el Pod si utilizaste `subPath`.
-
----
-
-### Problema 3. Un valor de Secret no coincide con el esperado
-
-**Síntoma:** El valor recuperado desde `data` no corresponde con la credencial original.
-
-**Causa probable:** El valor fue codificado con un salto de línea o existe una diferencia entre el dato creado y el utilizado por el Pod.
-
-**Solución:**
-
-```bash
-kubectl get secret db-credentials \
-  -o jsonpath='{.data.DB_USER}' \
-  | base64 --decode
-echo
-```
-
-Para codificaciones manuales futuras utiliza `echo -n` para evitar incorporar un salto de línea.
-
----
-
-### Problema 4. kubectl auth can-i devuelve no inesperadamente
-
-**Síntoma:** `app-reader` no puede realizar una acción de lectura que debería estar permitida por el Role.
-
-**Causa probable:** El RoleBinding referencia una ServiceAccount, namespace o Role diferente del esperado.
-
-**Solución:**
-
-```bash
-kubectl get serviceaccount app-reader
-kubectl get role pod-configmap-reader -o yaml
-kubectl get rolebinding app-reader-binding -o yaml
-```
-
-Confirma que `subjects.name` sea `app-reader`, que el namespace sea `lab5` y que `roleRef.name` sea `pod-configmap-reader`.
-
----
-
-### Problema 5. El Pod RBAC recibe Forbidden incluso para Pods
-
-**Síntoma:** `rbac-demo-pod` recibe `Forbidden` al ejecutar `kubectl get pods -n lab5`.
-
-**Causa probable:** El Pod utiliza una ServiceAccount incorrecta o el RoleBinding no está asociado con la identidad realmente utilizada.
-
-**Solución:**
-
-```bash
-kubectl get pod rbac-demo-pod \
-  -o jsonpath='{.spec.serviceAccountName}{"\n"}'
-
-kubectl auth can-i get pods \
-  --as=system:serviceaccount:lab5:app-reader \
-  --namespace=lab5
-```
-
-Si la respuesta continúa siendo `no`, revisa el Role y el RoleBinding antes de modificar el Pod.
-
----
-
-### Problema 6. Git Bash transforma una ruta Linux del contenedor
-
-**Síntoma:** Un comando `kubectl exec` intenta abrir una ruta similar a `C:/Program Files/Git/...`.
-
-**Causa probable:** MSYS2 interpreta una ruta que empieza con `/` como una ruta local de Windows antes de entregarla a `kubectl`.
-
-**Solución:**
-
-Encapsula el comando que usa la ruta dentro de `sh -c`.
-
-```bash
-kubectl exec config-volume-pod -- \
-  sh -c 'cat /usr/share/nginx/html/index.html'
-```
-
-Para argumentos de herramientas locales como `openssl -subj`, utiliza `MSYS_NO_PATHCONV=1` como se indica en la Tarea 2.2.
-
----
-
-### Problema 7. localhost devuelve Connection refused dentro de config-volume-pod
-
-**Síntoma:** NGINX aparece `Running`, pero `wget http://localhost/health` devuelve `Connection refused`.
-
-**Causa probable:** En este entorno la resolución de `localhost` no produce el comportamiento esperado dentro del contenedor.
-
-**Solución:**
-
-Utiliza la dirección loopback IPv4 explícita empleada por la práctica.
-
-```bash
-kubectl exec config-volume-pod -- \
-  sh -c 'wget -qO- http://127.0.0.1/health'
-```
-
-La salida correcta debe ser:
-
-```text
-OK
-```
-
----
-
-### Problema 8. El archivo proyectado desde db-credentials aparece vacío
-
-**Síntoma:** Las variables `DB_USER` y `DB_HOST` funcionan, pero la validación del archivo no muestra `labadmin`.
-
-**Causa probable:** El manifiesto anterior dependía del nombre automático de la clave y mostraba el contenido con un `cat` separado, dificultando distinguir una proyección incorrecta.
-
-**Solución:**
-
-La versión corregida utiliza una proyección explícita:
-
-```yaml
-items:
-  - key: DB_USER
-    path: db-user
-```
-
-Comprueba directamente el archivo:
-
-```bash
-kubectl exec secret-demo-pod -- \
-  sh -c 'ls -l /etc/db-secret && printf "DB_USER archivo="; cat /etc/db-secret/db-user; echo'
-```
-
-La salida debe incluir:
-
-```text
-DB_USER archivo=labadmin
-```

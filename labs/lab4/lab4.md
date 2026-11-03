@@ -88,20 +88,12 @@ Total               20 min
 
 - {% include step_label.html id="s001" %} Ubícate en el directorio utilizado por la Práctica 2 y confirma que `webapp` continúa disponible.
 
-  ```bash
-  cd /c/LABS/kubernetes/lab2
+  **Resultado esperado:**
 
-  kubectl get deployment webapp
-  kubectl get replicasets -l app=webapp
-  kubectl get pods -l app=webapp
-  ```
+  El Deployment debe tener sus réplicas disponibles y deben existir ReplicaSets asociados con la aplicación.
 
-**Resultado esperado:**
-
-El Deployment debe tener sus réplicas disponibles y deben existir ReplicaSets asociados con la aplicación.
-
-> **IMPORTANTE:** Si no existen ReplicaSets históricos, revisa que hayas completado previamente el rolling update y rollback del Lab 3.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Si no existen ReplicaSets históricos, revisa que hayas completado previamente el rolling update y rollback del Lab 3.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -116,7 +108,7 @@ El Deployment debe tener sus réplicas disponibles y deben existir ReplicaSets a
   curl -L -o lab2-1-scenario.sh https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab4/lab2-1-scenario.sh
   ```
 
-- {% include step_label.html id="s003" %} Ejecuta el escenario proporcionado sin abrir el archivo ni revisar previamente su contenido.
+- {% include step_label.html id="s003" %} Ejecuta el escenario proporcionado.
 
   ```bash
   bash lab2-1-scenario.sh
@@ -127,9 +119,6 @@ El Deployment debe tener sus réplicas disponibles y deben existir ReplicaSets a
   ```bash
   sleep 5
   ```
-
-> **IMPORTANTE:** No utilices `cat`, VS Code ni otro editor para inspeccionar `lab2-1-scenario.sh` antes de completar el diagnóstico.
-{: .lab-note .important .compact}
 
 ---
 
@@ -146,17 +135,13 @@ No modifiques recursos todavía. Primero determina qué objetos existen y cómo 
 
 - {% include step_label.html id="s005" %} Comprueba el estado deseado y disponible de `webapp`.
 
-  ```bash
-  kubectl get deployment webapp
+  Responde:
+
+  ```text
+  ¿Cuántas réplicas desea el Deployment?
+  ¿Cuántas aparecen Ready?
+  ¿El Deployment está realmente degradado?
   ```
-
-Responde:
-
-```text
-¿Cuántas réplicas desea el Deployment?
-¿Cuántas aparecen Ready?
-¿El Deployment está realmente degradado?
-```
 
 ---
 
@@ -167,27 +152,16 @@ Responde:
 
 - {% include step_label.html id="s006" %} Consulta únicamente los Pods que todavía coinciden con `app=webapp`.
 
-  ```bash
-  kubectl get pods \
-    -l app=webapp \
-    -o wide
-  ```
-
 - {% include step_label.html id="s007" %} Consulta después todos los Pods del namespace sin selector.
 
-  ```bash
-  kubectl get pods \
-    --show-labels
+  ### Preguntas de análisis
+
+  ```text
+  1. ¿Aparecen más Pods en la segunda consulta?
+  2. ¿Existe algún Pod Running que no aparezca con -l app=webapp?
+  3. ¿Qué label diferencia ese Pod del resto?
+  4. ¿El nombre del Pod sugiere que pertenecía originalmente a webapp?
   ```
-
-### Preguntas de análisis
-
-```text
-1. ¿Aparecen más Pods en la segunda consulta?
-2. ¿Existe algún Pod Running que no aparezca con -l app=webapp?
-3. ¿Qué label diferencia ese Pod del resto?
-4. ¿El nombre del Pod sugiere que pertenecía originalmente a webapp?
-```
 
 ---
 
@@ -198,20 +172,15 @@ Responde:
 
 - {% include step_label.html id="s008" %} Consulta `ownerReferences` para diferenciar Pods administrados de recursos que quedaron fuera del conjunto efectivo.
 
-  ```bash
-  kubectl get pods \
-    -o custom-columns=NAME:.metadata.name,APP:.metadata.labels.app,OWNER:.metadata.ownerReferences[0].name
+  ### Evidencia requerida
+
+  Debes poder señalar:
+
+  ```text
+  Pods actualmente contados por el ReplicaSet.
+  Pod que continúa existiendo pero ya no coincide con el selector.
+  ReplicaSet propietario original del Pod anómalo.
   ```
-
-### Evidencia requerida
-
-Debes poder señalar:
-
-```text
-Pods actualmente contados por el ReplicaSet.
-Pod que continúa existiendo pero ya no coincide con el selector.
-ReplicaSet propietario original del Pod anómalo.
-```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -232,17 +201,7 @@ Ahora relaciona el comportamiento observado con los selectors y el estado desead
 
 - {% include step_label.html id="s009" %} Obtén el selector estable del Deployment.
 
-  ```bash
-  kubectl get deployment webapp \
-    -o jsonpath='{.spec.selector.matchLabels}{"\n"}'
-  ```
-
 - {% include step_label.html id="s010" %} Consulta los labels definidos en el Pod template actual.
-
-  ```bash
-  kubectl get deployment webapp \
-    -o jsonpath='{.spec.template.metadata.labels}{"\n"}'
-  ```
 
 ---
 
@@ -253,27 +212,17 @@ Ahora relaciona el comportamiento observado con los selectors y el estado desead
 
 - {% include step_label.html id="s011" %} Muestra todos los ReplicaSets de `webapp` y diferencia el activo de las revisiones históricas.
 
-  ```bash
-  kubectl get replicasets \
-    -l app=webapp \
-    --show-labels
-  ```
-
 - {% include step_label.html id="s012" %} Consulta el historial del Deployment.
 
-  ```bash
-  kubectl rollout history deployment/webapp
+  ### Preguntas del reto
+
+  ```text
+  1. ¿Cuál ReplicaSet tiene réplicas activas?
+  2. ¿Cuáles tienen DESIRED=0?
+  3. ¿Qué pod-template-hash comparten los Pods activos?
+  4. ¿El Pod anómalo conserva ownerReference hacia un ReplicaSet?
+  5. ¿Por qué el controlador creó otro Pod si el Pod anómalo seguía Running?
   ```
-
-### Preguntas del reto
-
-```text
-1. ¿Cuál ReplicaSet tiene réplicas activas?
-2. ¿Cuáles tienen DESIRED=0?
-3. ¿Qué pod-template-hash comparten los Pods activos?
-4. ¿El Pod anómalo conserva ownerReference hacia un ReplicaSet?
-5. ¿Por qué el controlador creó otro Pod si el Pod anómalo seguía Running?
-```
 
 ---
 
@@ -289,16 +238,6 @@ el estado deseado aunque continúe ____________.
 
 Por eso el ReplicaSet crea ____________ para volver a alcanzar el número
 de réplicas configurado.
-```
-
-### Pistas permitidas
-
-```text
-kubectl get pods --show-labels
-kubectl get replicasets --show-labels
-kubectl describe replicaset
-kubectl rollout history
-kubectl get ... -o jsonpath
 ```
 
 {% assign results = site.data.task-results[page.slug].results %}
@@ -332,16 +271,8 @@ Debes corregir el incidente sin cambiar la definición del Deployment.
 
 - {% include step_label.html id="s013" %} Localiza el Pod que permanece fuera del selector `app=webapp`.
 
-### Pistas permitidas
-
-```text
-kubectl get pods --show-labels
-kubectl get pods -l app=webapp
-kubectl get pods -l 'app!=webapp'
-```
-
-> **NOTA:** El filtro negativo puede incluir otros Pods del namespace. Utiliza también nombre, ownerReference y labels para identificar el recurso correcto.
-{: .lab-note .info .compact}
+  > **NOTA:** El filtro negativo puede incluir otros Pods del namespace. Utiliza también nombre, ownerReference y labels para identificar el recurso correcto.
+  {: .lab-note .info .compact}
 
 ---
 
@@ -352,8 +283,6 @@ kubectl get pods -l 'app!=webapp'
 
 - {% include step_label.html id="s014" %} Elimina únicamente el Pod que quedó fuera del conjunto administrado.
 
-No se proporciona el comando exacto: debes construirlo a partir del nombre identificado durante el diagnóstico.
-
 ---
 
 ## Reto 3.3. Validar recuperación
@@ -363,161 +292,29 @@ No se proporciona el comando exacto: debes construirlo a partir del nombre ident
 
 - {% include step_label.html id="s015" %} Confirma que únicamente permanecen los Pods administrados con `app=webapp`.
 
-  ```bash
-  kubectl get pods \
-    -l app=webapp \
-    --show-labels
-  ```
-
 - {% include step_label.html id="s016" %} Revisa el ReplicaSet activo.
 
-  ```bash
-  kubectl get replicasets \
-    -l app=webapp
-  ```
-
 - {% include step_label.html id="s017" %} Confirma que el Deployment se encuentra estable y sin operaciones pendientes.
-
-  ```bash
-  kubectl rollout status deployment/webapp
-  ```
 
 ---
 
 # ✅ Validación final
 
-La práctica queda completada cuando puedes demostrar:
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
-```text
-[✓] webapp conserva el número deseado de réplicas.
-[✓] Todos los Pods administrados tienen app=webapp.
-[✓] No queda ningún Pod aislado del incidente.
-[✓] El ReplicaSet activo tiene DESIRED=CURRENT=READY.
-[✓] Los ReplicaSets históricos permanecen conservados.
-[✓] El Deployment no fue recreado ni alterado para resolver el problema.
-```
+  La práctica queda completada cuando puedes demostrar:
 
-Ejecuta:
+  ```text
+  [✓] webapp conserva el número deseado de réplicas.
+  [✓] Todos los Pods administrados tienen app=webapp.
+  [✓] No queda ningún Pod aislado del incidente.
+  [✓] El ReplicaSet activo tiene DESIRED=CURRENT=READY.
+  [✓] Los ReplicaSets históricos permanecen conservados.
+  [✓] El Deployment no fue recreado ni alterado para resolver el problema.
+  ```
 
-```bash
-echo "=== Validacion final Lab 2.1 ==="
-
-echo ""
-echo "--- Deployment ---"
-kubectl get deployment webapp
-
-echo ""
-echo "--- Pods administrados ---"
-kubectl get pods \
-  -l app=webapp \
-  --show-labels
-
-echo ""
-echo "--- ReplicaSets ---"
-kubectl get replicasets \
-  -l app=webapp
-
-echo ""
-echo "--- Historial ---"
-kubectl rollout history deployment/webapp
-
-echo ""
-echo "--- Estado del rollout ---"
-kubectl rollout status deployment/webapp
-
-echo ""
-echo "=== Fin de validacion ==="
-```
-
----
-
-# 🧠 Cierre del reto
-
-El comportamiento observado demuestra que un controlador no cuenta Pods simplemente porque:
-
-```text
-están Running
-tienen un nombre parecido
-fueron creados originalmente por la aplicación
-```
-
-La pertenencia efectiva depende de:
-
-```text
-labels del recurso
-        +
-selector del controlador
-```
-
-Cuando la coincidencia desaparece:
-
-```text
-Pod sigue Running
-        ↓
-deja de coincidir con selector
-        ↓
-ReplicaSet ya no lo cuenta
-        ↓
-estado actual < estado deseado
-        ↓
-ReplicaSet crea reemplazo
-```
-
-El diagnóstico correcto consiste en entender esa relación antes de modificar recursos.
-
----
-
-# 🛠️ Resolución de problemas
-
-## Problema 1. El script indica que no encontró Pods
-
-El escenario depende de `webapp`.
-
-Comprueba:
-
-```bash
-kubectl get deployment webapp
-kubectl get pods -l app=webapp
-```
-
-Si no existen, debes recuperar primero el estado final de la Práctica 2.
-
----
-
-## Problema 2. Solo observas el número normal de Pods
-
-Consulta todos los Pods sin aplicar selector:
-
-```bash
-kubectl get pods --show-labels
-```
-
-Recuerda que un Pod puede seguir `Running` aunque ya no sea contado por el ReplicaSet.
-
----
-
-## Problema 3. No aparecen ReplicaSets históricos
-
-Comprueba:
-
-```bash
-kubectl rollout history deployment/webapp
-kubectl get replicasets -l app=webapp
-```
-
-Si el Deployment fue recreado después del Lab 3, las revisiones anteriores ya no estarán disponibles.
-
----
-
-## Problema 4. Eliminaste accidentalmente un Pod administrado
-
-No crees uno manualmente.
-
-El ReplicaSet debe restaurar automáticamente la cantidad deseada:
-
-```bash
-kubectl rollout status deployment/webapp
-kubectl get pods -l app=webapp
-```
-
-Espera a que el controlador complete la reconciliación.
+  ```bash
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab4/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
+  ```

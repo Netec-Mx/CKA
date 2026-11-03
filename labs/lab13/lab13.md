@@ -75,22 +75,22 @@ En esta práctica crearás recursos de almacenamiento con alcance de clúster y 
   kubectl get nodes
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-minikube
-type: Control Plane
-host: Running
-kubelet: Running
-apiserver: Running
+  ```text
+  minikube
+  type: Control Plane
+  host: Running
+  kubelet: Running
+  apiserver: Running
 
-NAME           STATUS   ROLES           AGE   VERSION
-minikube       Ready    control-plane   ...   ...
-minikube-m02   Ready    <none>          ...   ...
-minikube-m03   Ready    <none>          ...   ...
-```
+  NAME           STATUS   ROLES           AGE   VERSION
+  minikube       Ready    control-plane   ...   ...
+  minikube-m02   Ready    <none>          ...   ...
+  minikube-m03   Ready    <none>          ...   ...
+  ```
 
-Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos deben permanecer `Ready`.
+  Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos deben permanecer `Ready`.
 
 - {% include step_label.html id="s004" %} Crea el namespace `lab7` para aislar los PVC, Pods, Secret y demás recursos namespaced utilizados durante el ejercicio.
 
@@ -98,11 +98,11 @@ Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos d
   kubectl create namespace lab7
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-namespace/lab7 created
-```
+  ```text
+  namespace/lab7 created
+  ```
 
 - {% include step_label.html id="s005" %} Establece `lab7` como namespace predeterminado del contexto actual para reducir errores en comandos posteriores.
 
@@ -110,11 +110,11 @@ namespace/lab7 created
   kubectl config set-context --current --namespace=lab7
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Context "<nombre-del-contexto>" modified.
-```
+  ```text
+  Context "<nombre-del-contexto>" modified.
+  ```
 
 - {% include step_label.html id="s006" %} Consulta las StorageClasses existentes para identificar la opción predeterminada disponible en Minikube.
 
@@ -122,17 +122,17 @@ Context "<nombre-del-contexto>" modified.
   kubectl get storageclass
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE
-standard (default)   k8s.io/minikube-hostpath   Delete          Immediate
-```
+  ```text
+  NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE
+  standard (default)   k8s.io/minikube-hostpath   Delete          Immediate
+  ```
 
-El nombre del provisioner y `VOLUMEBINDINGMODE` pueden variar entre versiones; debe existir una StorageClass marcada como `(default)` para la Tarea 3.
+  El nombre del provisioner y `VOLUMEBINDINGMODE` pueden variar entre versiones; debe existir una StorageClass marcada como `(default)` para la Tarea 3.
 
-> **IMPORTANTE:** No asumas el nombre de la StorageClass predeterminada hasta revisar esta salida. En instalaciones habituales de Minikube aparece `standard`, pero debes utilizar el valor real de tu clúster.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** No asumas el nombre de la StorageClass predeterminada hasta revisar esta salida. En instalaciones habituales de Minikube aparece `standard`, pero debes utilizar el valor real de tu clúster.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -142,7 +142,6 @@ En esta tarea crearás almacenamiento estático mediante `hostPath` y limitarás
 
 ### Tarea 1.1. Preparar el directorio del nodo
 
-
 {% assign tracking_task_id = "t002" %}
 
 - {% include step_label.html id="s007" %} Crea el directorio que respaldará el PV dentro del nodo principal de Minikube.
@@ -151,9 +150,9 @@ En esta tarea crearás almacenamiento estático mediante `hostPath` y limitarás
   minikube ssh -- "sudo mkdir -p /mnt/data/lab7-pv && sudo chmod 777 /mnt/data/lab7-pv"
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-El comando no debe mostrar errores. Puede finalizar sin imprimir texto.
+  El comando no debe mostrar errores. Puede finalizar sin imprimir texto.
 
 - {% include step_label.html id="s008" %} Comprueba que el directorio existe en el nodo antes de definir el PersistentVolume.
 
@@ -161,11 +160,11 @@ El comando no debe mostrar errores. Puede finalizar sin imprimir texto.
   minikube ssh -- "ls -ld /mnt/data/lab7-pv"
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-drwxrwxrwx ... /mnt/data/lab7-pv
-```
+  ```text
+  drwxrwxrwx ... /mnt/data/lab7-pv
+  ```
 
 ### Tarea 1.2. Crear el PersistentVolume
 
@@ -211,11 +210,11 @@ drwxrwxrwx ... /mnt/data/lab7-pv
   kubectl apply --dry-run=client -f pv-static.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-persistentvolume/pv-lab7-static created (dry run)
-```
+  ```text
+  persistentvolume/pv-lab7-static created (dry run)
+  ```
 
 - {% include step_label.html id="s012" %} Aplica el manifiesto validado para crear el PV de alcance de clúster.
 
@@ -223,11 +222,11 @@ persistentvolume/pv-lab7-static created (dry run)
   kubectl apply -f pv-static.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-persistentvolume/pv-lab7-static created
-```
+  ```text
+  persistentvolume/pv-lab7-static created
+  ```
 
 - {% include step_label.html id="s013" %} Comprueba que el PV se encuentra `Available` y todavía no está asociado con ningún PVC.
 
@@ -235,12 +234,12 @@ persistentvolume/pv-lab7-static created
   kubectl get pv pv-lab7-static
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      STORAGECLASS
-pv-lab7-static   1Gi        RWO            Retain           Available
-```
+  ```text
+  NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      STORAGECLASS
+  pv-lab7-static   1Gi        RWO            Retain           Available
+  ```
 
 ### Tarea 1.3. Crear el PersistentVolumeClaim
 
@@ -274,11 +273,11 @@ pv-lab7-static   1Gi        RWO            Retain           Available
   kubectl apply --dry-run=client -f pvc-static.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-persistentvolumeclaim/pvc-lab7-static created (dry run)
-```
+  ```text
+  persistentvolumeclaim/pvc-lab7-static created (dry run)
+  ```
 
 - {% include step_label.html id="s017" %} Aplica el PVC y espera hasta que Kubernetes complete el binding con el PV estático.
 
@@ -288,12 +287,12 @@ persistentvolumeclaim/pvc-lab7-static created (dry run)
   kubectl wait --for=jsonpath='{.status.phase}'=Bound pvc/pvc-lab7-static -n lab7 --timeout=60s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-persistentvolumeclaim/pvc-lab7-static created
-persistentvolumeclaim/pvc-lab7-static condition met
-```
+  ```text
+  persistentvolumeclaim/pvc-lab7-static created
+  persistentvolumeclaim/pvc-lab7-static condition met
+  ```
 
 - {% include step_label.html id="s018" %} Comprueba desde ambos recursos que el PVC quedó enlazado exactamente con `pv-lab7-static`.
 
@@ -302,14 +301,14 @@ persistentvolumeclaim/pvc-lab7-static condition met
   kubectl get pv pv-lab7-static
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME               STATUS   VOLUME            CAPACITY   ACCESS MODES
-pvc-lab7-static   Bound    pv-lab7-static   1Gi        RWO
-```
+  ```text
+  NAME               STATUS   VOLUME            CAPACITY   ACCESS MODES
+  pvc-lab7-static   Bound    pv-lab7-static   1Gi        RWO
+  ```
 
-El PV `pv-lab7-static` también debe aparecer con estado `Bound` y con `CLAIM` igual a `lab7/pvc-lab7-static`.
+  El PV `pv-lab7-static` también debe aparecer con estado `Bound` y con `CLAIM` igual a `lab7/pvc-lab7-static`.
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -334,11 +333,11 @@ En esta tarea montarás el PVC en `/var/lib/mysql`, crearás datos de prueba y d
   kubectl create secret generic mysql-secret --from-literal=MYSQL_ROOT_PASSWORD='K8s-lab7-2026!' --from-literal=MYSQL_DATABASE=testdb -n lab7
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-secret/mysql-secret created
-```
+  ```text
+  secret/mysql-secret created
+  ```
 
 ### Tarea 2.2. Crear el Pod MySQL
 
@@ -407,11 +406,11 @@ secret/mysql-secret created
   kubectl apply --dry-run=client -f mysql-pvc.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/mysql-persistente created (dry run)
-```
+  ```text
+  pod/mysql-persistente created (dry run)
+  ```
 
 - {% include step_label.html id="s023" %} Aplica el Pod y espera hasta que la `readinessProbe` confirme que MySQL realmente acepta conexiones, no solo que el proceso arrancó.
 
@@ -421,12 +420,12 @@ pod/mysql-persistente created (dry run)
   kubectl wait --for=condition=Ready pod/mysql-persistente -n lab7 --timeout=180s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/mysql-persistente created
-pod/mysql-persistente condition met
-```
+  ```text
+  pod/mysql-persistente created
+  pod/mysql-persistente condition met
+  ```
 
 - {% include step_label.html id="s024" %} Comprueba en qué nodo fue programado el Pod y confirma que respeta la afinidad del volumen.
 
@@ -436,14 +435,14 @@ pod/mysql-persistente condition met
     -o wide
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                 READY   STATUS    IP           NODE
-mysql-persistente    1/1     Running   10.244.x.x   minikube
-```
+  ```text
+  NAME                 READY   STATUS    IP           NODE
+  mysql-persistente    1/1     Running   10.244.x.x   minikube
+  ```
 
-El Pod debe ejecutarse sobre `minikube` porque el PV está limitado mediante `nodeAffinity` a ese nodo.
+  El Pod debe ejecutarse sobre `minikube` porque el PV está limitado mediante `nodeAffinity` a ese nodo.
 
 ### Tarea 2.3. Crear datos persistentes
 
@@ -469,16 +468,16 @@ El Pod debe ejecutarse sobre `minikube` porque el PV está limitado mediante `no
     "
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-id  mensaje
-1   Registro persistente 1
-2   Registro persistente 2
-3   Registro persistente 3
-```
+  ```text
+  id  mensaje
+  1   Registro persistente 1
+  2   Registro persistente 2
+  3   Registro persistente 3
+  ```
 
-Puede aparecer una advertencia de MySQL por utilizar la contraseña desde la línea de comandos; para este laboratorio es esperada.
+  Puede aparecer una advertencia de MySQL por utilizar la contraseña desde la línea de comandos; para este laboratorio es esperada.
 
 - {% include step_label.html id="s026" %} Obtén el número de registros y confirma que la base de datos contiene exactamente tres filas.
 
@@ -492,11 +491,11 @@ Puede aparecer una advertencia de MySQL por utilizar la contraseña desde la lí
     -sNe 'SELECT COUNT(*) FROM registros;'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-3
-```
+  ```text
+  3
+  ```
 
 ### Tarea 2.4. Eliminar y recrear el Pod
 
@@ -508,14 +507,14 @@ Puede aparecer una advertencia de MySQL por utilizar la contraseña desde la lí
   kubectl get pvc pvc-lab7-static -n lab7
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-pod "mysql-persistente" deleted
+  ```text
+  pod "mysql-persistente" deleted
 
-NAME               STATUS   VOLUME
-pvc-lab7-static   Bound    pv-lab7-static
-```
+  NAME               STATUS   VOLUME
+  pvc-lab7-static   Bound    pv-lab7-static
+  ```
 
 - {% include step_label.html id="s028" %} Recrea el Pod utilizando exactamente el mismo manifiesto y espera nuevamente hasta que esté listo.
 
@@ -525,12 +524,12 @@ pvc-lab7-static   Bound    pv-lab7-static
   kubectl wait --for=condition=Ready pod/mysql-persistente -n lab7 --timeout=180s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/mysql-persistente created
-pod/mysql-persistente condition met
-```
+  ```text
+  pod/mysql-persistente created
+  pod/mysql-persistente condition met
+  ```
 
 - {% include step_label.html id="s029" %} Consulta la tabla después de recrear el Pod para demostrar que el contenido persistió fuera del ciclo de vida del contenedor.
 
@@ -544,19 +543,19 @@ pod/mysql-persistente condition met
     -e 'SELECT * FROM registros;'
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-id  mensaje
-1   Registro persistente 1
-2   Registro persistente 2
-3   Registro persistente 3
-```
+  ```text
+  id  mensaje
+  1   Registro persistente 1
+  2   Registro persistente 2
+  3   Registro persistente 3
+  ```
 
-Los tres registros deben conservarse porque `/var/lib/mysql` continúa respaldado por el mismo PV/PVC.
+  Los tres registros deben conservarse porque `/var/lib/mysql` continúa respaldado por el mismo PV/PVC.
 
-> **Concepto clave:** El PVC no pertenece al ciclo de vida del Pod. El Pod puede eliminarse y recrearse mientras el volumen continúa conservando los datos almacenados.
-{: .lab-note .info .compact}
+  > **Concepto clave:** El PVC no pertenece al ciclo de vida del Pod. El Pod puede eliminarse y recrearse mientras el volumen continúa conservando los datos almacenados.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -590,16 +589,16 @@ En esta tarea crearás un PVC sin definir manualmente un PV y dejarás que la St
   echo "StorageClass predeterminada: $DEFAULT_SC"
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-StorageClass predeterminada: standard
-```
+  ```text
+  StorageClass predeterminada: standard
+  ```
 
-El nombre puede ser diferente; la variable no debe quedar vacía.
+  El nombre puede ser diferente; la variable no debe quedar vacía.
 
-> **IMPORTANTE:** Si la variable queda vacía, revisa `kubectl get storageclass` y confirma que existe una clase predeterminada antes de continuar.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Si la variable queda vacía, revisa `kubectl get storageclass` y confirma que existe una clase predeterminada antes de continuar.
+  {: .lab-note .important .compact}
 
 ### Tarea 3.2. Crear un PVC dinámico
 
@@ -632,12 +631,12 @@ El nombre puede ser diferente; la variable no debe quedar vacía.
   kubectl apply -f pvc-dynamic.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-persistentvolumeclaim/pvc-lab7-dynamic created (dry run)
-persistentvolumeclaim/pvc-lab7-dynamic created
-```
+  ```text
+  persistentvolumeclaim/pvc-lab7-dynamic created (dry run)
+  persistentvolumeclaim/pvc-lab7-dynamic created
+  ```
 
 - {% include step_label.html id="s035" %} Consulta el estado del PVC y la modalidad de binding de la StorageClass para interpretar correctamente `Bound` o `Pending`.
 
@@ -647,13 +646,13 @@ persistentvolumeclaim/pvc-lab7-dynamic created
   kubectl get storageclass "$DEFAULT_SC" -o jsonpath='{.volumeBindingMode}{"\n"}'
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                  STATUS   VOLUME
-pvc-lab7-dynamic     Bound    pvc-...
-Immediate
-```
+  ```text
+  NAME                  STATUS   VOLUME
+  pvc-lab7-dynamic     Bound    pvc-...
+  Immediate
+  ```
 
 Si la StorageClass muestra `WaitForFirstConsumer`, es válido que el PVC continúe `Pending` hasta crear `nginx-dynamic` en la Tarea 3.3.
 
@@ -720,11 +719,11 @@ Si la StorageClass muestra `WaitForFirstConsumer`, es válido que el PVC contin�
   kubectl exec nginx-dynamic -n lab7 -- sh -c 'cat /usr/share/nginx/html/index.html'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```html
-<h1>PVC dinamico operativo</h1>
-```
+  ```html
+  <h1>PVC dinamico operativo</h1>
+  ```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -782,13 +781,13 @@ En esta tarea crearás un volumen efímero y demostrarás que sus datos desapare
   kubectl wait --for=condition=Ready pod/emptydir-demo -n lab7 --timeout=60s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod/emptydir-demo created (dry run)
-pod/emptydir-demo created
-pod/emptydir-demo condition met
-```
+  ```text
+  pod/emptydir-demo created (dry run)
+  pod/emptydir-demo created
+  pod/emptydir-demo condition met
+  ```
 
 ### Tarea 4.2. Escribir y perder el dato
 
@@ -802,11 +801,11 @@ pod/emptydir-demo condition met
   kubectl exec emptydir-demo -n lab7 -- sh -c 'cat /datos/temporal.txt'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-Dato temporal lab7
-```
+  ```text
+  Dato temporal lab7
+  ```
 
 - {% include step_label.html id="s045" %} Elimina y recrea el Pod utilizando el mismo manifiesto.
 
@@ -818,13 +817,13 @@ Dato temporal lab7
   kubectl wait --for=condition=Ready pod/emptydir-demo -n lab7 --timeout=60s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod "emptydir-demo" deleted
-pod/emptydir-demo created
-pod/emptydir-demo condition met
-```
+  ```text
+  pod "emptydir-demo" deleted
+  pod/emptydir-demo created
+  pod/emptydir-demo condition met
+  ```
 
 - {% include step_label.html id="s046" %} Intenta leer el archivo anterior y confirma que ya no existe.
 
@@ -834,14 +833,14 @@ pod/emptydir-demo condition met
     sh -c 'test -f /datos/temporal.txt && cat /datos/temporal.txt || echo "Archivo no encontrado"'
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-Archivo no encontrado
-```
+  ```text
+  Archivo no encontrado
+  ```
 
-> **Concepto clave:** `emptyDir` vive mientras existe el Pod. Un contenedor puede reiniciarse y conservar el volumen dentro del mismo Pod, pero al eliminar el Pod se elimina también `emptyDir`.
-{: .lab-note .info .compact}
+  > **Concepto clave:** `emptyDir` vive mientras existe el Pod. Un contenedor puede reiniciarse y conservar el volumen dentro del mismo Pod, pero al eliminar el Pod se elimina también `emptyDir`.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -867,278 +866,49 @@ En esta tarea comprobarás los estados esenciales del almacenamiento utilizado d
   kubectl get pvc -n lab7
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-PV:
-pv-lab7-static   1Gi    RWO   Retain   Bound   lab7/pvc-lab7-static
-pvc-...           ...    RWO   Delete   Bound   lab7/pvc-lab7-dynamic
+  ```text
+  PV:
+  pv-lab7-static   1Gi    RWO   Retain   Bound   lab7/pvc-lab7-static
+  pvc-...           ...    RWO   Delete   Bound   lab7/pvc-lab7-dynamic
 
-PVC:
-pvc-lab7-static    Bound   pv-lab7-static
-pvc-lab7-dynamic   Bound   pvc-...
-```
+  PVC:
+  pvc-lab7-static    Bound   pv-lab7-static
+  pvc-lab7-dynamic   Bound   pvc-...
+  ```
 
-El nombre del PV dinámico es generado por Kubernetes y será diferente en cada ejecución.
+  El nombre del PV dinámico es generado por Kubernetes y será diferente en cada ejecución.
 
 ### Tarea 5.2. Ejecutar validación final
 
-- {% include step_label.html id="s048" %} Ejecuta el bloque siguiente para validar binding estático, ubicación de MySQL, persistencia, aprovisionamiento dinámico y pérdida de datos de `emptyDir`.
+- {% include step_label.html id="s048" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Validacion final de la Practica 7 ==="
-
-  STATIC_PVC=$(kubectl get pvc pvc-lab7-static \
-    -n lab7 \
-    -o jsonpath='{.status.phase}')
-
-  [ "$STATIC_PVC" = "Bound" ] \
-    && echo "✅ PVC estatico Bound" \
-    || echo "❌ PVC estatico: $STATIC_PVC"
-
-  STATIC_PV=$(kubectl get pv pv-lab7-static \
-    -o jsonpath='{.status.phase}')
-
-  [ "$STATIC_PV" = "Bound" ] \
-    && echo "✅ PV estatico Bound" \
-    || echo "❌ PV estatico: $STATIC_PV"
-
-  MYSQL_NODE=$(kubectl get pod mysql-persistente \
-    -n lab7 \
-    -o jsonpath='{.spec.nodeName}')
-
-  [ "$MYSQL_NODE" = "minikube" ] \
-    && echo "✅ MySQL programado en minikube" \
-    || echo "❌ MySQL programado en: $MYSQL_NODE"
-
-  MYSQL_COUNT=$(kubectl exec mysql-persistente \
-    -n lab7 -- \
-    mysql \
-    -uroot \
-    -p'K8s-lab7-2026!' \
-    testdb \
-    -sNe 'SELECT COUNT(*) FROM registros;' \
-    2>/dev/null)
-
-  [ "$MYSQL_COUNT" = "3" ] \
-    && echo "✅ Datos MySQL persistentes: 3 registros" \
-    || echo "❌ Registros encontrados: $MYSQL_COUNT"
-
-  DYNAMIC_PVC=$(kubectl get pvc pvc-lab7-dynamic \
-    -n lab7 \
-    -o jsonpath='{.status.phase}')
-
-  [ "$DYNAMIC_PVC" = "Bound" ] \
-    && echo "✅ PVC dinamico Bound" \
-    || echo "❌ PVC dinamico: $DYNAMIC_PVC"
-
-  DYNAMIC_FILE=$(kubectl exec nginx-dynamic \
-    -n lab7 -- \
-    sh -c 'cat /usr/share/nginx/html/index.html' \
-    2>/dev/null)
-
-  echo "$DYNAMIC_FILE" | grep -q "PVC dinamico operativo" \
-    && echo "✅ PVC dinamico montado y con datos" \
-    || echo "❌ No se pudo validar el contenido del PVC dinamico"
-
-  EMPTY_FILE=$(kubectl exec emptydir-demo \
-    -n lab7 -- \
-    sh -c 'test -f /datos/temporal.txt && echo existe || echo ausente')
-
-  [ "$EMPTY_FILE" = "ausente" ] \
-    && echo "✅ emptyDir perdio el dato al recrear el Pod" \
-    || echo "❌ El archivo temporal sigue presente"
-
-  echo "=== Fin de validacion ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab13/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-=== Validacion final de la Practica 7 ===
-✅ PVC estatico Bound
-✅ PV estatico Bound
-✅ MySQL programado en minikube
-✅ Datos MySQL persistentes: 3 registros
-✅ PVC dinamico Bound
-✅ PVC dinamico montado y con datos
-✅ emptyDir perdio el dato al recrear el Pod
-=== Fin de validacion ===
-```
+  ```text
+  === Validacion final de la Practica 7 ===
+  ✅ PVC estatico Bound
+  ✅ PV estatico Bound
+  ✅ MySQL programado en minikube
+  ✅ Datos MySQL persistentes: 3 registros
+  ✅ PVC dinamico Bound
+  ✅ PVC dinamico montado y con datos
+  ✅ emptyDir perdio el dato al recrear el Pod
+  === Fin de validacion ===
+  ```
 
-> **IMPORTANTE:** No elimines el clúster Minikube. Puedes conservar los recursos de `lab7` hasta terminar la revisión de esta práctica.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** No elimines el clúster Minikube. Puedes conservar los recursos de `lab7` hasta terminar la revisión de esta práctica.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
 
 {% include support-prompt.html task="tarea5" %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. El PVC estático permanece Pending
-
-**Síntoma:** `pvc-lab7-static` no alcanza estado `Bound`.
-
-**Causa probable:** El PV no existe, está ocupado, no coincide con el nombre solicitado o su capacidad y access mode no satisfacen el PVC.
-
-**Solución:**
-
-```bash
-kubectl get pv pv-lab7-static
-kubectl describe pv pv-lab7-static
-kubectl describe pvc pvc-lab7-static -n lab7
-```
-
-Comprueba que `volumeName` sea `pv-lab7-static`, que el PV esté disponible y que `storageClassName` sea vacío en ambos recursos.
-
----
-
-### Problema 2. mysql-persistente permanece Pending
-
-**Síntoma:** El PVC está `Bound`, pero el Pod MySQL no se programa.
-
-**Causa probable:** El PV está limitado mediante nodeAffinity al nodo `minikube` y ese nodo no está disponible o no dispone de recursos suficientes.
-
-**Solución:**
-
-```bash
-kubectl describe pod mysql-persistente -n lab7
-kubectl get node minikube
-kubectl describe node minikube
-```
-
-Confirma que el nodo `minikube` esté `Ready` antes de modificar el volumen.
-
----
-
-### Problema 3. MySQL entra en CrashLoopBackOff
-
-**Síntoma:** El Pod se programa pero el contenedor reinicia repetidamente.
-
-**Causa probable:** MySQL encuentra datos incompatibles en el volumen o existe un problema con las variables obtenidas desde el Secret.
-
-**Solución:**
-
-```bash
-kubectl logs mysql-persistente -n lab7
-kubectl describe pod mysql-persistente -n lab7
-kubectl get secret mysql-secret -n lab7
-```
-
-No elimines el contenido del volumen hasta identificar la causa en los logs.
-
----
-
-### Problema 4. El PVC dinámico permanece Pending
-
-**Síntoma:** `pvc-lab7-dynamic` no obtiene un PV.
-
-**Causa probable:** No existe una StorageClass predeterminada o el provisioner asociado no está disponible.
-
-**Solución:**
-
-```bash
-kubectl get storageclass
-minikube addons list | grep storage
-kubectl describe pvc pvc-lab7-dynamic -n lab7
-```
-
-Si Minikube no tiene habilitado el provisioner predeterminado, revisa los addons de almacenamiento disponibles antes de cambiar el manifiesto.
-
----
-
-### Problema 5. Los datos de MySQL desaparecieron después de recrear el Pod
-
-**Síntoma:** La tabla o registros creados anteriormente ya no existen.
-
-**Causa probable:** El Pod se recreó utilizando otro PVC, el volumen fue eliminado o el PV estático fue modificado.
-
-**Solución:**
-
-```bash
-kubectl get pod mysql-persistente \
-  -n lab7 \
-  -o jsonpath='{.spec.volumes[0].persistentVolumeClaim.claimName}{"\n"}'
-
-kubectl get pvc pvc-lab7-static -n lab7
-kubectl get pv pv-lab7-static
-```
-
-El Pod debe continuar utilizando `pvc-lab7-static`, y el PVC debe permanecer asociado con `pv-lab7-static`.
-
-
----
-
-### Problema 6. Git Bash transforma rutas Linux dentro del contenedor
-
-**Síntoma:** Un comando que intenta acceder a `/usr/share/nginx/html` o `/datos` termina utilizando una ruta similar a `C:/Program Files/Git/...`.
-
-**Causa probable:** Git Bash/MSYS2 convierte automáticamente argumentos que comienzan con `/` antes de entregarlos a `kubectl`.
-
-**Solución:**
-
-Ejecuta la operación dentro de `sh -c`.
-
-```bash
-kubectl exec nginx-dynamic \
-  -n lab7 -- \
-  sh -c 'cat /usr/share/nginx/html/index.html'
-```
-
-El mismo patrón debe utilizarse para rutas como `/datos/temporal.txt`.
-
----
-
-### Problema 7. MySQL está Running pero todavía no acepta consultas
-
-**Síntoma:** El Pod aparece `Running`, pero `mysql` devuelve un error de conexión durante los primeros segundos.
-
-**Causa probable:** El proceso principal ya inició, pero MySQL todavía está inicializando el directorio de datos o las tablas internas.
-
-**Solución:**
-
-La práctica utiliza una `readinessProbe` con `mysqladmin ping`. Espera a que Kubernetes marque el Pod como `Ready`.
-
-```bash
-kubectl wait \
-  --for=condition=Ready \
-  pod/mysql-persistente \
-  -n lab7 \
-  --timeout=180s
-```
-
-Si no alcanza `Ready`, revisa:
-
-```bash
-kubectl logs mysql-persistente -n lab7
-kubectl describe pod mysql-persistente -n lab7
-```
-
----
-
-### Problema 8. El PVC dinámico está Pending antes de crear nginx-dynamic
-
-**Síntoma:** El PVC dinámico no obtiene inmediatamente un PV aunque exista una StorageClass predeterminada.
-
-**Causa probable:** La StorageClass utiliza `WaitForFirstConsumer`, por lo que el provisioner espera a conocer dónde se programará el primer Pod consumidor.
-
-**Solución:**
-
-Comprueba la modalidad:
-
-```bash
-kubectl get storageclass "$DEFAULT_SC" \
-  -o jsonpath='{.volumeBindingMode}{"\n"}'
-```
-
-Si devuelve:
-
-```text
-WaitForFirstConsumer
-```
-
-continúa con la creación de `nginx-dynamic`. Después verifica nuevamente el PVC; debe pasar a `Bound`.

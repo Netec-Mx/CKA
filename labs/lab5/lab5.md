@@ -77,11 +77,11 @@ En esta práctica crearás el directorio `lab3` y prepararás un clúster Miniku
   pwd
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-/c/LABS/kubernetes/lab3
-```
+  ```text
+  /c/LABS/kubernetes/lab3
+  ```
 
 ### 🧱 Preparar el clúster de tres nodos
 
@@ -97,8 +97,8 @@ En esta práctica crearás el directorio `lab3` y prepararás un clúster Miniku
   minikube delete
   ```
 
-> **IMPORTANTE:** Este paso elimina los recursos de las prácticas anteriores almacenados dentro de Minikube. Los archivos YAML permanecen en `C:\LABS\kubernetes` y podrán reutilizarse si fueran necesarios.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Este paso elimina los recursos de las prácticas anteriores almacenados dentro de Minikube. Los archivos YAML permanecen en `C:\LABS\kubernetes` y podrán reutilizarse si fueran necesarios.
+  {: .lab-note .important .compact}
 
 - {% include step_label.html id="s007" %} Ejecuta el comando siguiente para crear un clúster Minikube con un control plane y dos nodos adicionales utilizando Docker como driver.
 
@@ -116,17 +116,17 @@ En esta práctica crearás el directorio `lab3` y prepararás un clúster Miniku
   kubectl get nodes -o wide
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME           STATUS   ROLES           AGE   VERSION
-minikube       Ready    control-plane   ...   ...
-minikube-m02   Ready    <none>          ...   ...
-minikube-m03   Ready    <none>          ...   ...
-```
+  ```text
+  NAME           STATUS   ROLES           AGE   VERSION
+  minikube       Ready    control-plane   ...   ...
+  minikube-m02   Ready    <none>          ...   ...
+  minikube-m03   Ready    <none>          ...   ...
+  ```
 
-> **IMPORTANTE:** No continúes si alguno de los nodos aparece como `NotReady`. El comportamiento de cordon, drain y reprogramación requiere que los tres nodos estén disponibles al inicio.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** No continúes si alguno de los nodos aparece como `NotReady`. El comportamiento de cordon, drain y reprogramación requiere que los tres nodos estén disponibles al inicio.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -242,12 +242,12 @@ En esta tarea desplegarás dos aplicaciones de prueba dentro de un namespace ded
   kubectl get pods -n lab3 -o wide
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-Debes observar siete Pods en estado `Running`, distribuidos entre los nodos disponibles del clúster.
+  Debes observar siete Pods en estado `Running`, distribuidos entre los nodos disponibles del clúster.
 
-> **NOTA:** El scheduler no garantiza una distribución perfectamente equilibrada. Lo importante es registrar qué Pods se encuentran en `minikube-m02`, porque ese será el nodo sometido a mantenimiento.
-{: .lab-note .info .compact}
+  > **NOTA:** El scheduler no garantiza una distribución perfectamente equilibrada. Lo importante es registrar qué Pods se encuentran en `minikube-m02`, porque ese será el nodo sometido a mantenimiento.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -278,14 +278,14 @@ En esta tarea marcarás `minikube-m02` como no programable. Los Pods existentes 
   kubectl get nodes
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME           STATUS                     ROLES           AGE
-minikube       Ready                      control-plane   ...
-minikube-m02   Ready,SchedulingDisabled   <none>          ...
-minikube-m03   Ready                      <none>          ...
-```
+  ```text
+  NAME           STATUS                     ROLES           AGE
+  minikube       Ready                      control-plane   ...
+  minikube-m02   Ready,SchedulingDisabled   <none>          ...
+  minikube-m03   Ready                      <none>          ...
+  ```
 
 - {% include step_label.html id="s018" %} Ejecuta el comando siguiente para comprobar que los Pods que ya estaban en `minikube-m02` continúan ejecutándose después del cordon.
 
@@ -317,8 +317,8 @@ minikube-m03   Ready                      <none>          ...
     --replicas=4
   ```
 
-> **Concepto clave:** `cordon` no expulsa ni reinicia Pods existentes. Únicamente evita nuevas asignaciones sobre el nodo hasta que vuelva a ser habilitado.
-{: .lab-note .important .compact}
+  > **Concepto clave:** `cordon` no expulsa ni reinicia Pods existentes. Únicamente evita nuevas asignaciones sobre el nodo hasta que vuelva a ser habilitado.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -365,12 +365,12 @@ En esta tarea crearás dos PodDisruptionBudgets. Uno permitirá una disrupción 
   kubectl get pdb -n lab3
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME          MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS
-pdb-app-web   3               N/A               1
-```
+  ```text
+  NAME          MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS
+  pdb-app-web   3               N/A               1
+  ```
 
 ### Tarea 3.2. Crear un PDB restrictivo para app-backend
 
@@ -397,16 +397,16 @@ pdb-app-web   3               N/A               1
   kubectl get pdb -n lab3
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                     MIN AVAILABLE   ALLOWED DISRUPTIONS
-pdb-app-web              3               1
-pdb-app-backend-strict   3               0
-```
+  ```text
+  NAME                     MIN AVAILABLE   ALLOWED DISRUPTIONS
+  pdb-app-web              3               1
+  pdb-app-backend-strict   3               0
+  ```
 
-> **IMPORTANTE:** `ALLOWED DISRUPTIONS: 0` significa que una evicción voluntaria de cualquier Pod protegido por ese PDB será rechazada mientras no aumente la disponibilidad.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** `ALLOWED DISRUPTIONS: 0` significa que una evicción voluntaria de cualquier Pod protegido por ese PDB será rechazada mientras no aumente la disponibilidad.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -434,12 +434,12 @@ En esta tarea intentarás vaciar `minikube-m02`. El primer intento quedará bloq
     --timeout=60s
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-error when evicting pods/...:
-Cannot evict pod as it would violate the pod's disruption budget.
-```
+  ```text
+  error when evicting pods/...:
+  Cannot evict pod as it would violate the pod's disruption budget.
+  ```
 
 - {% include step_label.html id="s028" %} Ejecuta la consulta siguiente para identificar qué PDB tiene cero disrupciones permitidas y relacionarlo con el workload que bloqueó el drain.
 
@@ -486,11 +486,11 @@ Cannot evict pod as it would violate the pod's disruption budget.
     --timeout=120s
   ```
 
-**Salida esperada final:**
+  **Salida esperada final:**
 
-```text
-node/minikube-m02 drained
-```
+  ```text
+  node/minikube-m02 drained
+  ```
 
 - {% include step_label.html id="s034" %} Ejecuta la consulta siguiente para comprobar que los Pods del namespace `lab3` fueron reprogramados en nodos disponibles y ya no permanecen en el worker drenado.
 
@@ -504,12 +504,12 @@ node/minikube-m02 drained
   kubectl get pods -n lab3 -o wide | grep minikube-m02
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-La última consulta no debe devolver Pods del namespace `lab3`.
+  La última consulta no debe devolver Pods del namespace `lab3`.
 
-> **NOTA:** Los Pods administrados por DaemonSets del sistema pueden continuar visibles en `minikube-m02`. El parámetro `--ignore-daemonsets` indica precisamente que no deben impedir el drenado.
-{: .lab-note .info .compact}
+  > **NOTA:** Los Pods administrados por DaemonSets del sistema pueden continuar visibles en `minikube-m02`. El parámetro `--ignore-daemonsets` indica precisamente que no deben impedir el drenado.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -540,14 +540,14 @@ En esta tarea ejecutarás `uncordon` para habilitar nuevamente el worker y compr
   kubectl get nodes
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME           STATUS   ROLES           AGE
-minikube       Ready    control-plane   ...
-minikube-m02   Ready    <none>          ...
-minikube-m03   Ready    <none>          ...
-```
+  ```text
+  NAME           STATUS   ROLES           AGE
+  minikube       Ready    control-plane   ...
+  minikube-m02   Ready    <none>          ...
+  minikube-m03   Ready    <none>          ...
+  ```
 
 ### Tarea 5.2. Observar el comportamiento después del uncordon
 
@@ -557,8 +557,8 @@ minikube-m03   Ready    <none>          ...
   kubectl get pods -n lab3 -o wide
   ```
 
-> **Concepto clave:** `uncordon` permite que el nodo vuelva a recibir Pods nuevos, pero no provoca un rebalanceo automático de los Pods que ya están ejecutándose correctamente en otros nodos.
-{: .lab-note .important .compact}
+  > **Concepto clave:** `uncordon` permite que el nodo vuelva a recibir Pods nuevos, pero no provoca un rebalanceo automático de los Pods que ya están ejecutándose correctamente en otros nodos.
+  {: .lab-note .important .compact}
 
 - {% include step_label.html id="s039" %} Ejecuta un rolling restart sobre ambos Deployments para provocar la recreación progresiva de Pods y permitir que el scheduler vuelva a considerar todos los nodos disponibles.
 
@@ -582,192 +582,31 @@ minikube-m03   Ready    <none>          ...
 
 ### Tarea 5.3. Ejecutar la verificación final
 
-- {% include step_label.html id="s042" %} Copia y ejecuta el bloque completo para confirmar automáticamente el estado de los nodos, Deployments, Pods y PDBs después del ciclo de mantenimiento.
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Verificacion final de la Practica 3 ==="
-
-  NOT_READY=$(kubectl get nodes --no-headers \
-    | awk '$2 !~ /^Ready/ {count++} END {print count+0}')
-
-  if [ "$NOT_READY" = "0" ]; then
-    echo "✅ Todos los nodos estan disponibles"
-  else
-    echo "❌ Existe al menos un nodo no disponible"
-  fi
-
-  if kubectl get nodes --no-headers | grep -q "SchedulingDisabled"; then
-    echo "❌ Existe un nodo con SchedulingDisabled"
-  else
-    echo "✅ Todos los nodos aceptan scheduling"
-  fi
-
-  WEB_READY=$(kubectl get deployment app-web -n lab3 \
-    -o jsonpath='{.status.readyReplicas}')
-
-  WEB_DESIRED=$(kubectl get deployment app-web -n lab3 \
-    -o jsonpath='{.spec.replicas}')
-
-  if [ "$WEB_READY" = "$WEB_DESIRED" ]; then
-    echo "✅ app-web disponible: $WEB_READY/$WEB_DESIRED"
-  else
-    echo "❌ app-web incompleto: $WEB_READY/$WEB_DESIRED"
-  fi
-
-  BACK_READY=$(kubectl get deployment app-backend -n lab3 \
-    -o jsonpath='{.status.readyReplicas}')
-
-  BACK_DESIRED=$(kubectl get deployment app-backend -n lab3 \
-    -o jsonpath='{.spec.replicas}')
-
-  if [ "$BACK_READY" = "$BACK_DESIRED" ]; then
-    echo "✅ app-backend disponible: $BACK_READY/$BACK_DESIRED"
-  else
-    echo "❌ app-backend incompleto: $BACK_READY/$BACK_DESIRED"
-  fi
-
-  echo ""
-  echo "Distribucion final de Pods:"
-  kubectl get pods -n lab3 -o wide
-
-  echo ""
-  echo "PodDisruptionBudgets:"
-  kubectl get pdb -n lab3
-
-  echo "=== Fin de verificacion ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab5/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-=== Verificacion final de la Practica 3 ===
-✅ Todos los nodos estan disponibles
-✅ Todos los nodos aceptan scheduling
-✅ app-web disponible: 4/4
-✅ app-backend disponible: 4/4
-...
-=== Fin de verificacion ===
-```
+  ```text
+  === Verificacion final de la Practica 3 ===
+  ✅ Todos los nodos estan disponibles
+  ✅ Todos los nodos aceptan scheduling
+  ✅ app-web disponible: 4/4
+  ✅ app-backend disponible: 4/4
+  ...
+  === Fin de verificacion ===
+  ```
 
-> **IMPORTANTE:** Conserva el clúster Minikube de tres nodos. Esta topología será útil para las siguientes prácticas relacionadas con namespaces, scheduling y troubleshooting.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Conserva el clúster Minikube de tres nodos. Esta topología será útil para las siguientes prácticas relacionadas con namespaces, scheduling y troubleshooting.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
 
 {% include support-prompt.html task="tarea5" %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. El clúster no inicia con tres nodos
-
-**Síntoma:** `minikube start --nodes=3` falla, uno de los nodos no aparece o permanece en estado `NotReady`.
-
-**Causa probable:** Docker Desktop no dispone de CPU o memoria suficientes para ejecutar simultáneamente los tres contenedores utilizados como nodos.
-
-**Solución:**
-
-Comprueba primero el estado de Docker y del perfil Minikube.
-
-```bash
-docker info
-minikube status
-kubectl get nodes
-```
-
-Si el host tiene recursos limitados, cierra aplicaciones no necesarias y revisa la asignación de recursos disponible para Docker Desktop antes de recrear el clúster.
-
----
-
-### Problema 2. El drain permanece bloqueado
-
-**Síntoma:** `kubectl drain` repite mensajes de evicción y termina por timeout indicando que un Pod no puede ser eliminado.
-
-**Causa probable:** Un PodDisruptionBudget tiene `ALLOWED DISRUPTIONS: 0`, por lo que Kubernetes protege todas las réplicas disponibles del workload.
-
-**Solución:**
-
-Identifica el PDB bloqueante y compara sus requisitos con las réplicas actuales.
-
-```bash
-kubectl get pdb -n lab3
-kubectl get deployments -n lab3
-```
-
-Si `pdb-app-backend-strict` muestra cero disrupciones permitidas, escala `app-backend` antes de reintentar:
-
-```bash
-kubectl scale deployment app-backend \
-  -n lab3 \
-  --replicas=4
-
-kubectl rollout status deployment/app-backend -n lab3
-kubectl get pdb -n lab3
-```
-
----
-
-### Problema 3. Los Pods permanecen en Pending después del drain
-
-**Síntoma:** Uno o más Pods reprogramados permanecen en `Pending` después de evacuar `minikube-m02`.
-
-**Causa probable:** Los nodos restantes no tienen capacidad suficiente para satisfacer los requests de CPU o memoria de todos los Pods.
-
-**Solución:**
-
-Identifica el Pod afectado y revisa los eventos de scheduling.
-
-```bash
-kubectl get pods -n lab3
-POD_NAME=$(kubectl get pods -n lab3 \
-  --field-selector=status.phase=Pending \
-  -o jsonpath='{.items[0].metadata.name}')
-kubectl describe pod "$POD_NAME" -n lab3
-```
-
-Revisa la sección `Events` para determinar qué recurso impide la programación.
-
----
-
-### Problema 4. Después del uncordon los Pods no regresan al nodo
-
-**Síntoma:** `minikube-m02` aparece nuevamente como `Ready`, pero todos los Pods continúan ejecutándose en los otros nodos.
-
-**Causa probable:** Este es el comportamiento normal de Kubernetes. El scheduler no mueve Pods sanos solamente para equilibrar nuevamente la carga.
-
-**Solución:**
-
-Confirma primero que el nodo acepta scheduling:
-
-```bash
-kubectl get nodes
-```
-
-Si necesitas provocar una nueva decisión del scheduler, recrea progresivamente los Pods mediante un rolling restart:
-
-```bash
-kubectl rollout restart deployment/app-web -n lab3
-kubectl rollout restart deployment/app-backend -n lab3
-```
-
----
-
-### Problema 5. El nodo continúa en SchedulingDisabled
-
-**Síntoma:** Después de finalizar el mantenimiento, `kubectl get nodes` continúa mostrando `Ready,SchedulingDisabled` para `minikube-m02`.
-
-**Causa probable:** El comando `uncordon` no se ejecutó o terminó con un error.
-
-**Solución:**
-
-Ejecuta nuevamente la reincorporación y verifica inmediatamente el estado:
-
-```bash
-kubectl uncordon minikube-m02
-kubectl get nodes
-```
-
-El nodo debe mostrarse como `Ready` sin la indicación `SchedulingDisabled`.

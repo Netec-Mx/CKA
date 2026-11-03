@@ -1,0 +1,190 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cka-admin
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cka-security
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cka-workloads
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cka-network
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cka-storage
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cka-troubleshoot
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-app
+  namespace: cka-admin
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: maintenance-app
+  template:
+    metadata:
+      labels:
+        app: maintenance-app
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broken-backend
+  namespace: cka-network
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: broken-backend-svc
+  namespace: cka-network
+spec:
+  type: ClusterIP
+  selector:
+    app: backend-error
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: image-failure
+  namespace: cka-troubleshoot
+spec:
+  containers:
+    - name: app
+      image: nginx:tag-does-not-exist-cka
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crash-failure
+  namespace: cka-troubleshoot
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27-alpine
+      command: ["/bin/sh", "-c", "exit 17"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dns-backend
+  namespace: cka-troubleshoot
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dns-backend
+  template:
+    metadata:
+      labels:
+        app: dns-backend
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dns-backend-svc
+  namespace: cka-troubleshoot
+spec:
+  selector:
+    app: dns-wrong
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dns-client
+  namespace: cka-troubleshoot
+spec:
+  dnsPolicy: None
+  dnsConfig:
+    nameservers:
+      - 1.2.3.4
+  containers:
+    - name: tools
+      image: busybox:1.36
+      command: ["sh", "-c", "sleep 7200"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: production-api
+  namespace: cka-troubleshoot
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: production-api
+  template:
+    metadata:
+      labels:
+        app: production-api
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /ready-does-not-exist
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: production-api-svc
+  namespace: cka-troubleshoot
+spec:
+  selector:
+    app: production-api
+  ports:
+    - port: 80
+      targetPort: 80

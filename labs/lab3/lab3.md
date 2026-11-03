@@ -79,11 +79,11 @@ En esta práctica conservarás el directorio raíz del curso y crearás únicame
   pwd
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-/c/LABS/kubernetes/lab2
-```
+  ```text
+  /c/LABS/kubernetes/lab2
+  ```
 
 - {% include step_label.html id="s006" %} Ejecuta `minikube status` para confirmar que el clúster conserva sus componentes principales activos y puede recibir nuevas operaciones.
 
@@ -97,12 +97,12 @@ En esta práctica conservarás el directorio raíz del curso y crearás únicame
   kubectl get nodes
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-El nodo `minikube` debe permanecer disponible y en estado `Ready` antes de continuar con la creación del Deployment.
+  El nodo `minikube` debe permanecer disponible y en estado `Ready` antes de continuar con la creación del Deployment.
 
-> **IMPORTANTE:** Esta práctica no requiere recrear Minikube ni utilizar varios nodos. El objetivo está centrado en el ciclo de vida del Deployment, no en scheduling o mantenimiento de nodos.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Esta práctica no requiere recrear Minikube ni utilizar varios nodos. El objetivo está centrado en el ciclo de vida del Deployment, no en scheduling o mantenimiento de nodos.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -163,8 +163,8 @@ En esta tarea crearás un Deployment con tres réplicas de NGINX y observarás c
                 memory: "128Mi"
   ```
 
-> **NOTA:** `maxSurge: 1` permite crear como máximo un Pod adicional durante una actualización, mientras `maxUnavailable: 1` permite que como máximo uno de los Pods deseados no esté disponible temporalmente.
-{: .lab-note .info .compact}
+  > **NOTA:** `maxSurge: 1` permite crear como máximo un Pod adicional durante una actualización, mientras `maxUnavailable: 1` permite que como máximo uno de los Pods deseados no esté disponible temporalmente.
+  {: .lab-note .info .compact}
 
 ### Tarea 1.2. Validar y aplicar el Deployment
 
@@ -174,11 +174,11 @@ En esta tarea crearás un Deployment con tres réplicas de NGINX y observarás c
   kubectl apply --dry-run=client -f deployment-webapp.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment.apps/webapp created (dry run)
-```
+  ```text
+  deployment.apps/webapp created (dry run)
+  ```
 
 - {% include step_label.html id="s011" %} Ejecuta el comando siguiente para aplicar el manifiesto y permitir que Kubernetes comience a crear el ReplicaSet y los Pods declarados.
 
@@ -192,11 +192,11 @@ deployment.apps/webapp created (dry run)
   kubectl rollout status deployment/webapp
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment "webapp" successfully rolled out
-```
+  ```text
+  deployment "webapp" successfully rolled out
+  ```
 
 ### Tarea 1.3. Explorar Deployment, ReplicaSet y Pods
 
@@ -208,20 +208,20 @@ deployment "webapp" successfully rolled out
   kubectl get pods -l app=webapp -o wide
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME     READY   UP-TO-DATE   AVAILABLE   AGE
-webapp   3/3     3            3           ...
+  ```text
+  NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+  webapp   3/3     3            3           ...
 
-NAME                DESIRED   CURRENT   READY   AGE
-webapp-xxxxxxxxxx   3         3         3       ...
+  NAME                DESIRED   CURRENT   READY   AGE
+  webapp-xxxxxxxxxx   3         3         3       ...
 
-NAME                     READY   STATUS    RESTARTS   AGE
-webapp-xxxxxxxxxx-aaaaa   1/1     Running   0          ...
-webapp-xxxxxxxxxx-bbbbb   1/1     Running   0          ...
-webapp-xxxxxxxxxx-ccccc   1/1     Running   0          ...
-```
+  NAME                     READY   STATUS    RESTARTS   AGE
+  webapp-xxxxxxxxxx-aaaaa   1/1     Running   0          ...
+  webapp-xxxxxxxxxx-bbbbb   1/1     Running   0          ...
+  webapp-xxxxxxxxxx-ccccc   1/1     Running   0          ...
+  ```
 
 - {% include step_label.html id="s014" %} Ejecuta `kubectl describe` para revisar la configuración activa, la estrategia RollingUpdate y los eventos generados durante la reconciliación.
 
@@ -229,8 +229,8 @@ webapp-xxxxxxxxxx-ccccc   1/1     Running   0          ...
   kubectl describe deployment webapp
   ```
 
-> **Concepto clave:** El Deployment mantiene el estado deseado mediante un ReplicaSet. El ReplicaSet es quien conserva la cantidad de Pods requerida por la plantilla activa.
-{: .lab-note .important .compact}
+  > **Concepto clave:** El Deployment mantiene el estado deseado mediante un ReplicaSet. El ReplicaSet es quien conserva la cantidad de Pods requerida por la plantilla activa.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -261,7 +261,7 @@ En esta tarea modificarás el número de réplicas para observar cómo Kubernete
   kubectl get pods -l app=webapp -w
   ```
 
-Cuando los seis Pods aparezcan en estado `Running`, presiona `Ctrl+C` para salir del modo de observación.
+  Cuando los seis Pods aparezcan en estado `Running`, presiona `Ctrl+C` para salir del modo de observación.
 
 - {% include step_label.html id="s017" %} Ejecuta los comandos siguientes para verificar que el mismo ReplicaSet ahora administra seis Pods sin haberse creado una nueva revisión de plantilla.
 
@@ -270,9 +270,9 @@ Cuando los seis Pods aparezcan en estado `Running`, presiona `Ctrl+C` para salir
   kubectl get replicasets -l app=webapp
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-El Deployment debe mostrar `6/6` réplicas disponibles y el ReplicaSet activo debe mostrar seis réplicas deseadas.
+  El Deployment debe mostrar `6/6` réplicas disponibles y el ReplicaSet activo debe mostrar seis réplicas deseadas.
 
 ### Tarea 2.2. Reducir las réplicas desde el manifiesto
 
@@ -302,15 +302,15 @@ El Deployment debe mostrar `6/6` réplicas disponibles y el ReplicaSet activo de
   kubectl get replicasets -l app=webapp
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME     READY   UP-TO-DATE   AVAILABLE   AGE
-webapp   2/2     2            2           ...
-```
+  ```text
+  NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+  webapp   2/2     2            2           ...
+  ```
 
-> **NOTA:** Cambiar solamente `spec.replicas` no modifica el Pod template, por lo que Kubernetes conserva el mismo ReplicaSet y ajusta únicamente su cantidad de réplicas.
-{: .lab-note .info .compact}
+  > **NOTA:** Cambiar solamente `spec.replicas` no modifica el Pod template, por lo que Kubernetes conserva el mismo ReplicaSet y ajusta únicamente su cantidad de réplicas.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -364,12 +364,12 @@ En esta tarea actualizarás la imagen utilizada por el Deployment y observarás 
   kubectl rollout status deployment/webapp
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Waiting for deployment "webapp" rollout to finish: ...
-deployment "webapp" successfully rolled out
-```
+  ```text
+  Waiting for deployment "webapp" rollout to finish: ...
+  deployment "webapp" successfully rolled out
+  ```
 
 ### Tarea 3.3. Comparar los ReplicaSets antes y después
 
@@ -379,13 +379,13 @@ deployment "webapp" successfully rolled out
   kubectl get replicasets -l app=webapp
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                DESIRED   CURRENT   READY   AGE
-webapp-<hash-v1>    0         0         0       ...
-webapp-<hash-v2>    4         4         4       ...
-```
+  ```text
+  NAME                DESIRED   CURRENT   READY   AGE
+  webapp-<hash-v1>    0         0         0       ...
+  webapp-<hash-v2>    4         4         4       ...
+  ```
 
 - {% include step_label.html id="s028" %} Ejecuta la consulta siguiente para comprobar directamente qué imagen utiliza cada Pod activo después del rolling update.
 
@@ -394,9 +394,9 @@ webapp-<hash-v2>    4         4         4       ...
     -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-Todos los Pods activos deben utilizar `nginx:1.26`.
+  Todos los Pods activos deben utilizar `nginx:1.26`.
 
 ### Tarea 3.4. Sincronizar el manifiesto con el estado actual
 
@@ -427,8 +427,8 @@ Todos los Pods activos deben utilizar `nginx:1.26`.
   kubectl apply --dry-run=client -f deployment-webapp.yaml
   ```
 
-> **IMPORTANTE:** No apliques todavía este archivo después de añadir `version: v2`. Cambiar una etiqueta dentro de `spec.template` genera otra revisión del Pod template. Para esta práctica basta con conservar el archivo preparado como referencia del estado deseado.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** No apliques todavía este archivo después de añadir `version: v2`. Cambiar una etiqueta dentro de `spec.template` genera otra revisión del Pod template. Para esta práctica basta con conservar el archivo preparado como referencia del estado deseado.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -453,14 +453,14 @@ En esta tarea revisarás las revisiones almacenadas por el Deployment y restaura
   kubectl rollout history deployment/webapp
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-deployment.apps/webapp
-REVISION  CHANGE-CAUSE
-1         Version inicial con nginx:1.25
-2         Actualizacion a nginx:1.26
-```
+  ```text
+  deployment.apps/webapp
+  REVISION  CHANGE-CAUSE
+  1         Version inicial con nginx:1.25
+  2         Actualizacion a nginx:1.26
+  ```
 
 - {% include step_label.html id="s032" %} Ejecuta los comandos siguientes para consultar individualmente las revisiones disponibles y comparar los valores conservados por Kubernetes.
 
@@ -483,11 +483,11 @@ REVISION  CHANGE-CAUSE
   kubectl rollout status deployment/webapp
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment "webapp" successfully rolled out
-```
+  ```text
+  deployment "webapp" successfully rolled out
+  ```
 
 - {% include step_label.html id="s035" %} Ejecuta la consulta siguiente para confirmar que los Pods activos volvieron a utilizar la imagen correspondiente a la versión inicial.
 
@@ -496,13 +496,13 @@ deployment "webapp" successfully rolled out
     -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.containers[0].image}{"\n"}{end}'
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-Los Pods activos deben utilizar nuevamente:
+  Los Pods activos deben utilizar nuevamente:
 
-```text
-nginx:1.25
-```
+  ```text
+  nginx:1.25
+  ```
 
 ### Tarea 4.3. Observar la reutilización de ReplicaSets
 
@@ -518,8 +518,8 @@ nginx:1.25
   kubectl rollout history deployment/webapp
   ```
 
-> **Concepto clave:** El rollback no requiere reconstruir manualmente los Pods anteriores. El Deployment conserva ReplicaSets históricos según `revisionHistoryLimit` y puede volver a escalar la plantilla correspondiente.
-{: .lab-note .important .compact}
+  > **Concepto clave:** El rollback no requiere reconstruir manualmente los Pods anteriores. El Deployment conserva ReplicaSets históricos según `revisionHistoryLimit` y puede volver a escalar la plantilla correspondiente.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -554,188 +554,39 @@ En esta tarea comprobarás que el Deployment quedó operativo después de las op
 
 ### Tarea 5.2. Ejecutar la verificación final
 
-- {% include step_label.html id="s040" %} Copia y ejecuta el bloque completo para validar automáticamente la disponibilidad, cantidad de réplicas, imagen activa, historial y ReplicaSets del Deployment.
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Verificacion final de la Practica 1.1 ==="
-
-  READY=$(kubectl get deployment webapp \
-    -o jsonpath='{.status.readyReplicas}')
-
-  DESIRED=$(kubectl get deployment webapp \
-    -o jsonpath='{.spec.replicas}')
-
-  if [ "$READY" = "$DESIRED" ]; then
-    echo "✅ Deployment disponible: $READY/$DESIRED replicas"
-  else
-    echo "❌ Deployment incompleto: $READY/$DESIRED replicas"
-  fi
-
-  IMAGE=$(kubectl get deployment webapp \
-    -o jsonpath='{.spec.template.spec.containers[0].image}')
-
-  if [ "$IMAGE" = "nginx:1.25" ]; then
-    echo "✅ Rollback confirmado: imagen activa nginx:1.25"
-  else
-    echo "❌ Imagen inesperada: $IMAGE"
-  fi
-
-  RS_COUNT=$(kubectl get rs -l app=webapp --no-headers | wc -l)
-
-  if [ "$RS_COUNT" -ge "2" ] 2>/dev/null; then
-    echo "✅ Existen ReplicaSets historicos para el Deployment"
-  else
-    echo "❌ No se identificaron ReplicaSets historicos"
-  fi
-
-  echo ""
-  echo "Historial de revisiones:"
-  kubectl rollout history deployment/webapp
-
-  echo ""
-  echo "ReplicaSets:"
-  kubectl get rs -l app=webapp
-
-  echo "=== Fin de verificacion ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab3/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-=== Verificacion final de la Practica 2 ===
-✅ Deployment disponible: 4/4 replicas
-✅ Rollback confirmado: imagen activa nginx:1.25
-✅ Existen ReplicaSets historicos para el Deployment
+  ```text
+  === Verificacion final de la Practica 2 ===
+  ✅ Deployment disponible: 4/4 replicas
+  ✅ Rollback confirmado: imagen activa nginx:1.25
+  ✅ Existen ReplicaSets historicos para el Deployment
 
-Historial de revisiones:
-deployment.apps/webapp
-REVISION  CHANGE-CAUSE
-...
+  Historial de revisiones:
+  deployment.apps/webapp
+  REVISION  CHANGE-CAUSE
+  ...
 
-ReplicaSets:
-NAME                DESIRED   CURRENT   READY   AGE
-...
+  ReplicaSets:
+  NAME                DESIRED   CURRENT   READY   AGE
+  ...
 
-=== Fin de verificacion ===
-```
+  === Fin de verificacion ===
+  ```
 
-> **IMPORTANTE:** No elimines todavía el Deployment `webapp`. La siguiente práctica complementaria utilizará estos recursos para profundizar en labels, selectors y ReplicaSets.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** No elimines todavía el Deployment `webapp`. La siguiente práctica complementaria utilizará estos recursos para profundizar en labels, selectors y ReplicaSets.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
 
 {% include support-prompt.html task="tarea5" %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. El Deployment no alcanza todas las réplicas disponibles
-
-**Síntoma:** `kubectl get deployment webapp` muestra menos réplicas disponibles que las definidas en `DESIRED`.
-
-**Causa probable:** Alguno de los Pods no puede iniciar, la imagen no está disponible o el nodo no tiene recursos suficientes para ejecutar todas las réplicas solicitadas.
-
-**Solución:**
-
-Identifica primero los Pods con problemas y revisa sus eventos antes de modificar el Deployment.
-
-```bash
-kubectl get pods -l app=webapp
-POD_NAME=$(kubectl get pods -l app=webapp \
-  -o jsonpath='{.items[0].metadata.name}')
-kubectl describe pod "$POD_NAME"
-```
-
-Revisa principalmente la sección `Events` para identificar errores de descarga de imagen, scheduling o recursos.
-
----
-
-### Problema 2. El rolling update queda detenido
-
-**Síntoma:** `kubectl rollout status deployment/webapp` permanece esperando y uno o más Pods nuevos no alcanzan estado `Running`.
-
-**Causa probable:** La nueva imagen no puede descargarse, el contenedor falla al iniciar o la actualización no puede cumplir temporalmente con la estrategia configurada.
-
-**Solución:**
-
-Consulta el estado de los Pods y los eventos del Deployment para identificar el punto exacto donde se detuvo la actualización.
-
-```bash
-kubectl get pods -l app=webapp
-kubectl describe deployment webapp
-```
-
-Si el problema está relacionado con la nueva imagen y necesitas recuperar rápidamente la versión estable, ejecuta:
-
-```bash
-kubectl rollout undo deployment/webapp
-kubectl rollout status deployment/webapp
-```
-
----
-
-### Problema 3. El historial muestra CHANGE-CAUSE como <none>
-
-**Síntoma:** `kubectl rollout history deployment/webapp` muestra una revisión sin descripción en la columna `CHANGE-CAUSE`.
-
-**Causa probable:** La anotación `kubernetes.io/change-cause` no estaba definida en el Deployment cuando se creó esa revisión o fue registrada después de generar el cambio.
-
-**Solución:**
-
-Comprueba primero las anotaciones actuales del Deployment.
-
-```bash
-kubectl get deployment webapp \
-  -o jsonpath='{.metadata.annotations}'
-```
-
-Para futuras revisiones, registra la causa antes o junto con el cambio que modificará el Pod template.
-
----
-
-### Problema 4. El rollback no devuelve la imagen esperada
-
-**Síntoma:** Después de `kubectl rollout undo`, la imagen activa no corresponde con `nginx:1.25`.
-
-**Causa probable:** Existen más revisiones de las previstas debido a modificaciones adicionales realizadas durante la práctica.
-
-**Solución:**
-
-Consulta el historial y selecciona explícitamente la revisión que contiene la versión requerida.
-
-```bash
-kubectl rollout history deployment/webapp
-kubectl rollout history deployment/webapp --revision=1
-kubectl rollout undo deployment/webapp --to-revision=1
-kubectl rollout status deployment/webapp
-```
-
-Después confirma nuevamente la imagen activa:
-
-```bash
-kubectl get deployment webapp \
-  -o jsonpath='{.spec.template.spec.containers[0].image}{"\n"}'
-```
-
----
-
-### Problema 5. El número de réplicas cambia inesperadamente al aplicar el manifiesto
-
-**Síntoma:** Después de utilizar `kubectl scale`, al ejecutar posteriormente `kubectl apply -f deployment-webapp.yaml`, el número de Pods vuelve al valor definido dentro del archivo.
-
-**Causa probable:** `kubectl scale` modificó el estado actual del clúster, pero el manifiesto local conserva otro valor en `spec.replicas`.
-
-**Solución:**
-
-Decide cuál debe ser el estado deseado definitivo y sincroniza el campo `replicas` del manifiesto antes de volver a aplicarlo.
-
-```bash
-grep -n "replicas:" deployment-webapp.yaml
-kubectl get deployment webapp \
-  -o jsonpath='{.spec.replicas}{"\n"}'
-```
-
-La diferencia entre ambos valores demuestra por qué es importante mantener sincronizados el estado declarativo y las operaciones imperativas.

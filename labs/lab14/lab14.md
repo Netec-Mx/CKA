@@ -74,17 +74,17 @@ Crearás todos los escenarios dentro de un namespace dedicado para evitar interf
   kubectl get pods -n kube-system -l k8s-app=kube-dns
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME           STATUS   ROLES
-minikube       Ready    control-plane
-minikube-m02   Ready    <none>
-minikube-m03   Ready    <none>
+  ```text
+  NAME           STATUS   ROLES
+  minikube       Ready    control-plane
+  minikube-m02   Ready    <none>
+  minikube-m03   Ready    <none>
 
-NAME                       READY   STATUS
-coredns-<hash>-<id>        1/1     Running
-```
+  NAME                       READY   STATUS
+  coredns-<hash>-<id>        1/1     Running
+  ```
 
 Los tres nodos deben estar `Ready` y al menos un Pod de CoreDNS debe permanecer disponible.
 
@@ -94,11 +94,11 @@ Los tres nodos deben estar `Ready` y al menos un Pod de CoreDNS debe permanecer 
   kubectl create namespace troubleshooting-lab
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-namespace/troubleshooting-lab created
-```
+  ```text
+  namespace/troubleshooting-lab created
+  ```
 
 - {% include step_label.html id="s005" %} Configura el namespace como predeterminado del contexto actual para reducir errores durante las operaciones de diagnóstico.
 
@@ -106,11 +106,11 @@ namespace/troubleshooting-lab created
   kubectl config set-context --current --namespace=troubleshooting-lab
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Context "<nombre-del-contexto>" modified.
-```
+  ```text
+  Context "<nombre-del-contexto>" modified.
+  ```
 
 ### 🧰 Crear los escenarios de fallo
 
@@ -293,9 +293,9 @@ Context "<nombre-del-contexto>" modified.
   kubectl apply --dry-run=client -f setup-failures.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-La salida debe listar los Pods, Services y el Deployment como `created (dry run)` sin errores de validación.
+  La salida debe listar los Pods, Services y el Deployment como `created (dry run)` sin errores de validación.
 
 - {% include step_label.html id="s009" %} Aplica todos los escenarios y espera 30 segundos para que los reinicios, fallos de pull y eventos de scheduling sean observables.
 
@@ -304,21 +304,21 @@ La salida debe listar los Pods, Services y el Deployment como `created (dry run)
   sleep 30
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-pod/pod-a1-imagepull created
-pod/pod-a2-crashloop created
-pod/pod-a3-pending created
-pod/pod-b1-backend created
-service/svc-b1-wrong-selector created
-pod/pod-b2-webserver created
-service/svc-b2-wrong-port created
-deployment.apps/deploy-b3-liveness created
-service/svc-b3-liveness created
-pod/pod-c1-dns-policy created
-pod/pod-c2-dns-debug created
-```
+  ```text
+  pod/pod-a1-imagepull created
+  pod/pod-a2-crashloop created
+  pod/pod-a3-pending created
+  pod/pod-b1-backend created
+  service/svc-b1-wrong-selector created
+  pod/pod-b2-webserver created
+  service/svc-b2-wrong-port created
+  deployment.apps/deploy-b3-liveness created
+  service/svc-b3-liveness created
+  pod/pod-c1-dns-policy created
+  pod/pod-c2-dns-debug created
+  ```
 
 - {% include step_label.html id="s010" %} Obtén una vista inicial de Pods, Deployments, Services y eventos recientes.
 
@@ -330,25 +330,25 @@ pod/pod-c2-dns-debug created
     --sort-by='.lastTimestamp' | tail -30
   ```
 
-**Salida esperada aproximada de Pods:**
+  **Salida esperada aproximada de Pods:**
 
-```text
-NAME                                  READY   STATUS
-pod-a1-imagepull                      0/1     ImagePullBackOff
-pod-a2-crashloop                      0/1     CrashLoopBackOff
-pod-a3-pending                        0/1     Pending
-pod-b1-backend                        1/1     Running
-pod-b2-webserver                      1/1     Running
-deploy-b3-liveness-<hash>-<id>        ...     Running
-deploy-b3-liveness-<hash>-<id>        ...     Running
-pod-c1-dns-policy                     1/1     Running
-pod-c2-dns-debug                      1/1     Running
-```
+  ```text
+  NAME                                  READY   STATUS
+  pod-a1-imagepull                      0/1     ImagePullBackOff
+  pod-a2-crashloop                      0/1     CrashLoopBackOff
+  pod-a3-pending                        0/1     Pending
+  pod-b1-backend                        1/1     Running
+  pod-b2-webserver                      1/1     Running
+  deploy-b3-liveness-<hash>-<id>        ...     Running
+  deploy-b3-liveness-<hash>-<id>        ...     Running
+  pod-c1-dns-policy                     1/1     Running
+  pod-c2-dns-debug                      1/1     Running
+  ```
 
-A1 puede aparecer temporalmente como `ErrImagePull` y B3 puede alternar disponibilidad/reinicios debido a la liveness probe defectuosa.
+  A1 puede aparecer temporalmente como `ErrImagePull` y B3 puede alternar disponibilidad/reinicios debido a la liveness probe defectuosa.
 
-> **IMPORTANTE:** `ImagePullBackOff`, `CrashLoopBackOff` y `Pending` son resultados esperados en este punto. No intentes corregirlos todavía.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** `ImagePullBackOff`, `CrashLoopBackOff` y `Pending` son resultados esperados en este punto. No intentes corregirlos todavía.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -393,8 +393,8 @@ Antes de resolver escenarios individuales, utilizarás siempre el mismo flujo:
     -n troubleshooting-lab
   ```
 
-> **Concepto clave:** El estado visible describe el síntoma; Events, logs y configuración efectiva permiten acercarse a la causa raíz.
-{: .lab-note .info .compact}
+  > **Concepto clave:** El estado visible describe el síntoma; Events, logs y configuración efectiva permiten acercarse a la causa raíz.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -538,13 +538,13 @@ En esta tarea corregirás tres fallos clásicos: imagen inexistente, proceso que
   kubectl wait --for=condition=Ready pod/pod-a3-pending -n troubleshooting-lab --timeout=90s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod "pod-a3-pending" deleted
-pod/pod-a3-pending created
-pod/pod-a3-pending condition met
-```
+  ```text
+  pod "pod-a3-pending" deleted
+  pod/pod-a3-pending created
+  pod/pod-a3-pending condition met
+  ```
 
 - {% include step_label.html id="s023" %} Verifica que los tres escenarios A1, A2 y A3 queden finalmente en `Running`.
 
@@ -714,12 +714,12 @@ En esta tarea resolverás una configuración DNS incorrecta y luego verificarás
     -n troubleshooting-lab
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                READY   STATUS
-pod-c1-dns-policy   1/1     Running
-```
+  ```text
+  NAME                READY   STATUS
+  pod-c1-dns-policy   1/1     Running
+  ```
 
 - {% include step_label.html id="s037" %} Ejecuta una consulta acotada al FQDN de `kubernetes.default`; el timeout evita que una configuración DNS inválida mantenga la terminal esperando demasiado tiempo.
 
@@ -729,11 +729,11 @@ pod-c1-dns-policy   1/1     Running
     sh -c 'timeout 5 nslookup kubernetes.default.svc.cluster.local || echo "DNS_FAILED"'
   ```
 
-**Salida esperada durante el fallo:**
+  **Salida esperada durante el fallo:**
 
-```text
-DNS_FAILED
-```
+  ```text
+  DNS_FAILED
+  ```
 
 Puede aparecer además un mensaje de timeout generado por `nslookup`.
 
@@ -745,11 +745,11 @@ Puede aparecer además un mensaje de timeout generado por `nslookup`.
     sh -c 'cat /etc/resolv.conf'
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-nameserver 1.2.3.4
-```
+  ```text
+  nameserver 1.2.3.4
+  ```
 
 - {% include step_label.html id="s039" %} Confirma mediante la API que el Pod utiliza `dnsPolicy: None` y una configuración DNS explícita.
 
@@ -764,12 +764,12 @@ nameserver 1.2.3.4
     -o jsonpath='{.spec.dnsConfig}{"\n"}'
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-None
-{"nameservers":["1.2.3.4"]}
-```
+  ```text
+  None
+  {"nameservers":["1.2.3.4"]}
+  ```
 
 - {% include step_label.html id="s040" %} Recrea únicamente el Pod C1 con `ClusterFirst`, retirando la configuración personalizada sin modificar CoreDNS ni el Service `kube-dns`.
 
@@ -805,13 +805,13 @@ None
     --timeout=60s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-pod "pod-c1-dns-policy" deleted
-pod/pod-c1-dns-policy created
-pod/pod-c1-dns-policy condition met
-```
+  ```text
+  pod "pod-c1-dns-policy" deleted
+  pod/pod-c1-dns-policy created
+  pod/pod-c1-dns-policy condition met
+  ```
 
 - {% include step_label.html id="s041" %} Repite la consulta usando el FQDN completo para validar de forma determinista que el Pod vuelve a consultar el DNS del clúster.
 
@@ -821,12 +821,12 @@ pod/pod-c1-dns-policy condition met
     nslookup kubernetes.default.svc.cluster.local
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Name:    kubernetes.default.svc.cluster.local
-Address: 10.x.x.x
-```
+  ```text
+  Name:    kubernetes.default.svc.cluster.local
+  Address: 10.x.x.x
+  ```
 
 ### Tarea 4.2. Diagnóstico de CoreDNS
 
@@ -869,8 +869,8 @@ Address: 10.x.x.x
     sh -c 'cat /etc/resolv.conf'
   ```
 
-> **NOTA:** No es necesario modificar CoreDNS para completar este escenario. El objetivo es demostrar que el servicio DNS del clúster está sano después de corregir la política DNS del Pod C1.
-{: .lab-note .info .compact}
+  > **NOTA:** No es necesario modificar CoreDNS para completar este escenario. El objetivo es demostrar que el servicio DNS del clúster está sano después de corregir la política DNS del Pod C1.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -923,263 +923,43 @@ La última tarea verifica que los ocho escenarios se encuentran corregidos y que
 
 ### Tarea 5.3. Ejecutar el resumen automático
 
-- {% include step_label.html id="s048" %} Ejecuta el bloque siguiente para verificar estados, correcciones de Service, liveness probe, endpoints y DNS mediante FQDN completos.
+- {% include step_label.html id="s048" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Validacion final de la Practica 8 ==="
-
-  for POD in \
-    pod-a1-imagepull \
-    pod-a2-crashloop \
-    pod-a3-pending \
-    pod-b1-backend \
-    pod-b2-webserver \
-    pod-c1-dns-policy \
-    pod-c2-dns-debug
-  do
-    STATUS=$(kubectl get pod "$POD" \
-      -n troubleshooting-lab \
-      -o jsonpath='{.status.phase}')
-
-    echo "$POD: $STATUS"
-  done
-
-  READY=$(kubectl get deployment deploy-b3-liveness \
-    -n troubleshooting-lab \
-    -o jsonpath='{.status.readyReplicas}')
-
-  echo "deploy-b3-liveness ready: ${READY:-0}/2"
-
-  B1_SELECTOR=$(kubectl get service svc-b1-wrong-selector \
-    -n troubleshooting-lab \
-    -o jsonpath='{.spec.selector.app}')
-
-  B2_TARGET=$(kubectl get service svc-b2-wrong-port \
-    -n troubleshooting-lab \
-    -o jsonpath='{.spec.ports[0].targetPort}')
-
-  B3_PATH=$(kubectl get deployment deploy-b3-liveness \
-    -n troubleshooting-lab \
-    -o jsonpath='{.spec.template.spec.containers[0].livenessProbe.httpGet.path}')
-
-  echo "B1 selector: $B1_SELECTOR"
-  echo "B2 targetPort: $B2_TARGET"
-  echo "B3 liveness path: $B3_PATH"
-
-  echo ""
-  echo "Endpoints:"
-
-  kubectl get endpoints \
-    -n troubleshooting-lab \
-    svc-b1-wrong-selector \
-    svc-b2-wrong-port \
-    svc-b3-liveness
-
-  echo ""
-  echo "DNS:"
-
-  kubectl exec pod-c1-dns-policy \
-    -n troubleshooting-lab -- \
-    nslookup kubernetes.default.svc.cluster.local >/dev/null 2>&1 \
-    && echo "C1 DNS: OK" \
-    || echo "C1 DNS: FAIL"
-
-  kubectl exec pod-c2-dns-debug \
-    -n troubleshooting-lab -- \
-    nslookup svc-b1-wrong-selector.troubleshooting-lab.svc.cluster.local >/dev/null 2>&1 \
-    && echo "C2 DNS: OK" \
-    || echo "C2 DNS: FAIL"
-
-  echo "=== Fin de validacion ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab14/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-=== Validacion final de la Practica 8 ===
-pod-a1-imagepull: Running
-pod-a2-crashloop: Running
-pod-a3-pending: Running
-pod-b1-backend: Running
-pod-b2-webserver: Running
-pod-c1-dns-policy: Running
-pod-c2-dns-debug: Running
-deploy-b3-liveness ready: 2/2
-B1 selector: backend-real
-B2 targetPort: 80
-B3 liveness path: /
+  ```text
+  === Validacion final de la Practica 8 ===
+  pod-a1-imagepull: Running
+  pod-a2-crashloop: Running
+  pod-a3-pending: Running
+  pod-b1-backend: Running
+  pod-b2-webserver: Running
+  pod-c1-dns-policy: Running
+  pod-c2-dns-debug: Running
+  deploy-b3-liveness ready: 2/2
+  B1 selector: backend-real
+  B2 targetPort: 80
+  B3 liveness path: /
 
-Endpoints:
-svc-b1-wrong-selector   10.244.x.x:80
-svc-b2-wrong-port       10.244.x.x:80
-svc-b3-liveness         10.244.x.x:80,10.244.x.x:80
+  Endpoints:
+  svc-b1-wrong-selector   10.244.x.x:80
+  svc-b2-wrong-port       10.244.x.x:80
+  svc-b3-liveness         10.244.x.x:80,10.244.x.x:80
 
-DNS:
-C1 DNS: OK
-C2 DNS: OK
-=== Fin de validacion ===
-```
+  DNS:
+  C1 DNS: OK
+  C2 DNS: OK
+  === Fin de validacion ===
+  ```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
 
 {% include support-prompt.html task="tarea5" %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. ImagePullBackOff continúa después de corregir la imagen
-
-**Síntoma:** El Pod sigue sin iniciar aunque la imagen parece válida.
-
-**Causa probable:** Existe un problema de conectividad, rate limiting del registro o la imagen no está disponible para la arquitectura utilizada.
-
-**Solución:**
-
-```bash
-kubectl describe pod pod-a1-imagepull \
-  -n troubleshooting-lab
-```
-
-Lee el mensaje exacto de Events antes de cambiar nuevamente el manifiesto.
-
----
-
-### Problema 2. logs --previous no devuelve información
-
-**Síntoma:** `kubectl logs --previous` indica que no existe una instancia anterior del contenedor.
-
-**Causa probable:** El contenedor todavía no ha reiniciado o el Pod fue recreado recientemente.
-
-**Solución:**
-
-```bash
-kubectl get pod pod-a2-crashloop \
-  -n troubleshooting-lab
-
-kubectl describe pod pod-a2-crashloop \
-  -n troubleshooting-lab
-```
-
-Utiliza logs normales si existe una instancia activa o espera a que ocurra al menos un reinicio.
-
----
-
-### Problema 3. El Pod A3 continúa Pending
-
-**Síntoma:** El Pod sigue sin ser programado después de reducir requests.
-
-**Causa probable:** Existe otro motivo de scheduling distinto a CPU o memoria.
-
-**Solución:**
-
-```bash
-kubectl describe pod pod-a3-pending \
-  -n troubleshooting-lab
-```
-
-Lee el evento `FailedScheduling` completo. Puede señalar taints, affinity o restricciones de nodos.
-
----
-
-### Problema 4. Un Service tiene endpoints pero wget falla
-
-**Síntoma:** El Service muestra destinos activos, pero la conexión HTTP no funciona.
-
-**Causa probable:** El puerto destino es incorrecto o la aplicación no escucha donde espera el Service.
-
-**Solución:**
-
-```bash
-kubectl describe service svc-b2-wrong-port \
-  -n troubleshooting-lab
-
-kubectl get pod pod-b2-webserver \
-  -n troubleshooting-lab \
-  -o yaml
-```
-
-Compara `targetPort` con el puerto real de la aplicación.
-
----
-
-### Problema 5. DNS interno sigue sin resolver
-
-**Síntoma:** El Pod usa `ClusterFirst`, pero `nslookup` continúa fallando.
-
-**Causa probable:** CoreDNS no está disponible o el Service `kube-dns` no tiene endpoints.
-
-**Solución:**
-
-```bash
-kubectl get pods \
-  -n kube-system \
-  -l k8s-app=kube-dns
-
-kubectl get endpoints kube-dns \
-  -n kube-system
-
-kubectl exec pod-c1-dns-policy \
-  -n troubleshooting-lab -- \
-  cat /etc/resolv.conf
-```
-
-No modifiques CoreDNS hasta comprobar primero estos tres elementos.
-
-
----
-
-### Problema 6. nslookup muestra una respuesta válida y termina con exit code 1
-
-**Síntoma:** BusyBox muestra la dirección correcta para un Service, pero también imprime consultas `NXDOMAIN` y `kubectl exec` termina con código `1`.
-
-**Causa probable:** `nslookup` intenta varias expansiones definidas por los search domains y alguna de ellas falla aunque otra haya resuelto correctamente.
-
-**Solución:**
-
-Para validaciones automáticas utiliza el FQDN completo:
-
-```bash
-kubectl exec pod-c2-dns-debug \
-  -n troubleshooting-lab -- \
-  nslookup svc-b1-wrong-selector.troubleshooting-lab.svc.cluster.local
-```
-
-Utiliza el nombre corto en pruebas funcionales HTTP cuando quieras demostrar el efecto del search domain.
-
----
-
-### Problema 7. Git Bash transforma /etc/resolv.conf
-
-**Síntoma:** El comando intenta acceder a una ruta parecida a `C:/Program Files/Git/etc/resolv.conf`.
-
-**Causa probable:** MSYS2 convirtió la ruta Linux antes de entregarla a `kubectl`.
-
-**Solución:**
-
-```bash
-kubectl exec pod-c2-dns-debug \
-  -n troubleshooting-lab -- \
-  sh -c 'cat /etc/resolv.conf'
-```
-
----
-
-### Problema 8. final-test permanece esperando
-
-**Síntoma:** La prueba funcional de Services tarda demasiado en devolver resultado.
-
-**Causa probable:** Algún Service todavía apunta a un destino incorrecto o carece de endpoints.
-
-**Solución:**
-
-Los `wget` de la práctica utilizan `-T 5` para limitar la espera. Revisa:
-
-```bash
-kubectl get endpoints -n troubleshooting-lab
-kubectl get services -n troubleshooting-lab
-```
-
-Identifica qué escenario permanece incorrecto antes de repetir la validación.

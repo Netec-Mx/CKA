@@ -74,20 +74,20 @@ En esta práctica crearás un namespace independiente y los manifiestos necesari
   kubectl get nodes
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-minikube
-type: Control Plane
-host: Running
-kubelet: Running
-apiserver: Running
+  ```text
+  minikube
+  type: Control Plane
+  host: Running
+  kubelet: Running
+  apiserver: Running
 
-NAME           STATUS   ROLES           AGE   VERSION
-minikube       Ready    control-plane   ...   ...
-minikube-m02   Ready    <none>          ...   ...
-minikube-m03   Ready    <none>          ...   ...
-```
+  NAME           STATUS   ROLES           AGE   VERSION
+  minikube       Ready    control-plane   ...   ...
+  minikube-m02   Ready    <none>          ...   ...
+  minikube-m03   Ready    <none>          ...   ...
+  ```
 
 Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos deben estar en estado `Ready`.
 
@@ -97,11 +97,11 @@ Los nombres exactos, versión y antigüedad pueden variar, pero los tres nodos d
   kubectl create namespace lab6
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-namespace/lab6 created
-```
+  ```text
+  namespace/lab6 created
+  ```
 
 - {% include step_label.html id="s005" %} Configura `lab6` como namespace predeterminado del contexto activo para reducir errores en los comandos posteriores.
 
@@ -109,11 +109,11 @@ namespace/lab6 created
   kubectl config set-context --current --namespace=lab6
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Context "<nombre-del-contexto>" modified.
-```
+  ```text
+  Context "<nombre-del-contexto>" modified.
+  ```
 
 - {% include step_label.html id="s006" %} Verifica que el contexto activo utiliza el namespace correcto para evitar crear recursos accidentalmente en `default`.
 
@@ -121,11 +121,11 @@ Context "<nombre-del-contexto>" modified.
   kubectl config view --minify | grep namespace
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-namespace: lab6
-```
+  ```text
+  namespace: lab6
+  ```
 
 ---
 
@@ -229,12 +229,12 @@ En esta tarea crearás dos Deployments con respuestas HTML diferentes para poder
   kubectl apply --dry-run=client -f frontend.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment.apps/backend created (dry run)
-deployment.apps/frontend created (dry run)
-```
+  ```text
+  deployment.apps/backend created (dry run)
+  deployment.apps/frontend created (dry run)
+  ```
 
 - {% include step_label.html id="s012" %} Aplica los Deployments y espera hasta que sus réplicas se encuentren disponibles.
 
@@ -243,12 +243,12 @@ deployment.apps/frontend created (dry run)
   kubectl apply -f frontend.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment.apps/backend created
-deployment.apps/frontend created
-```
+  ```text
+  deployment.apps/backend created
+  deployment.apps/frontend created
+  ```
 
 - {% include step_label.html id="s013" %} Espera a que ambos Deployments completen su rollout y alcancen las dos réplicas disponibles antes de probar conectividad.
 
@@ -257,12 +257,12 @@ deployment.apps/frontend created
   kubectl rollout status deployment/frontend
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment "backend" successfully rolled out
-deployment "frontend" successfully rolled out
-```
+  ```text
+  deployment "backend" successfully rolled out
+  deployment "frontend" successfully rolled out
+  ```
 
 - {% include step_label.html id="s014" %} Consulta los Pods con información extendida y observa sus IPs y nodos de ejecución.
 
@@ -270,17 +270,17 @@ deployment "frontend" successfully rolled out
   kubectl get pods -o wide
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                        READY   STATUS    IP           NODE
-backend-<hash>-<id>         1/1     Running   10.244.x.x   minikube-...
-backend-<hash>-<id>         1/1     Running   10.244.x.x   minikube-...
-frontend-<hash>-<id>        1/1     Running   10.244.x.x   minikube-...
-frontend-<hash>-<id>        1/1     Running   10.244.x.x   minikube-...
-```
+  ```text
+  NAME                        READY   STATUS    IP           NODE
+  backend-<hash>-<id>         1/1     Running   10.244.x.x   minikube-...
+  backend-<hash>-<id>         1/1     Running   10.244.x.x   minikube-...
+  frontend-<hash>-<id>        1/1     Running   10.244.x.x   minikube-...
+  frontend-<hash>-<id>        1/1     Running   10.244.x.x   minikube-...
+  ```
 
-Deben existir cuatro Pods `Running` y `Ready`: dos de `backend` y dos de `frontend`. La distribución entre nodos puede variar.
+  Deben existir cuatro Pods `Running` y `Ready`: dos de `backend` y dos de `frontend`. La distribución entre nodos puede variar.
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -345,12 +345,12 @@ En esta tarea proporcionarás identidades de red estables para frontend y backen
   kubectl apply --dry-run=client -f services-clusterip.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-service/backend-svc created (dry run)
-service/frontend-svc created (dry run)
-```
+  ```text
+  service/backend-svc created (dry run)
+  service/frontend-svc created (dry run)
+  ```
 
 - {% include step_label.html id="s018" %} Aplica los Services y revisa las ClusterIP asignadas, que proporcionarán direcciones estables independientes de las IP de los Pods.
 
@@ -359,13 +359,13 @@ service/frontend-svc created (dry run)
   kubectl get services -o wide
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME           TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)
-backend-svc    ClusterIP   10.96.x.x     <none>        80/TCP
-frontend-svc   ClusterIP   10.96.y.y     <none>        80/TCP
-```
+  ```text
+  NAME           TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)
+  backend-svc    ClusterIP   10.96.x.x     <none>        80/TCP
+  frontend-svc   ClusterIP   10.96.y.y     <none>        80/TCP
+  ```
 
 - {% include step_label.html id="s019" %} Comprueba que cada Service descubrió dos backends antes de realizar solicitudes, validando la relación entre selectors y labels.
 
@@ -373,13 +373,13 @@ frontend-svc   ClusterIP   10.96.y.y     <none>        80/TCP
   kubectl get endpoints backend-svc frontend-svc
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME           ENDPOINTS
-backend-svc    10.244.x.x:80,10.244.x.x:80
-frontend-svc   10.244.x.x:80,10.244.x.x:80
-```
+  ```text
+  NAME           ENDPOINTS
+  backend-svc    10.244.x.x:80,10.244.x.x:80
+  frontend-svc   10.244.x.x:80,10.244.x.x:80
+  ```
 
 Las IP exactas cambian entre ejecuciones; cada Service debe mostrar dos endpoints.
 
@@ -395,11 +395,11 @@ Las IP exactas cambian entre ejecuciones; cada Service debe mostrar dos endpoint
   echo "$FRONTEND_POD"
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-frontend-<hash>-<id>
-```
+  ```text
+  frontend-<hash>-<id>
+  ```
 
 - {% include step_label.html id="s021" %} Desde el Pod frontend, realiza una petición HTTP hacia `backend-svc` utilizando el nombre estable del Service.
 
@@ -408,11 +408,11 @@ frontend-<hash>-<id>
     sh -c 'wget -qO- http://backend-svc'
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```html
-<html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
-```
+  ```html
+  <html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
+  ```
 
 - {% include step_label.html id="s022" %} Ejecuta varias solicitudes para comprobar que el Service puede dirigir tráfico hacia las réplicas disponibles del backend.
 
@@ -422,19 +422,19 @@ frontend-<hash>-<id>
   done
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Pod: backend-<hash>-<id>
-Pod: backend-<hash>-<id>
-Pod: backend-<hash>-<id>
-Pod: backend-<hash>-<id>
-```
+  ```text
+  Pod: backend-<hash>-<id>
+  Pod: backend-<hash>-<id>
+  Pod: backend-<hash>-<id>
+  Pod: backend-<hash>-<id>
+  ```
 
-Pueden aparecer uno o ambos Pods backend durante las cuatro solicitudes.
+  Pueden aparecer uno o ambos Pods backend durante las cuatro solicitudes.
 
-> **NOTA:** No es obligatorio observar una alternancia exacta entre Pods en cuatro solicitudes. Kubernetes distribuye conexiones entre endpoints disponibles, pero una secuencia corta no garantiza reparto perfectamente uniforme.
-{: .lab-note .info .compact}
+  > **NOTA:** No es obligatorio observar una alternancia exacta entre Pods en cuatro solicitudes. Kubernetes distribuye conexiones entre endpoints disponibles, pero una secuencia corta no garantiza reparto perfectamente uniforme.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -483,11 +483,11 @@ En esta tarea crearás un segundo Service para frontend que pueda ser alcanzado 
   kubectl apply --dry-run=client -f frontend-nodeport.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-service/frontend-nodeport created (dry run)
-```
+  ```text
+  service/frontend-nodeport created (dry run)
+  ```
 
 - {% include step_label.html id="s026" %} Aplica el manifiesto y comprueba la relación entre `port: 80`, `targetPort: 80` y el puerto externo `30080`.
 
@@ -496,12 +496,12 @@ service/frontend-nodeport created (dry run)
   kubectl get service frontend-nodeport
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                TYPE       CLUSTER-IP   EXTERNAL-IP   PORT(S)
-frontend-nodeport   NodePort   10.96.x.x    <none>        80:30080/TCP
-```
+  ```text
+  NAME                TYPE       CLUSTER-IP   EXTERNAL-IP   PORT(S)
+  frontend-nodeport   NodePort   10.96.x.x    <none>        80:30080/TCP
+  ```
 
 - {% include step_label.html id="s027" %} Comprueba que el NodePort selecciona las dos réplicas frontend antes de intentar acceder desde el equipo host.
 
@@ -509,12 +509,12 @@ frontend-nodeport   NodePort   10.96.x.x    <none>        80:30080/TCP
   kubectl get endpoints frontend-nodeport
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                ENDPOINTS
-frontend-nodeport   10.244.x.x:80,10.244.x.x:80
-```
+  ```text
+  NAME                ENDPOINTS
+  frontend-nodeport   10.244.x.x:80,10.244.x.x:80
+  ```
 
 ### Tarea 3.2. Obtener una URL accesible desde el host
 
@@ -526,16 +526,16 @@ frontend-nodeport   10.244.x.x:80,10.244.x.x:80
     --url
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-http://127.0.0.1:<puerto-local>
-```
+  ```text
+  http://127.0.0.1:<puerto-local>
+  ```
 
-En algunos entornos puede devolverse una dirección basada en la IP de Minikube. Utiliza exactamente la URL mostrada por el comando.
+  En algunos entornos puede devolverse una dirección basada en la IP de Minikube. Utiliza exactamente la URL mostrada por el comando.
 
-> **IMPORTANTE:** Si el comando muestra mensajes indicando que la terminal debe permanecer abierta por utilizar el driver Docker, no la cierres hasta terminar la prueba con `curl`.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Si el comando muestra mensajes indicando que la terminal debe permanecer abierta por utilizar el driver Docker, no la cierres hasta terminar la prueba con `curl`.
+  {: .lab-note .important .compact}
 
 - {% include step_label.html id="s029" %} Copia la URL generada y, desde la terminal principal, realiza una solicitud HTTP para comprobar acceso externo hacia el frontend.
 
@@ -543,17 +543,17 @@ En algunos entornos puede devolverse una dirección basada en la IP de Minikube.
   curl -s URL_DEVUELTA_POR_MINIKUBE
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```html
-<html><body><h1>FRONTEND WEB</h1><p>Pod: frontend-...</p></body></html>
-```
+  ```html
+  <html><body><h1>FRONTEND WEB</h1><p>Pod: frontend-...</p></body></html>
+  ```
 
-La respuesta debe contener:
+  La respuesta debe contener:
 
-```text
-FRONTEND WEB
-```
+  ```text
+  FRONTEND WEB
+  ```
 
 - {% include step_label.html id="s030" %} Regresa a la segunda terminal y presiona `Ctrl+C` si `minikube service --url` mantiene un túnel activo después de completar la validación.
 
@@ -578,11 +578,11 @@ En esta tarea utilizarás Ingress para consolidar la exposición HTTP de fronten
   minikube addons enable ingress
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-The 'ingress' addon is enabled
-```
+  ```text
+  The 'ingress' addon is enabled
+  ```
 
 El texto exacto puede variar entre versiones de Minikube.
 
@@ -592,11 +592,11 @@ El texto exacto puede variar entre versiones de Minikube.
   kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx --timeout=180s
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment "ingress-nginx-controller" successfully rolled out
-```
+  ```text
+  deployment "ingress-nginx-controller" successfully rolled out
+  ```
 
 - {% include step_label.html id="s033" %} Comprueba que el controlador y la clase `nginx` existen en el clúster.
 
@@ -605,15 +605,15 @@ deployment "ingress-nginx-controller" successfully rolled out
   kubectl get ingressclass
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                                        READY   STATUS
-ingress-nginx-controller-...                1/1     Running
+  ```text
+  NAME                                        READY   STATUS
+  ingress-nginx-controller-...                1/1     Running
 
-NAME    CONTROLLER
-nginx   k8s.io/ingress-nginx
-```
+  NAME    CONTROLLER
+  nginx   k8s.io/ingress-nginx
+  ```
 
 ### Tarea 4.2. Crear reglas para frontend y backend
 
@@ -661,11 +661,11 @@ nginx   k8s.io/ingress-nginx
   kubectl apply --dry-run=client -f ingress.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-ingress.networking.k8s.io/app-ingress created (dry run)
-```
+  ```text
+  ingress.networking.k8s.io/app-ingress created (dry run)
+  ```
 
 - {% include step_label.html id="s037" %} Aplica el Ingress después de validar el archivo para registrar las reglas `/` y `/api` en el clúster.
 
@@ -673,11 +673,11 @@ ingress.networking.k8s.io/app-ingress created (dry run)
   kubectl apply -f ingress.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-ingress.networking.k8s.io/app-ingress created
-```
+  ```text
+  ingress.networking.k8s.io/app-ingress created
+  ```
 
 - {% include step_label.html id="s038" %} Revisa el recurso y confirma que cada path apunta al Service esperado.
 
@@ -686,17 +686,17 @@ ingress.networking.k8s.io/app-ingress created
   kubectl describe ingress app-ingress
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Name:             app-ingress
-Ingress Class:    nginx
-Rules:
-  Path  Backends
-  ----  --------
-  /api  backend-svc:80
-  /     frontend-svc:80
-```
+  ```text
+  Name:             app-ingress
+  Ingress Class:    nginx
+  Rules:
+    Path  Backends
+    ----  --------
+    /api  backend-svc:80
+    /     frontend-svc:80
+  ```
 
 La salida puede incluir dirección, annotations y Events adicionales.
 
@@ -711,17 +711,17 @@ La salida puede incluir dirección, annotations y Events adicionales.
     8080:80
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Forwarding from 127.0.0.1:8080 -> 80
-Forwarding from [::1]:8080 -> 80
-```
+  ```text
+  Forwarding from 127.0.0.1:8080 -> 80
+  Forwarding from [::1]:8080 -> 80
+  ```
 
-Puede aparecer una sola línea o ambas, según la configuración de red del host.
+  Puede aparecer una sola línea o ambas, según la configuración de red del host.
 
-> **IMPORTANTE:** Mantén esta segunda terminal abierta mientras realizas las pruebas siguientes. `port-forward` solo se utiliza como puente local hacia el controlador; las decisiones `/` y `/api` siguen siendo realizadas por Ingress.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Mantén esta segunda terminal abierta mientras realizas las pruebas siguientes. `port-forward` solo se utiliza como puente local hacia el controlador; las decisiones `/` y `/api` siguen siendo realizadas por Ingress.
+  {: .lab-note .important .compact}
 
 - {% include step_label.html id="s040" %} Desde la terminal principal, realiza una petición a `/` para comprobar que Ingress dirige la solicitud hacia `frontend-svc`.
 
@@ -729,11 +729,11 @@ Puede aparecer una sola línea o ambas, según la configuración de red del host
   curl -s http://127.0.0.1:8080/
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```html
-<html><body><h1>FRONTEND WEB</h1><p>Pod: frontend-...</p></body></html>
-```
+  ```html
+  <html><body><h1>FRONTEND WEB</h1><p>Pod: frontend-...</p></body></html>
+  ```
 
 La respuesta debe contener `FRONTEND WEB`.
 
@@ -743,18 +743,18 @@ La respuesta debe contener `FRONTEND WEB`.
   curl -s http://127.0.0.1:8080/api
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```html
-<html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
-```
+  ```html
+  <html><body><h1>BACKEND API</h1><p>Pod: backend-...</p></body></html>
+  ```
 
-La respuesta debe contener `BACKEND API`.
+  La respuesta debe contener `BACKEND API`.
 
 - {% include step_label.html id="s042" %} Regresa a la segunda terminal y presiona `Ctrl+C` para cerrar el port-forward después de completar las pruebas.
 
-> **Concepto clave:** Ingress no reemplaza los Services. El controlador recibe la petición HTTP, evalúa las reglas y reenvía el tráfico al Service configurado como backend.
-{: .lab-note .info .compact}
+  > **Concepto clave:** Ingress no reemplaza los Services. El controlador recibe la petición HTTP, evalúa las reglas y reenvía el tráfico al Service configurado como backend.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -777,9 +777,9 @@ En esta tarea comprobarás que los componentes creados durante la práctica perm
   kubectl get all -n lab6
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-La consulta debe mostrar dos Deployments, cuatro Pods `Running` y los Services `backend-svc`, `frontend-svc` y `frontend-nodeport`.
+  La consulta debe mostrar dos Deployments, cuatro Pods `Running` y los Services `backend-svc`, `frontend-svc` y `frontend-nodeport`.
 
 - {% include step_label.html id="s044" %} Comprueba que el Ingress existe y utiliza la clase `nginx`.
 
@@ -787,263 +787,49 @@ La consulta debe mostrar dos Deployments, cuatro Pods `Running` y los Services `
   kubectl get ingress app-ingress -n lab6 -o wide
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME          CLASS   HOSTS   ADDRESS   PORTS
-app-ingress   nginx   *       ...       80
-```
+  ```text
+  NAME          CLASS   HOSTS   ADDRESS   PORTS
+  app-ingress   nginx   *       ...       80
+  ```
 
-El campo `ADDRESS` puede tardar en poblarse o permanecer vacío en Minikube; la validación funcional se realizó mediante port-forward.
+  El campo `ADDRESS` puede tardar en poblarse o permanecer vacío en Minikube; la validación funcional se realizó mediante port-forward.
 
 ### Tarea 5.2. Ejecutar la validación automática
 
-- {% include step_label.html id="s045" %} Copia y ejecuta el bloque siguiente para validar réplicas, tipos de Service, NodePort, endpoints e Ingress sin depender de valores de IP dinámicos.
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Verificacion final de la Practica 6 ==="
-
-  BACKEND_READY=$(kubectl get deployment backend \
-    -n lab6 \
-    -o jsonpath='{.status.readyReplicas}')
-
-  FRONTEND_READY=$(kubectl get deployment frontend \
-    -n lab6 \
-    -o jsonpath='{.status.readyReplicas}')
-
-  [ "$BACKEND_READY" = "2" ] \
-    && echo "✅ backend disponible: 2/2" \
-    || echo "❌ backend incompleto: ${BACKEND_READY:-0}/2"
-
-  [ "$FRONTEND_READY" = "2" ] \
-    && echo "✅ frontend disponible: 2/2" \
-    || echo "❌ frontend incompleto: ${FRONTEND_READY:-0}/2"
-
-  BACKEND_TYPE=$(kubectl get service backend-svc \
-    -n lab6 \
-    -o jsonpath='{.spec.type}')
-
-  FRONTEND_TYPE=$(kubectl get service frontend-svc \
-    -n lab6 \
-    -o jsonpath='{.spec.type}')
-
-  NODEPORT_TYPE=$(kubectl get service frontend-nodeport \
-    -n lab6 \
-    -o jsonpath='{.spec.type}')
-
-  [ "$BACKEND_TYPE" = "ClusterIP" ] \
-    && echo "✅ backend-svc es ClusterIP" \
-    || echo "❌ backend-svc tiene tipo inesperado: $BACKEND_TYPE"
-
-  [ "$FRONTEND_TYPE" = "ClusterIP" ] \
-    && echo "✅ frontend-svc es ClusterIP" \
-    || echo "❌ frontend-svc tiene tipo inesperado: $FRONTEND_TYPE"
-
-  [ "$NODEPORT_TYPE" = "NodePort" ] \
-    && echo "✅ frontend-nodeport es NodePort" \
-    || echo "❌ frontend-nodeport tiene tipo inesperado: $NODEPORT_TYPE"
-
-  NODEPORT=$(kubectl get service frontend-nodeport \
-    -n lab6 \
-    -o jsonpath='{.spec.ports[0].nodePort}')
-
-  [ "$NODEPORT" = "30080" ] \
-    && echo "✅ NodePort configurado en 30080" \
-    || echo "❌ NodePort inesperado: $NODEPORT"
-
-  BACKEND_ENDPOINTS=$(kubectl get endpoints backend-svc \
-    -n lab6 \
-    -o jsonpath='{.subsets[0].addresses[*].ip}')
-
-  FRONTEND_ENDPOINTS=$(kubectl get endpoints frontend-svc \
-    -n lab6 \
-    -o jsonpath='{.subsets[0].addresses[*].ip}')
-
-  [ -n "$BACKEND_ENDPOINTS" ] \
-    && echo "✅ backend-svc tiene endpoints" \
-    || echo "❌ backend-svc no tiene endpoints"
-
-  [ -n "$FRONTEND_ENDPOINTS" ] \
-    && echo "✅ frontend-svc tiene endpoints" \
-    || echo "❌ frontend-svc no tiene endpoints"
-
-  INGRESS_CLASS=$(kubectl get ingress app-ingress \
-    -n lab6 \
-    -o jsonpath='{.spec.ingressClassName}')
-
-  [ "$INGRESS_CLASS" = "nginx" ] \
-    && echo "✅ Ingress utiliza la clase nginx" \
-    || echo "❌ IngressClass inesperada: $INGRESS_CLASS"
-
-  ROOT_BACKEND=$(kubectl get ingress app-ingress \
-    -n lab6 \
-    -o jsonpath='{.spec.rules[0].http.paths[?(@.path=="/")].backend.service.name}')
-
-  API_BACKEND=$(kubectl get ingress app-ingress \
-    -n lab6 \
-    -o jsonpath='{.spec.rules[0].http.paths[?(@.path=="/api")].backend.service.name}')
-
-  [ "$ROOT_BACKEND" = "frontend-svc" ] \
-    && echo "✅ / apunta a frontend-svc" \
-    || echo "❌ / apunta a: $ROOT_BACKEND"
-
-  [ "$API_BACKEND" = "backend-svc" ] \
-    && echo "✅ /api apunta a backend-svc" \
-    || echo "❌ /api apunta a: $API_BACKEND"
-
-  echo ""
-  echo "=== Fin de verificacion ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab10/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-=== Verificacion final de la Practica 6 ===
-✅ backend disponible: 2/2
-✅ frontend disponible: 2/2
-✅ backend-svc es ClusterIP
-✅ frontend-svc es ClusterIP
-✅ frontend-nodeport es NodePort
-✅ NodePort configurado en 30080
-Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
-Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
-✅ backend-svc tiene endpoints
-✅ frontend-svc tiene endpoints
-✅ Ingress utiliza la clase nginx
-✅ / apunta a frontend-svc
-✅ /api apunta a backend-svc
+  ```text
+  === Verificacion final de la Practica 6 ===
+  ✅ backend disponible: 2/2
+  ✅ frontend disponible: 2/2
+  ✅ backend-svc es ClusterIP
+  ✅ frontend-svc es ClusterIP
+  ✅ frontend-nodeport es NodePort
+  ✅ NodePort configurado en 30080
+  Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+  Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+  ✅ backend-svc tiene endpoints
+  ✅ frontend-svc tiene endpoints
+  ✅ Ingress utiliza la clase nginx
+  ✅ / apunta a frontend-svc
+  ✅ /api apunta a backend-svc
 
-=== Fin de verificacion ===
-```
+  === Fin de verificacion ===
+  ```
 
-> **IMPORTANTE:** Conserva el namespace `lab6`, los Deployments, Services y el addon de Ingress. Las prácticas complementarias 6.1 y 6.2 reutilizarán estos recursos para diagnóstico de Services, endpoints y DNS.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Conserva el namespace `lab6`, los Deployments, Services y el addon de Ingress. Las prácticas complementarias 6.1 y 6.2 reutilizarán estos recursos para diagnóstico de Services, endpoints y DNS.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. backend-svc no responde desde frontend
-
-**Síntoma:** La petición `wget http://backend-svc` falla o queda esperando.
-
-**Causa probable:** El Service no existe, los Pods backend no están disponibles o existe una inconsistencia entre selector y labels.
-
-**Solución:**
-
-```bash
-kubectl get service backend-svc -n lab6
-kubectl get pods -n lab6 -l app=backend --show-labels
-kubectl describe service backend-svc -n lab6
-kubectl get endpoints backend-svc -n lab6
-```
-
-El Service debe mostrar endpoints en el puerto 80. Si aparecen vacíos, compara el selector `app=backend` con los labels reales de los Pods.
-
-La práctica complementaria 6.1 profundizará en el diagnóstico sistemático de endpoints.
-
----
-
-### Problema 2. minikube service --url no permite acceder al NodePort
-
-**Síntoma:** La URL no se genera, el comando permanece activo o `curl` no obtiene respuesta.
-
-**Causa probable:** El Service no está disponible, Minikube no está activo o el túnel local del driver Docker no pudo establecerse.
-
-**Solución:**
-
-```bash
-minikube status
-kubectl get service frontend-nodeport -n lab6
-kubectl get pods -n lab6 -l app=frontend
-```
-
-Vuelve a ejecutar `minikube service frontend-nodeport --namespace=lab6 --url`, conserva abierta la terminal si Minikube crea un túnel y utiliza exactamente la URL generada.
-
----
-
-### Problema 3. El Ingress Controller no alcanza Running
-
-**Síntoma:** El rollout del controlador termina por timeout o los Pods permanecen en `ContainerCreating` o `ImagePullBackOff`.
-
-**Causa probable:** Las imágenes del addon todavía se están descargando, existe un problema de conectividad o Docker Desktop no dispone de recursos suficientes.
-
-**Solución:**
-
-```bash
-kubectl get pods -n ingress-nginx
-kubectl get events -n ingress-nginx \
-  --sort-by='.lastTimestamp'
-```
-
-Corrige el problema indicado por los eventos y repite el rollout antes de probar el Ingress.
-
----
-
-### Problema 4. Ingress devuelve 404
-
-**Síntoma:** `curl http://127.0.0.1:8080/` o `/api` devuelve una respuesta 404 del controlador.
-
-**Causa probable:** El recurso Ingress no fue aplicado, la clase no coincide con el controlador o el path solicitado no corresponde con las reglas definidas.
-
-**Solución:**
-
-```bash
-kubectl get ingress app-ingress -n lab6
-kubectl describe ingress app-ingress -n lab6
-kubectl get ingressclass
-```
-
-Confirma que `ingressClassName` sea `nginx` y que existan las rutas `/` y `/api`.
-
----
-
-### Problema 5. Ingress devuelve 503 Service Unavailable
-
-**Síntoma:** El controlador responde, pero una ruta devuelve `503 Service Unavailable`.
-
-**Causa probable:** El Service utilizado como backend no dispone de Pods disponibles o no tiene destinos asociados.
-
-**Solución:**
-
-```bash
-kubectl get services -n lab6
-kubectl get pods -n lab6 --show-labels
-kubectl describe service backend-svc -n lab6
-kubectl describe service frontend-svc -n lab6
-```
-
-No cambies los selectors hasta identificar qué relación entre Service y Pods está fallando.
-
----
-
-### Problema 6. El port-forward no puede utilizar el puerto 8080
-
-**Síntoma:** `kubectl port-forward` devuelve un error indicando que el puerto local `8080` ya está ocupado.
-
-**Causa probable:** Otra aplicación o un port-forward anterior continúa escuchando en ese puerto del host.
-
-**Solución:**
-
-Utiliza otro puerto local sin cambiar el puerto 80 del Service del controlador.
-
-```bash
-kubectl port-forward \
-  -n ingress-nginx \
-  service/ingress-nginx-controller \
-  8081:80
-```
-
-Después realiza las pruebas con:
-
-```bash
-curl -s http://127.0.0.1:8081/
-curl -s http://127.0.0.1:8081/api
-```
-
-El cambio afecta únicamente al puerto local del host; las reglas del Ingress permanecen iguales.
-

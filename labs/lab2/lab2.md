@@ -81,15 +81,9 @@ Total               20 min
 
 - {% include step_label.html id="s001" %} Verifica que el Deployment y el Service originales continúan disponibles antes de introducir el incidente.
 
-  ```bash
-  kubectl get deployment node-web-deployment
-  kubectl get service node-web-service
-  kubectl get pods -l app=node-web
-  ```
+  **Resultado esperado:**
 
-**Resultado esperado:**
-
-El Deployment debe estar disponible y al menos un Pod debe encontrarse en estado `Running`.
+  El Deployment debe estar disponible y al menos un Pod debe encontrarse en estado `Running`.
 
 ---
 
@@ -104,14 +98,7 @@ El Deployment debe estar disponible y al menos un Pod debe encontrarse en estado
   curl -L -o k8s/lab1-1-scenario.yaml https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab2/lab2-scenario.yaml
   ```
 
-- {% include step_label.html id="s003" %} Desde el directorio donde guardaste `lab2-scenario.yaml`, aplica el archivo sin abrirlo ni inspeccionarlo todavía.
-
-  ```bash
-  kubectl apply -f lab1-1-scenario.yaml
-  ```
-
-> **IMPORTANTE:** El archivo contiene el cambio que originó el incidente. No utilices `cat`, VS Code ni otro editor para inspeccionarlo antes de completar el diagnóstico.
-{: .lab-note .important .compact}
+- {% include step_label.html id="s003" %} Desde el directorio donde guardaste `lab2-scenario.yaml`, aplica el archivo.
 
 - {% include step_label.html id="s004" %} Espera unos segundos para que Kubernetes actualice el estado relacionado con el Service.
 
@@ -134,19 +121,14 @@ Antes de buscar la causa, separa los componentes sanos de los componentes afecta
 
 - {% include step_label.html id="s005" %} Inspecciona el Deployment y los Pods sin modificar ningún recurso.
 
-  ```bash
-  kubectl get deployment node-web-deployment
-  kubectl get pods -l app=node-web -o wide
+  Debes responder:
+
+  ```text
+  ¿El Deployment mantiene las réplicas esperadas?
+  ¿Los Pods están Running?
+  ¿Los Pods tienen IP?
+  ¿La aplicación parece haber fallado realmente?
   ```
-
-Debes responder:
-
-```text
-¿El Deployment mantiene las réplicas esperadas?
-¿Los Pods están Running?
-¿Los Pods tienen IP?
-¿La aplicación parece haber fallado realmente?
-```
 
 ---
 
@@ -157,24 +139,19 @@ Debes responder:
 
 - {% include step_label.html id="s006" %} Comprueba el endpoint `/health` directamente dentro de uno de los Pods.
 
-  ```bash
-  kubectl exec deployment/node-web-deployment -- \
-    wget -qO- http://localhost:3000/health
+  **Resultado esperado aproximado:**
+
+  ```json
+  {"status":"ok","pod":"node-web-deployment-<hash>-<id>"}
   ```
 
-**Resultado esperado aproximado:**
+  ### Pregunta de diagnóstico
 
-```json
-{"status":"ok","pod":"node-web-deployment-<hash>-<id>"}
-```
+  Si el Pod responde directamente pero el acceso mediante Service falla:
 
-### Pregunta de diagnóstico
-
-Si el Pod responde directamente pero el acceso mediante Service falla:
-
-```text
-¿Deberías investigar primero la aplicación o la relación entre el Service y sus backends?
-```
+  ```text
+  ¿Deberías investigar primero la aplicación o la relación entre el Service y sus backends?
+  ```
 
 ---
 
@@ -185,20 +162,9 @@ Si el Pod responde directamente pero el acceso mediante Service falla:
 
 - {% include step_label.html id="s007" %} Comprueba que el Service todavía existe y conserva una ClusterIP.
 
-  ```bash
-  kubectl get service node-web-service
-  ```
-
 - {% include step_label.html id="s008" %} Intenta acceder a la aplicación mediante el nombre del Service desde el propio workload.
 
-  ```bash
-  kubectl exec deployment/node-web-deployment -- \
-    wget -qO- \
-    --timeout=3 \
-    http://node-web-service/health
-  ```
-
-Registra si la conexión responde o falla.
+  Registra si la conexión responde o falla.
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -219,26 +185,17 @@ Ahora debes encontrar por qué un Service existente no puede llegar a una aplica
 
 - {% include step_label.html id="s009" %} Comprueba si `node-web-service` tiene destinos disponibles.
 
-  ```bash
-  kubectl get endpoints node-web-service
-  ```
-
 - {% include step_label.html id="s010" %} Revisa también el recurso moderno EndpointSlice asociado con el Service.
 
-  ```bash
-  kubectl get endpointslices \
-    -l kubernetes.io/service-name=node-web-service
+  ### Evidencia requerida
+
+  Registra:
+
+  ```text
+  ¿Existen direcciones de backend?
+  ¿Aparece alguna IP de Pod?
+  ¿El Service tiene un destino real al cual enviar tráfico?
   ```
-
-### Evidencia requerida
-
-Registra:
-
-```text
-¿Existen direcciones de backend?
-¿Aparece alguna IP de Pod?
-¿El Service tiene un destino real al cual enviar tráfico?
-```
 
 ---
 
@@ -249,36 +206,21 @@ Registra:
 
 - {% include step_label.html id="s011" %} Describe el Service y localiza `Selector` y `Endpoints`.
 
-  ```bash
-  kubectl describe service node-web-service
-  ```
-
 - {% include step_label.html id="s012" %} Muestra los labels reales de los Pods administrados por el Deployment.
-
-  ```bash
-  kubectl get pods \
-    -l app=node-web \
-    --show-labels
-  ```
 
 - {% include step_label.html id="s013" %} Consulta también el selector configurado directamente en el Service.
 
-  ```bash
-  kubectl get service node-web-service \
-    -o jsonpath='{.spec.selector}{"\n"}'
+  ### Diagnóstico
+
+  Compara:
+
+  ```text
+  Selector del Service
+  vs.
+  Labels de los Pods
   ```
 
-### Diagnóstico
-
-Compara:
-
-```text
-Selector del Service
-vs.
-Labels de los Pods
-```
-
-No avances hasta poder explicar qué relación está rota.
+  No avances hasta poder explicar qué relación está rota.
 
 ---
 
@@ -289,21 +231,16 @@ No avances hasta poder explicar qué relación está rota.
 
 - {% include step_label.html id="s014" %} Revisa el selector del Deployment para comprobar que sus Pods están correctamente administrados.
 
-  ```bash
-  kubectl get deployment node-web-deployment \
-    -o jsonpath='{.spec.selector.matchLabels}{"\n"}'
+  ### Criterio de diagnóstico
+
+  Debes poder concluir cuál de estas afirmaciones corresponde al escenario:
+
+  ```text
+  A. El Deployment no crea Pods.
+  B. La aplicación falla dentro del contenedor.
+  C. El Service existe, pero no selecciona los Pods correctos.
+  D. Kubernetes DNS no puede resolver node-web-service.
   ```
-
-### Criterio de diagnóstico
-
-Debes poder concluir cuál de estas afirmaciones corresponde al escenario:
-
-```text
-A. El Deployment no crea Pods.
-B. La aplicación falla dentro del contenedor.
-C. El Service existe, pero no selecciona los Pods correctos.
-D. Kubernetes DNS no puede resolver node-web-service.
-```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -336,13 +273,6 @@ Ya identificaste la causa raíz. Corrige únicamente el recurso responsable.
 
 - {% include step_label.html id="s015" %} Guarda la ClusterIP antes de corregir el incidente.
 
-  ```bash
-  SERVICE_IP=$(kubectl get service node-web-service \
-    -o jsonpath='{.spec.clusterIP}')
-
-  echo "ClusterIP antes de la corrección: $SERVICE_IP"
-  ```
-
 ---
 
 ## Reto 3.2. Corregir el recurso
@@ -351,17 +281,6 @@ Ya identificaste la causa raíz. Corrige únicamente el recurso responsable.
 {% assign tracking_task_id = "t010" %}
 
 - {% include step_label.html id="s016" %} Utiliza `kubectl patch`, `kubectl edit` o un manifiesto corregido para restaurar la relación adecuada entre el Service y los Pods.
-
-### Pistas permitidas
-
-```text
-kubectl patch service
-kubectl edit service
-kubectl get pods --show-labels
-kubectl get service -o yaml
-```
-
-No se proporciona el comando exacto porque forma parte del reto.
 
 ---
 
@@ -372,71 +291,22 @@ No se proporciona el comando exacto porque forma parte del reto.
 
 - {% include step_label.html id="s017" %} Comprueba que Kubernetes vuelva a publicar destinos para el Service.
 
-  ```bash
-  kubectl get endpoints node-web-service
-  ```
-
 - {% include step_label.html id="s018" %} Verifica EndpointSlice.
-
-  ```bash
-  kubectl get endpointslices \
-    -l kubernetes.io/service-name=node-web-service
-  ```
 
 - {% include step_label.html id="s019" %} Comprueba nuevamente `/health` utilizando el nombre del Service.
 
-  ```bash
-  kubectl exec deployment/node-web-deployment -- \
-    wget -qO- http://node-web-service/health
-  ```
-
 - {% include step_label.html id="s020" %} Confirma que la ClusterIP no cambió durante la reparación.
-
-  ```bash
-  NEW_SERVICE_IP=$(kubectl get service node-web-service \
-    -o jsonpath='{.spec.clusterIP}')
-
-  echo "Antes:   $SERVICE_IP"
-  echo "Después: $NEW_SERVICE_IP"
-  ```
 
 ---
 
 # ✅ Validación final
 
-Ejecuta:
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
 ```bash
-echo "=== Validacion final Lab 2 ==="
-
-echo ""
-echo "--- Deployment ---"
-kubectl get deployment node-web-deployment
-
-echo ""
-echo "--- Pods ---"
-kubectl get pods -l app=node-web -o wide
-
-echo ""
-echo "--- Service ---"
-kubectl get service node-web-service
-
-echo ""
-echo "--- Selector ---"
-kubectl get service node-web-service \
-  -o jsonpath='{.spec.selector}{"\n"}'
-
-echo ""
-echo "--- Endpoints ---"
-kubectl get endpoints node-web-service
-
-echo ""
-echo "--- Health mediante Service ---"
-kubectl exec deployment/node-web-deployment -- \
-  wget -qO- http://node-web-service/health
-
-echo ""
-echo "=== Fin de validacion ==="
+curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab2/scripts/validacion.sh -o validacion.sh
+chmod +x validacion.sh
+./validacion.sh
 ```
 
 El reto queda completado si:
@@ -449,87 +319,3 @@ El reto queda completado si:
 [✓] /health responde mediante node-web-service.
 [✓] No fue necesario reiniciar ni recrear el Deployment.
 ```
-
----
-
-# 🧠 Cierre del reto
-
-La evidencia debe llevarte a reconstruir el flujo:
-
-```text
-Deployment
-    │
-    ▼
-ReplicaSet
-    │
-    ▼
-Pods
-    ▲
-    │ labels/selectors
-    │
-Service
-```
-
-La clave del troubleshooting no consiste en modificar recursos hasta que algo funcione, sino en:
-
-```text
-1. comprobar qué componente sigue sano;
-2. localizar dónde se rompe la relación;
-3. obtener evidencia;
-4. corregir únicamente la causa;
-5. validar funcionalmente la recuperación.
-```
-
----
-
-# 🛠️ Resolución de problemas
-
-## Problema 1. El archivo de escenario no se encuentra
-
-Comprueba el directorio actual:
-
-```bash
-pwd
-ls -la
-```
-
-`lab2-scenario.yaml` debe encontrarse en el directorio desde el que ejecutas `kubectl apply`.
-
----
-
-## Problema 2. El Pod tampoco responde directamente
-
-Si esta prueba falla:
-
-```bash
-kubectl exec deployment/node-web-deployment -- \
-  wget -qO- http://localhost:3000/health
-```
-
-el escenario ya no coincide con el reto esperado.
-
-Antes de continuar, revisa:
-
-```bash
-kubectl get pods -l app=node-web
-kubectl logs deployment/node-web-deployment
-```
-
-La aplicación de la Práctica 1 debe estar saludable antes de diagnosticar el Service.
-
----
-
-## Problema 3. Los endpoints no reaparecen después de corregir el Service
-
-Compara nuevamente:
-
-```bash
-kubectl get service node-web-service \
-  -o jsonpath='{.spec.selector}{"\n"}'
-
-kubectl get pods \
-  -l app=node-web \
-  --show-labels
-```
-
-El selector del Service debe coincidir exactamente con los labels requeridos en los Pods.

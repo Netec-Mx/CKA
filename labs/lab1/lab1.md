@@ -99,16 +99,16 @@ En esta preparación crearás el directorio raíz del curso y el subdirectorio d
   pwd
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-Comprueba la salida obtenida y confirma que Git Bash se encuentra en el directorio destinado a la primera práctica.
+  Comprueba la salida obtenida y confirma que Git Bash se encuentra en el directorio destinado a la primera práctica.
 
-```text
-/c/LABS/kubernetes/lab1
-```
+  ```text
+  /c/LABS/kubernetes/lab1
+  ```
 
-> **IMPORTANTE:** En las prácticas siguientes conservarás `C:\LABS\kubernetes` y crearás únicamente el subdirectorio correspondiente a cada nuevo laboratorio.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** En las prácticas siguientes conservarás `C:\LABS\kubernetes` y crearás únicamente el subdirectorio correspondiente a cada nuevo laboratorio.
+  {: .lab-note .important .compact}
 
 ---
 
@@ -136,19 +136,19 @@ En esta tarea crearás una aplicación web sencilla con Node.js. La página most
   find . -maxdepth 2 -type f | sort
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-Comprueba que la estructura general corresponda con la referencia siguiente antes de continuar con la implementación.
+  Comprueba que la estructura general corresponda con la referencia siguiente antes de continuar con la implementación.
 
-```text
-./.dockerignore
-./Dockerfile
-./app/index.html
-./app/package.json
-./app/server.js
-./k8s/deployment.yaml
-./k8s/service.yaml
-```
+  ```text
+  ./.dockerignore
+  ./Dockerfile
+  ./app/index.html
+  ./app/package.json
+  ./app/server.js
+  ./k8s/deployment.yaml
+  ./k8s/service.yaml
+  ```
 
 ### Tarea 1.2. Crear la aplicación web
 
@@ -286,14 +286,14 @@ Comprueba que la estructura general corresponda con la referencia siguiente ante
   npm start
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-Comprueba que Node.js confirme el puerto utilizado y que el proceso permanezca activo esperando solicitudes HTTP.
+  Comprueba que Node.js confirme el puerto utilizado y que el proceso permanezca activo esperando solicitudes HTTP.
 
-```text
-Aplicación disponible en el puerto 3000
-Hostname: <nombre_del_equipo>
-```
+  ```text
+  Aplicación disponible en el puerto 3000
+  Hostname: <nombre_del_equipo>
+  ```
 
 - {% include step_label.html id="s017" %} Abre un navegador y visita `http://localhost:3000` para confirmar que la página se renderiza correctamente antes de empaquetar la aplicación.
 
@@ -307,14 +307,14 @@ Hostname: <nombre_del_equipo>
   http://localhost:3000/health
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```json
-{
-  "status": "ok",
-  "pod": "<nombre_del_equipo>"
-}
-```
+  ```json
+  {
+    "status": "ok",
+    "pod": "<nombre_del_equipo>"
+  }
+  ```
 
 - {% include step_label.html id="s019" %} Regresa a la terminal, presiona `Ctrl+C` para detener Node.js y vuelve al directorio raíz `lab1` antes de comenzar la construcción de la imagen.
 
@@ -399,11 +399,11 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
   curl http://localhost:3000/health
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```json
-{"status":"ok","pod":"<id_del_contenedor>"}
-```
+  ```json
+  {"status":"ok","pod":"<id_del_contenedor>"}
+  ```
 
 - {% include step_label.html id="s026" %} Detén el contenedor temporal para liberar el puerto 3000 y conservar únicamente la imagen que será utilizada posteriormente por Kubernetes.
 
@@ -425,12 +425,12 @@ En esta tarea empaquetarás la aplicación como una imagen Docker y la cargarás
   kubectl get nodes
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME       STATUS   ROLES           AGE   VERSION
-minikube   Ready    control-plane   ...   ...
-```
+  ```text
+  NAME       STATUS   ROLES           AGE   VERSION
+  minikube   Ready    control-plane   ...   ...
+  ```
 
 - {% include step_label.html id="s029" %} Ejecuta `minikube image load` para copiar la imagen construida con Docker Desktop al almacenamiento de imágenes disponible para el nodo local de Minikube.
 
@@ -444,11 +444,11 @@ minikube   Ready    control-plane   ...   ...
   minikube image ls | grep k8s-node-web
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-docker.io/library/k8s-node-web:1.0
-```
+  ```text
+  docker.io/library/k8s-node-web:1.0
+  ```
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r2 %}{{ results[1] }}{% endcapture %}
@@ -495,8 +495,8 @@ En esta tarea definirás el estado deseado de la aplicación mediante un manifie
                 protocol: TCP
   ```
 
-> **NOTA:** Se utiliza `imagePullPolicy: Never` porque la imagen fue cargada manualmente en Minikube. En un entorno productivo normalmente se utilizaría una imagen almacenada en un registry accesible para los nodos.
-{: .lab-note .info .compact}
+  > **NOTA:** Se utiliza `imagePullPolicy: Never` porque la imagen fue cargada manualmente en Minikube. En un entorno productivo normalmente se utilizaría una imagen almacenada en un registry accesible para los nodos.
+  {: .lab-note .info .compact}
 
 ### Tarea 3.2. Validar el manifiesto antes de aplicarlo
 
@@ -508,11 +508,11 @@ En esta tarea definirás el estado deseado de la aplicación mediante un manifie
     -f k8s/deployment.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment.apps/node-web-deployment created (dry run)
-```
+  ```text
+  deployment.apps/node-web-deployment created (dry run)
+  ```
 
 - {% include step_label.html id="s033" %} Ejecuta el comando siguiente para mostrar el manifiesto interpretado por kubectl y detectar errores básicos de indentación, nombres o estructura antes del despliegue.
 
@@ -537,11 +537,11 @@ deployment.apps/node-web-deployment created (dry run)
   kubectl rollout status deployment/node-web-deployment
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-deployment "node-web-deployment" successfully rolled out
-```
+  ```text
+  deployment "node-web-deployment" successfully rolled out
+  ```
 
 - {% include step_label.html id="s036" %} Ejecuta los comandos siguientes para observar el Deployment, el ReplicaSet creado automáticamente y el Pod que ejecuta la aplicación dentro del clúster.
 
@@ -551,9 +551,9 @@ deployment "node-web-deployment" successfully rolled out
   kubectl get pods -l app=node-web -o wide
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-El Deployment debe mostrar `1/1` disponible y el Pod asociado debe encontrarse en estado `Running` con `READY 1/1`.
+  El Deployment debe mostrar `1/1` disponible y el Pod asociado debe encontrarse en estado `Running` con `READY 1/1`.
 
 - {% include step_label.html id="s037" %} Ejecuta `kubectl describe` sobre el Deployment para revisar selector, estrategia, plantilla del Pod y eventos registrados durante la creación del workload.
 
@@ -598,8 +598,8 @@ En esta tarea crearás un Service que proporcione un punto estable de acceso hac
         targetPort: 3000
   ```
 
-> **NOTA:** Kubernetes asignará automáticamente el `nodePort`. No se fija manualmente para evitar conflictos con puertos utilizados por otros laboratorios.
-{: .lab-note .info .compact}
+  > **NOTA:** Kubernetes asignará automáticamente el `nodePort`. No se fija manualmente para evitar conflictos con puertos utilizados por otros laboratorios.
+  {: .lab-note .info .compact}
 
 ### Tarea 4.2. Validar y aplicar el Service
 
@@ -611,11 +611,11 @@ En esta tarea crearás un Service que proporcione un punto estable de acceso hac
     -f k8s/service.yaml
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-service/node-web-service created (dry run)
-```
+  ```text
+  service/node-web-service created (dry run)
+  ```
 
 - {% include step_label.html id="s040" %} Ejecuta `kubectl apply` para crear el Service y establecer un punto de acceso estable hacia los Pods identificados mediante la etiqueta `app=node-web`.
 
@@ -629,12 +629,12 @@ service/node-web-service created (dry run)
   kubectl get service node-web-service
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME               TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-node-web-service   NodePort   10.96.xxx.xxx   <none>        80:3xxxx/TCP   ...
-```
+  ```text
+  NAME               TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+  node-web-service   NodePort   10.96.xxx.xxx   <none>        80:3xxxx/TCP   ...
+  ```
 
 ### Tarea 4.3. Acceder a la aplicación desde el navegador
 
@@ -644,16 +644,16 @@ node-web-service   NodePort   10.96.xxx.xxx   <none>        80:3xxxx/TCP   ...
   minikube service node-web-service --url
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-http://127.0.0.1:<puerto_asignado>
-```
+  ```text
+  http://127.0.0.1:<puerto_asignado>
+  ```
 
 - {% include step_label.html id="s043" %} Mantén activa la terminal si Minikube crea un túnel temporal y copia exactamente la URL mostrada para utilizarla durante las pruebas de navegador.
 
-> **NOTA:** Con el driver Docker en Windows, el proceso puede permanecer activo mientras mantiene el túnel. Utiliza otra terminal de VS Code para continuar con las validaciones.
-{: .lab-note .info .compact}
+  > **NOTA:** Con el driver Docker en Windows, el proceso puede permanecer activo mientras mantiene el túnel. Utiliza otra terminal de VS Code para continuar con las validaciones.
+  {: .lab-note .info .compact}
 
 - {% include step_label.html id="s044" %} Abre la URL obtenida en Chrome, Edge o Firefox y confirma que aparezca la página **Aplicación Node.js desplegada correctamente**.
 
@@ -682,21 +682,21 @@ En esta tarea reunirás las comprobaciones esenciales del laboratorio para relac
   kubectl get all -l app=node-web
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME                                      READY   STATUS    RESTARTS   AGE
-pod/node-web-deployment-xxxxxxxxxx-xxxxx  1/1     Running   0          ...
+  ```text
+  NAME                                      READY   STATUS    RESTARTS   AGE
+  pod/node-web-deployment-xxxxxxxxxx-xxxxx  1/1     Running   0          ...
 
-NAME                       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-service/node-web-service   NodePort   10.96.xxx.xxx   <none>        80:3xxxx/TCP   ...
+  NAME                       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+  service/node-web-service   NodePort   10.96.xxx.xxx   <none>        80:3xxxx/TCP   ...
 
-NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/node-web-deployment   1/1     1            1           ...
+  NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE
+  deployment.apps/node-web-deployment   1/1     1            1           ...
 
-NAME                                             DESIRED   CURRENT   READY   AGE
-replicaset.apps/node-web-deployment-xxxxxxxxxx   1         1         1       ...
-```
+  NAME                                             DESIRED   CURRENT   READY   AGE
+  replicaset.apps/node-web-deployment-xxxxxxxxxx   1         1         1       ...
+  ```
 
 ### Tarea 5.2. Validar la relación entre Service y Pod
 
@@ -706,15 +706,15 @@ replicaset.apps/node-web-deployment-xxxxxxxxxx   1         1         1       ...
   kubectl get endpoints node-web-service
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME               ENDPOINTS           AGE
-node-web-service   10.244.x.x:3000     ...
-```
+  ```text
+  NAME               ENDPOINTS           AGE
+  node-web-service   10.244.x.x:3000     ...
+  ```
 
-> **NOTA:** En versiones recientes de Kubernetes puedes observar una advertencia indicando que el recurso `Endpoints` está deprecado. Para esta primera práctica se usa solo como comprobación sencilla; más adelante se trabajará con los recursos actuales de descubrimiento de endpoints.
-{: .lab-note .info .compact}
+  > **NOTA:** En versiones recientes de Kubernetes puedes observar una advertencia indicando que el recurso `Endpoints` está deprecado. Para esta primera práctica se usa solo como comprobación sencilla; más adelante se trabajará con los recursos actuales de descubrimiento de endpoints.
+  {: .lab-note .info .compact}
 
 ### Tarea 5.3. Consultar los logs de la aplicación
 
@@ -724,180 +724,41 @@ node-web-service   10.244.x.x:3000     ...
   kubectl logs deployment/node-web-deployment
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-Aplicación disponible en el puerto 3000
-Hostname: node-web-deployment-xxxxxxxxxx-xxxxx
-```
+  ```text
+  Aplicación disponible en el puerto 3000
+  Hostname: node-web-deployment-xxxxxxxxxx-xxxxx
+  ```
 
 ### Tarea 5.4. Ejecutar la verificación final
 
-- {% include step_label.html id="s049" %} Copia y ejecuta el bloque completo para comprobar automáticamente el nodo, Deployment, Pod, Service y endpoints antes de cerrar la práctica.
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Verificación final de la Práctica 1 ==="
-
-  NODE_READY=$(kubectl get node minikube -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
-  if [ "$NODE_READY" = "True" ]; then
-    echo "✅ Nodo Minikube en estado Ready"
-  else
-    echo "❌ Nodo Minikube no está Ready"
-  fi
-
-  AVAILABLE=$(kubectl get deployment node-web-deployment -o jsonpath='{.status.availableReplicas}')
-  if [ "$AVAILABLE" = "1" ]; then
-    echo "✅ Deployment disponible con 1 réplica"
-  else
-    echo "❌ Deployment sin réplica disponible"
-  fi
-
-  POD_PHASE=$(kubectl get pods -l app=node-web -o jsonpath='{.items[0].status.phase}')
-  if [ "$POD_PHASE" = "Running" ]; then
-    echo "✅ Pod en estado Running"
-  else
-    echo "❌ Pod no está en estado Running"
-  fi
-
-  SERVICE_TYPE=$(kubectl get service node-web-service -o jsonpath='{.spec.type}')
-  if [ "$SERVICE_TYPE" = "NodePort" ]; then
-    echo "✅ Service NodePort creado"
-  else
-    echo "❌ Service NodePort no encontrado"
-  fi
-
-  ENDPOINT_COUNT=$(kubectl get endpoints node-web-service \
-    -o jsonpath='{.subsets[0].addresses[*].ip}' 2>/dev/null | wc -w)
-
-  if [ "$ENDPOINT_COUNT" -ge "1" ] 2>/dev/null; then
-    echo "✅ Service asociado con al menos un endpoint"
-  else
-    echo "❌ Service sin endpoint disponible"
-  fi
-
-  echo "=== Fin de verificación ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab1/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada:**
 
-```text
-=== Verificación final de la Práctica 1 ===
-✅ Nodo Minikube en estado Ready
-✅ Deployment disponible con 1 réplica
-✅ Pod en estado Running
-✅ Service NodePort creado
-✅ Service asociado con al menos un endpoint
-=== Fin de verificación ===
-```
+  **Salida esperada:**
 
-> **IMPORTANTE:** No elimines el Deployment, el Service, la imagen ni el clúster Minikube. La **Práctica complementaria 1.1** utilizará estos recursos para trabajar validaciones con `kubectl` y manifiestos YAML.
-{: .lab-note .important .compact}
+  ```text
+  === Verificación final de la Práctica 1 ===
+  ✅ Nodo Minikube en estado Ready
+  ✅ Deployment disponible con 1 réplica
+  ✅ Pod en estado Running
+  ✅ Service NodePort creado
+  ✅ Service asociado con al menos un endpoint
+  === Fin de verificación ===
+  ```
+
+  > **IMPORTANTE:** No elimines el Deployment, el Service, la imagen ni el clúster Minikube. La **Práctica complementaria 1.1** utilizará estos recursos para trabajar validaciones con `kubectl` y manifiestos YAML.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
 
 {% include support-prompt.html task="tarea5" %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. Minikube no inicia con el driver Docker
-
-**Síntoma:** `minikube start --driver=docker` termina con un error relacionado con Docker o no crea el nodo `minikube`.
-
-**Causa probable:** Docker Desktop no está activo, el motor todavía está inicializando o Minikube no puede comunicarse con el daemon local.
-
-**Solución:**
-
-Aplica las acciones siguientes en el orden presentado y confirma que Docker responda antes de intentar iniciar nuevamente el clúster.
-
-```bash
-docker info
-minikube status
-minikube start --driver=docker
-```
-
-Si `docker info` falla, abre Docker Desktop y no continúes hasta que el motor responda correctamente.
-
----
-
-### Problema 2. El Pod muestra ErrImageNeverPull
-
-**Síntoma:** El Pod no inicia y `kubectl get pods` muestra `ErrImageNeverPull` o un evento relacionado con la imagen `k8s-node-web:1.0`.
-
-**Causa probable:** La imagen fue construida en Docker Desktop, pero no se cargó correctamente en el almacenamiento de imágenes utilizado por Minikube.
-
-**Solución:**
-
-Aplica los comandos siguientes para confirmar la imagen local, cargarla nuevamente en Minikube y recrear el Pod administrado por el Deployment.
-
-```bash
-docker images k8s-node-web:1.0
-minikube image load k8s-node-web:1.0
-minikube image ls | grep k8s-node-web
-kubectl rollout restart deployment/node-web-deployment
-kubectl rollout status deployment/node-web-deployment
-```
-
----
-
-### Problema 3. El Pod permanece en Pending o no llega a Running
-
-**Síntoma:** `kubectl get pods` muestra `Pending`, `ContainerCreating` durante demasiado tiempo o el Pod no alcanza `READY 1/1`.
-
-**Causa probable:** El nodo no está listo, existe un problema con la imagen o Kubernetes registró un evento que impide iniciar el contenedor.
-
-**Solución:**
-
-Obtén el nombre del Pod y revisa su descripción para identificar el evento concreto generado por el scheduler, kubelet o runtime.
-
-```bash
-kubectl get nodes
-kubectl get pods -l app=node-web
-POD_NAME=$(kubectl get pods -l app=node-web -o jsonpath='{.items[0].metadata.name}')
-kubectl describe pod "$POD_NAME"
-```
-
-Revisa especialmente la sección `Events` ubicada al final de la salida antes de realizar cualquier cambio adicional.
-
----
-
-### Problema 4. El Service existe pero la aplicación no responde
-
-**Síntoma:** `kubectl get service node-web-service` muestra el Service, pero la URL obtenida con Minikube no carga la página.
-
-**Causa probable:** El Service no encontró Pods compatibles, el Pod no está listo o el proceso de túnel de Minikube fue cerrado.
-
-**Solución:**
-
-Comprueba las etiquetas, los endpoints y el estado del Pod para determinar si el Service tiene un destino válido antes de volver a abrir la URL.
-
-```bash
-kubectl get pods -l app=node-web --show-labels
-kubectl get endpoints node-web-service
-kubectl get service node-web-service
-minikube service node-web-service --url
-```
-
-El Service debe disponer de al menos un endpoint con formato similar a `10.244.x.x:3000`.
-
----
-
-### Problema 5. El manifiesto YAML devuelve un error
-
-**Síntoma:** `kubectl apply` muestra errores como `error parsing`, `mapping values are not allowed` o indica campos desconocidos.
-
-**Causa probable:** La indentación cambió al editar el archivo, se utilizaron tabulaciones o alguna propiedad quedó ubicada en una sección incorrecta.
-
-**Solución:**
-
-Valida primero ambos archivos sin modificar el clúster y utiliza la salida detallada para localizar el manifiesto que contiene el problema.
-
-```bash
-kubectl apply --dry-run=client -f k8s/deployment.yaml
-kubectl apply --dry-run=client -f k8s/service.yaml
-```
-
-Revisa los archivos en VS Code utilizando espacios para la indentación y vuelve a ejecutar la validación antes de aplicar los cambios.

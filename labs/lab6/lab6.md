@@ -76,11 +76,11 @@ En esta práctica crearás el directorio `lab4` y comprobarás que el clúster M
   pwd
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-/c/LABS/kubernetes/lab4
-```
+  ```text
+  /c/LABS/kubernetes/lab4
+  ```
 
 - {% include step_label.html id="s005" %} Ejecuta los comandos siguientes para confirmar que Minikube está activo y que los nodos continúan disponibles.
 
@@ -89,9 +89,9 @@ En esta práctica crearás el directorio `lab4` y comprobarás que el clúster M
   kubectl get nodes
   ```
 
-**Resultado esperado:**
+  **Resultado esperado:**
 
-Los tres nodos del clúster deben aparecer en estado `Ready`.
+  Los tres nodos del clúster deben aparecer en estado `Ready`.
 
 ---
 
@@ -110,15 +110,15 @@ En esta tarea identificarás los namespaces creados automáticamente por Kuberne
   kubectl get namespaces
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-NAME              STATUS   AGE
-default           Active   ...
-kube-node-lease   Active   ...
-kube-public       Active   ...
-kube-system       Active   ...
-```
+  ```text
+  NAME              STATUS   AGE
+  default           Active   ...
+  kube-node-lease   Active   ...
+  kube-public       Active   ...
+  kube-system       Active   ...
+  ```
 
 - {% include step_label.html id="s007" %} Ejecuta `kubectl describe` para revisar los metadatos y estado del namespace utilizado por los componentes internos de Kubernetes.
 
@@ -138,8 +138,8 @@ kube-system       Active   ...
   kubectl get leases -n kube-node-lease
   ```
 
-> **IMPORTANTE:** Los namespaces `kube-system`, `kube-public` y `kube-node-lease` forman parte de la infraestructura del clúster. No deben utilizarse para desplegar aplicaciones de usuario ni eliminarse durante las prácticas.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Los namespaces `kube-system`, `kube-public` y `kube-node-lease` forman parte de la infraestructura del clúster. No deben utilizarse para desplegar aplicaciones de usuario ni eliminarse durante las prácticas.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -222,14 +222,14 @@ En esta tarea crearás `development`, `staging` y `production`, utilizando tanto
   kubectl get namespaces development staging production
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-NAME          STATUS   AGE
-development   Active   ...
-staging       Active   ...
-production    Active   ...
-```
+  ```text
+  NAME          STATUS   AGE
+  development   Active   ...
+  staging       Active   ...
+  production    Active   ...
+  ```
 
 - {% include step_label.html id="s017" %} Consulta los labels de los namespaces para comprobar que las etiquetas añadidas permiten clasificarlos por ambiente o equipo.
 
@@ -452,16 +452,16 @@ En esta tarea desplegarás recursos llamados `webapp` y `webapp-svc` en los tres
   kubectl get services --all-namespaces | grep webapp-svc
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-development   webapp   1/1   ...
-production    webapp   3/3   ...
-staging       webapp   2/2   ...
-```
+  ```text
+  development   webapp   1/1   ...
+  production    webapp   3/3   ...
+  staging       webapp   2/2   ...
+  ```
 
-> **Concepto clave:** Los namespaces proporcionan aislamiento lógico de nombres. Un Deployment llamado `webapp` puede existir en varios namespaces porque cada combinación `namespace + nombre` identifica un recurso diferente.
-{: .lab-note .important .compact}
+  > **Concepto clave:** Los namespaces proporcionan aislamiento lógico de nombres. Un Deployment llamado `webapp` puede existir en varios namespaces porque cada combinación `namespace + nombre` identifica un recurso diferente.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r3 %}{{ results[2] }}{% endcapture %}
@@ -570,16 +570,16 @@ En esta tarea aplicarás controles de consumo al namespace `development`. Resour
     -o yaml
   ```
 
-**Resultado esperado dentro de `resources`:**
+  **Resultado esperado dentro de `resources`:**
 
-```yaml
-limits:
-  cpu: 200m
-  memory: 128Mi
-requests:
-  cpu: 100m
-  memory: 64Mi
-```
+  ```yaml
+  limits:
+    cpu: 200m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+  ```
 
 - {% include step_label.html id="s035" %} Ejecuta las consultas siguientes para confirmar que ResourceQuota y LimitRange están activos en el namespace.
 
@@ -588,8 +588,8 @@ requests:
   kubectl get limitrange -n development
   ```
 
-> **NOTA:** ResourceQuota controla el consumo total del namespace, mientras LimitRange aplica reglas y valores predeterminados a objetos individuales. Son mecanismos complementarios.
-{: .lab-note .info .compact}
+  > **NOTA:** ResourceQuota controla el consumo total del namespace, mientras LimitRange aplica reglas y valores predeterminados a objetos individuales. Son mecanismos complementarios.
+  {: .lab-note .info .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r4 %}{{ results[3] }}{% endcapture %}
@@ -641,11 +641,11 @@ En esta tarea eliminarás `staging` y comprobarás que Kubernetes elimina autom�
   kubectl get deployment webapp -n staging
   ```
 
-**Salida esperada:**
+  **Salida esperada:**
 
-```text
-Error from server (NotFound): namespaces "staging" not found
-```
+  ```text
+  Error from server (NotFound): namespaces "staging" not found
+  ```
 
 - {% include step_label.html id="s041" %} Confirma que los recursos con el mismo nombre en `development` y `production` permanecen disponibles y no fueron afectados por la eliminación.
 
@@ -656,168 +656,32 @@ Error from server (NotFound): namespaces "staging" not found
 
 ### Tarea 5.3. Ejecutar la verificación final
 
-- {% include step_label.html id="s042" %} Copia y ejecuta el bloque siguiente para validar automáticamente los principales resultados de la práctica.
+- {% include step_label.html id="s045" %} Ejecuta el siguiente script para validar la configuracion.
 
   ```bash
-  echo "=== Verificacion final de la Practica 4 ==="
-
-  for ns in development production; do
-    STATUS=$(kubectl get namespace "$ns" \
-      -o jsonpath='{.status.phase}' 2>/dev/null)
-
-    if [ "$STATUS" = "Active" ]; then
-      echo "✅ Namespace $ns disponible"
-    else
-      echo "❌ Namespace $ns no disponible"
-    fi
-  done
-
-  if kubectl get namespace staging >/dev/null 2>&1; then
-    echo "❌ staging todavia existe"
-  else
-    echo "✅ staging fue eliminado"
-  fi
-
-  if kubectl get resourcequota development-quota \
-    -n development >/dev/null 2>&1; then
-    echo "✅ ResourceQuota disponible"
-  else
-    echo "❌ ResourceQuota no encontrada"
-  fi
-
-  if kubectl get limitrange development-limits \
-    -n development >/dev/null 2>&1; then
-    echo "✅ LimitRange disponible"
-  else
-    echo "❌ LimitRange no encontrado"
-  fi
-
-  echo ""
-  echo "Deployments restantes:"
-  kubectl get deployments --all-namespaces | grep webapp
-
-  echo "=== Fin de verificacion ==="
+  curl -sSL https://raw.githubusercontent.com/Netec-Mx/CKA/refs/heads/main/labs/lab6/scripts/validacion.sh -o validacion.sh
+  chmod +x validacion.sh
+  ./validacion.sh
   ```
 
-**Salida esperada aproximada:**
+  **Salida esperada aproximada:**
 
-```text
-=== Verificacion final de la Practica 4 ===
-✅ Namespace development disponible
-✅ Namespace production disponible
-✅ staging fue eliminado
-✅ ResourceQuota disponible
-✅ LimitRange disponible
-...
-=== Fin de verificacion ===
-```
+  ```text
+  === Verificacion final de la Practica 4 ===
+  ✅ Namespace development disponible
+  ✅ Namespace production disponible
+  ✅ staging fue eliminado
+  ✅ ResourceQuota disponible
+  ✅ LimitRange disponible
+  ...
+  === Fin de verificacion ===
+  ```
 
-> **IMPORTANTE:** Conserva `development`, `production` y el clúster Minikube. La práctica complementaria siguiente profundizará en separación lógica por ambiente utilizando namespaces.
-{: .lab-note .important .compact}
+  > **IMPORTANTE:** Conserva `development`, `production` y el clúster Minikube. La práctica complementaria siguiente profundizará en separación lógica por ambiente utilizando namespaces.
+  {: .lab-note .important .compact}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r5 %}{{ results[4] }}{% endcapture %}
 {% include task-result.html title="Tarea finalizada" content=r5 %}
 
 {% include support-prompt.html task="tarea5" %}
-
----
-
-## 🛠️ Resolución de problemas
-
-### Problema 1. Un namespace ya existe
-
-**Síntoma:** `kubectl create namespace development` devuelve un error indicando que el recurso ya existe.
-
-**Causa probable:** El namespace fue creado previamente durante otra ejecución del laboratorio.
-
-**Solución:**
-
-Comprueba primero su estado y labels antes de decidir si debes reutilizarlo.
-
-```bash
-kubectl get namespace development --show-labels
-```
-
-Si pertenece a una ejecución anterior y necesitas reiniciar completamente el ejercicio, elimina solamente ese namespace y vuelve a crearlo.
-
----
-
-### Problema 2. El Deployment no crea Pods después de aplicar ResourceQuota
-
-**Síntoma:** El Deployment existe, pero algunas réplicas no pueden crearse y los eventos muestran `exceeded quota`.
-
-**Causa probable:** La suma de requests o limits de los Pods supera los valores máximos definidos en `development-quota`.
-
-**Solución:**
-
-Consulta primero el consumo actual:
-
-```bash
-kubectl describe resourcequota development-quota -n development
-kubectl get pods -n development
-```
-
-Reduce réplicas o ajusta los valores de recursos del workload antes de modificar la cuota.
-
----
-
-### Problema 3. El Pod de prueba no recibe resources automáticamente
-
-**Síntoma:** Al consultar `test-limitrange`, la sección `resources` aparece vacía o no contiene los valores configurados.
-
-**Causa probable:** El Pod fue creado antes de que existiera el LimitRange o el recurso no fue aplicado correctamente.
-
-**Solución:**
-
-Confirma que el LimitRange existe y recrea únicamente el Pod de prueba.
-
-```bash
-kubectl get limitrange development-limits -n development
-kubectl delete pod test-limitrange -n development --ignore-not-found
-
-kubectl run test-limitrange \
-  --image=nginx:1.27-alpine \
-  --restart=Never \
-  -n development
-```
-
----
-
-### Problema 4. staging permanece en Terminating
-
-**Síntoma:** Después de eliminar `staging`, el namespace permanece durante varios minutos en estado `Terminating`.
-
-**Causa probable:** Kubernetes todavía está procesando recursos o finalizers existentes dentro del namespace.
-
-**Solución:**
-
-Consulta primero el estado del namespace y los recursos que todavía puedan existir.
-
-```bash
-kubectl get namespace staging
-kubectl get all -n staging
-```
-
-En un laboratorio estándar con Minikube, espera a que Kubernetes complete la terminación antes de intentar intervenciones manuales sobre finalizers.
-
----
-
-### Problema 5. kubectl consulta el namespace equivocado
-
-**Síntoma:** Un comando sin `-n` no encuentra un recurso que sabes que existe en otro namespace.
-
-**Causa probable:** kubectl utiliza el namespace configurado en el contexto actual o `default` cuando no existe uno explícito.
-
-**Solución:**
-
-Consulta el contexto y utiliza el namespace de forma explícita.
-
-```bash
-kubectl config current-context
-kubectl config view --minify
-kubectl get deployments -n development
-kubectl get deployments -n production
-```
-
-Para evitar ambigüedad durante esta práctica, utiliza `-n <namespace>` en las operaciones sobre recursos namespaced.
